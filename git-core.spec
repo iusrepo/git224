@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documetnation
 Name: 		git-core
-Version: 	0.99.4
-Release: 	4%{?dist}
+Version: 	0.99.6
+Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
 Group: 		Development/Tools
@@ -24,12 +24,11 @@ elsewhere for tools for ordinary humans layered on top of this.
 
 %build
 make COPTS="$RPM_OPT_FLAGS" prefix=%{_prefix} all %{!?_without_docs: doc}
-make COPTS="$RPM_OPT_FLAGS" -C tools all
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make dest=$RPM_BUILD_ROOT prefix=%{_prefix} mandir=%{_mandir} \
-     install install-tools %{!?_without_docs: install-doc}
+make DESTDIR=$RPM_BUILD_ROOT prefix=%{_prefix} mandir=%{_mandir} \
+     install %{!?_without_docs: install-doc}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -44,6 +43,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %{_mandir}/man7/*.7.gz}
 
 %changelog
+* Fri Sep 16 2005 Chris Wright <chrisw@osdl.org> 0.99.6-1
+- update to 0.99.6
+
 * Thu Aug 18 2005 Chris Wright <chrisw@osdl.org> 0.99.4-4
 - drop sh_utils, sh-utils, diffutils, mktemp, and openssl Requires
 - use RPM_OPT_FLAGS in spec file, drop patch0
