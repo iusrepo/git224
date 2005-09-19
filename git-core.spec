@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documetnation
 Name: 		git-core
-Version: 	0.99.6
+Version: 	0.99.7
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
@@ -9,7 +9,7 @@ URL: 		http://kernel.org/pub/software/scm/git/
 Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
 BuildRequires:	zlib-devel, openssl-devel, curl-devel  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires: 	rsync, rcs, curl
+Requires:	rsync, rcs, curl, less, openssh-clients, python >= 2.4, tk
 
 %description
 This is a stupid (but extremely fast) directory content manager.  It
@@ -39,12 +39,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/git-core/
 %doc README COPYING Documentation/*.txt
 %{!?_without_docs: %doc Documentation/*.html }
-%{!?_without_docs: %{_mandir}/man1/*.1.gz}
-%{!?_without_docs: %{_mandir}/man7/*.7.gz}
+%{!?_without_docs: %{_mandir}/man1/*.1*}
+%{!?_without_docs: %{_mandir}/man7/*.7*}
 
 %changelog
 * Fri Sep 16 2005 Chris Wright <chrisw@osdl.org> 0.99.6-1
 - update to 0.99.6
+
+* Fri Sep 16 2005 Horst H. von Brand <vonbrand@inf.utfsm.cl>
+- Linus noticed that less is required, added to the dependencies
+
+* Sun Sep 11 2005 Horst H. von Brand <vonbrand@inf.utfsm.cl>
+- Updated dependencies
+- Don't assume manpages are gzipped
 
 * Thu Aug 18 2005 Chris Wright <chrisw@osdl.org> 0.99.4-4
 - drop sh_utils, sh-utils, diffutils, mktemp, and openssl Requires
