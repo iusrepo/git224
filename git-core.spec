@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documetnation
 Name: 		git-core
-Version: 	0.99.7a
+Version: 	0.99.8
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
@@ -9,7 +9,7 @@ URL: 		http://kernel.org/pub/software/scm/git/
 Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
 BuildRequires:	zlib-devel, openssl-devel, curl-devel  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires:	rsync, rcs, curl, less, openssh-clients, python >= 2.3, tk
+Requires:	rsync, rcs, curl, less, openssh-clients, python >= 2.3, tk >= 8.4
 
 %description
 This is a stupid (but extremely fast) directory content manager.  It
@@ -23,12 +23,12 @@ elsewhere for tools for ordinary humans layered on top of this.
 %setup -q
 
 %build
-make COPTS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease \
+make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease \
      prefix=%{_prefix} all %{!?_without_docs: doc}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make DESTDIR=$RPM_BUILD_ROOT WITH_OWN_SUBPROCESS_PY=YesPlease \
+make %{_smp_mflags} DESTDIR=$RPM_BUILD_ROOT WITH_OWN_SUBPROCESS_PY=YesPlease \
      prefix=%{_prefix} mandir=%{_mandir} \
      install %{!?_without_docs: install-doc}
 
@@ -45,6 +45,10 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %{_mandir}/man7/*.7*}
 
 %changelog
+* Tue Sep 27 2005 H. Peter Anvin <hpa@zytor.com>
+- parallelize build
+- COPTS -> CFLAGS
+
 * Fri Sep 16 2005 Chris Wright <chrisw@osdl.org> 0.99.6-1
 - update to 0.99.6
 
