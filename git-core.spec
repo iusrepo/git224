@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documetnation
 Name: 		git-core
-Version: 	0.99.8a
+Version: 	0.99.8c
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
