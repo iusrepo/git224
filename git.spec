@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 # Pass --with email to rpmbuild if you want git-email (more perl dependencies)
 Name: 		git
-Version: 	1.2.6
+Version: 	1.3.0
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
@@ -141,6 +141,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/*.html }
 
 %changelog
+* Wed Apr 19 2006 Chris Wright <chrisw@redhat.com> 1.3.0-1
+- git-1.3.0
+
 * Mon Apr 10 2006 Chris Wright <chrisw@redhat.com> 1.2.6-1
 - git-1.2.6
 
