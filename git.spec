@@ -1,7 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
-# Pass --with email to rpmbuild if you want git-email (more perl dependencies)
 Name: 		git
-Version: 	1.3.2
+Version: 	1.3.3
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
@@ -10,7 +9,7 @@ URL: 		http://kernel.org/pub/software/scm/git/
 Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires:	git-core, git-svn, git-cvs, git-arch, %{?_with_email: git-email}, gitk
+Requires:	git-core, git-svn, git-cvs, git-arch, git-email, gitk
 
 %description
 This is a stupid (but extremely fast) directory content manager.  It
@@ -57,14 +56,12 @@ Requires:       git-core = %{version}-%{release}, tla
 %description arch
 Git tools for importing Arch repositories.
 
-%if %{?_with_email:1}0
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
 Requires:	git-core = %{version}-%{release} 
 %description email
 Git tools for sending email.
-%endif
 
 %package -n gitk
 Summary:        Git revision tree visualiser ('gitk')
@@ -77,18 +74,18 @@ Git revision tree visualiser ('gitk')
 %setup -q
 
 %build
-make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease %{?_with_email:WITH_SEND_EMAIL=1} \
+make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease \
      prefix=%{_prefix} all %{!?_without_docs: doc}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make %{_smp_mflags} DESTDIR=$RPM_BUILD_ROOT WITH_OWN_SUBPROCESS_PY=YesPlease %{?_with_email:WITH_SEND_EMAIL=1} \
+make %{_smp_mflags} DESTDIR=$RPM_BUILD_ROOT WITH_OWN_SUBPROCESS_PY=YesPlease \
      prefix=%{_prefix} mandir=%{_mandir} \
      install %{!?_without_docs: install-doc}
 
-(find $RPM_BUILD_ROOT%{_bindir} -type f | grep -vE "arch|svn|cvs|%{?_with_email:email|}gitk" | sed -e s@^$RPM_BUILD_ROOT@@)               > bin-man-doc-files
+(find $RPM_BUILD_ROOT%{_bindir} -type f | grep -vE "arch|svn|cvs|email|gitk" | sed -e s@^$RPM_BUILD_ROOT@@)               > bin-man-doc-files
 %if %{!?_without_docs:1}0
-(find $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT/Documentation -type f | grep -vE "arch|svn|git-cvs|%{?_with_email:email|}gitk" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
+(find $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT/Documentation -type f | grep -vE "arch|svn|git-cvs|email|gitk" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
 %endif
 
 %clean
@@ -118,14 +115,12 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %{_mandir}/man1/*arch*.1*}
 %{!?_without_docs: %doc Documentation/*arch*.html }
 
-%if %{?_with_email:1}0
 %files email
 %defattr(-,root,root)
 %doc Documentation/*email*.txt
 %{_bindir}/*email*
 %{!?_without_docs: %{_mandir}/man1/*email*.1*}
 %{!?_without_docs: %doc Documentation/*email*.html }
-%endif
 
 %files -n gitk
 %defattr(-,root,root)
@@ -141,6 +136,10 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/*.html }
 
 %changelog
+* Thu May 4 2006 Chris Wright <chrisw@redhat.com> 1.3.3-1
+- git-1.3.3
+- enable git-email building, prereqs have been relaxed
+
 * Thu May 4 2006 Chris Wright <chrisw@redhat.com> 1.3.2-1
 - git-1.3.2
 
