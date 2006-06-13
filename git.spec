@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.3.3
+Version: 	1.4.0
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
@@ -136,6 +136,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/*.html }
 
 %changelog
+* Tue Jun 13 2006 Chris Wright <chrisw@redhat.com> 1.4.0-1
+* git-1.4.0
+
 * Thu May 4 2006 Chris Wright <chrisw@redhat.com> 1.3.3-1
 - git-1.3.3
 - enable git-email building, prereqs have been relaxed
