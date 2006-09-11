@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.4.1
+Version: 	1.4.2
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
@@ -136,6 +136,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/*.html }
 
 %changelog
+* Mon Sep 11 2006 Chris Wright <chrisw@redhat.com> 1.4.2-1
+- git-1.4.2
+
 * Thu Jul 6 2006 Chris Wright <chrisw@redhat.com> 1.4.1-1
 - git-1.4.1
 
