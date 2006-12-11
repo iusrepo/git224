@@ -1,0 +1,32 @@
+From 4f88d3e0cbf443cd309c2c881209f3366f14023d Mon Sep 17 00:00:00 2001
+From: Martin Langhoff <martin@catalyst.net.nz>
+Date: Thu, 7 Dec 2006 16:38:50 +1300
+Subject: [PATCH] cvsserver: Avoid miscounting bytes in Perl v5.8.x
+
+At some point between v5.6 and 5.8 Perl started to assume its input,
+output and filehandles are UTF-8. This breaks the counting of bytes
+for the CVS protocol, resulting in the client expecting less data
+than we actually send, and storing truncated files.
+
+Signed-off-by: Martin Langhoff <martin@catalyst.net.nz>
+Signed-off-by: Junio C Hamano <junkio@cox.net>
+Signed-off-by: Chris Wright <chrisw@sous-sol.org>
+---
+ git-cvsserver.perl |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/git-cvsserver.perl b/git-cvsserver.perl
+index ca519b7..197014d 100755
+--- a/git-cvsserver.perl
++++ b/git-cvsserver.perl
+@@ -17,6 +17,7 @@
+ 
+ use strict;
+ use warnings;
++use bytes;
+ 
+ use Fcntl;
+ use File::Temp qw/tempdir tempfile/;
+-- 
+1.4.4.2
+

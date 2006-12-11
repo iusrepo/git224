@@ -1,12 +1,14 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.4.4.2
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
 Group: 		Development/Tools
 URL: 		http://kernel.org/pub/software/scm/git/
 Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
+Patch0:		git-install-non-executable-doc-files.patch
+Patch1:		cvsserver-Avoid-miscounting-bytes-in-Perl-v5.8.x.patch
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:	git-core, git-svn, git-cvs, git-arch, git-email, gitk, perl-Git
@@ -82,6 +84,8 @@ Perl interface to Git
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease \
@@ -155,6 +159,10 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/*.html }
 
 %changelog
+* Sun Dec 10 2006 Chris Wright <chrisw@redhat.com> 1.4.4.2-2
+- no need to install manpages executable (bz 216790)
+- use bytes for git-cvsserver
+
 * Sun Dec 10 2006 Chris Wright <chrisw@redhat.com> 1.4.4.2-1
 - git-1.4.4.2
 
