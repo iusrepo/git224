@@ -1,39 +1,31 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.4.4.2
-Release: 	2%{?dist}
+Version: 	1.5.0.2
+Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
 Group: 		Development/Tools
 URL: 		http://kernel.org/pub/software/scm/git/
 Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
-Patch0:		git-install-non-executable-doc-files.patch
-Patch1:		cvsserver-Avoid-miscounting-bytes-in-Perl-v5.8.x.patch
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires:	git-core, git-svn, git-cvs, git-arch, git-email, gitk, perl-Git
+Requires:	git-core, git-svn, git-cvs, git-arch, git-email, gitk, git-gui, perl-Git
 
 %description
-This is a stupid (but extremely fast) directory content manager.  It
-doesn't do a whole lot, but what it _does_ do is track directory
-contents efficiently. It is intended to be the base of an efficient,
-distributed source code management system. This package includes
-rudimentary tools that can be used as a SCM, but you should look
-elsewhere for tools for ordinary humans layered on top of this.
+Git is a fast, scalable, distributed revision control system with an
+unusually rich command set that provides both high-level operations
+and full access to internals.
 
 This is a dummy package which brings in all subpackages.
 
 %package core
 Summary:	Core git tools
 Group:		Development/Tools
-Requires:	zlib >= 1.2, rsync, rcs, curl, less, openssh-clients, python >= 2.3, expat
+Requires:	zlib >= 1.2, rsync, curl, less, openssh-clients, expat
 %description core
-This is a stupid (but extremely fast) directory content manager.  It
-doesn't do a whole lot, but what it _does_ do is track directory
-contents efficiently. It is intended to be the base of an efficient,
-distributed source code management system. This package includes
-rudimentary tools that can be used as a SCM, but you should look
-elsewhere for tools for ordinary humans layered on top of this.
+Git is a fast, scalable, distributed revision control system with an
+unusually rich command set that provides both high-level operations
+and full access to internals.
 
 These are the core tools with minimal dependencies.
 
@@ -65,6 +57,13 @@ Requires:	git-core = %{version}-%{release}
 %description email
 Git tools for sending email.
 
+%package gui
+Summary:        Git GUI tool
+Group:          Development/Tools
+Requires:       git-core = %{version}-%{release}, tk >= 8.4
+%description gui
+Git GUI tool
+
 %package -n gitk
 Summary:        Git revision tree visualiser ('gitk')
 Group:          Development/Tools
@@ -84,8 +83,6 @@ Perl interface to Git
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 %build
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease \
@@ -93,17 +90,18 @@ make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease \
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make %{_smp_mflags} DESTDIR=$RPM_BUILD_ROOT WITH_OWN_SUBPROCESS_PY=YesPlease \
+make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" DESTDIR=$RPM_BUILD_ROOT \
+     WITH_OWN_SUBPROCESS_PY=YesPlease \
      prefix=%{_prefix} mandir=%{_mandir} INSTALLDIRS=vendor \
      install %{!?_without_docs: install-doc}
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
 
-(find $RPM_BUILD_ROOT%{_bindir} -type f | grep -vE "archimport|svn|cvs|email|gitk" | sed -e s@^$RPM_BUILD_ROOT@@)               > bin-man-doc-files
+(find $RPM_BUILD_ROOT%{_bindir} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citool" | sed -e s@^$RPM_BUILD_ROOT@@)               > bin-man-doc-files
 (find $RPM_BUILD_ROOT%{perl_vendorlib} -type f | sed -e s@^$RPM_BUILD_ROOT@@) >> perl-files
 %if %{!?_without_docs:1}0
-(find $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT/Documentation -type f | grep -vE "archimport|svn|git-cvs|email|gitk" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
+(find $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT/Documentation -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
 rm -rf $RPM_BUILD_ROOT%{_mandir}
 %endif
@@ -142,6 +140,16 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %{_mandir}/man1/*email*.1*}
 %{!?_without_docs: %doc Documentation/*email*.html }
 
+%files gui
+%defattr(-,root,root)
+%{_bindir}/git-gui
+%{_bindir}/git-citool
+# Not Yet...
+# %{!?_without_docs: %{_mandir}/man1/git-gui.1}
+# %{!?_without_docs: %doc Documentation/git-gui.html}
+# %{!?_without_docs: %{_mandir}/man1/git-citool.1}
+# %{!?_without_docs: %doc Documentation/git-citool.html}
+
 %files -n gitk
 %defattr(-,root,root)
 %doc Documentation/*gitk*.txt
@@ -159,6 +167,15 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/*.html }
 
 %changelog
+* Mon Feb 26 2007 Chris Wright <chrisw@redhat.com> 1.5.0.2-1
+- git-1.5.0.2
+
+* Mon Feb 13 2007 Nicolas Pitre <nico@cam.org>
+- Update core package description (Git isn't as stupid as it used to be)
+
+* Mon Feb 12 2007 Junio C Hamano <junkio@cox.net>
+- Add git-gui and git-citool.
+
 * Sun Dec 10 2006 Chris Wright <chrisw@redhat.com> 1.4.4.2-2
 - no need to install manpages executable (bz 216790)
 - use bytes for git-cvsserver
