@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.0.6
+Version: 	1.5.2.1
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
@@ -85,15 +85,16 @@ Perl interface to Git
 %setup -q
 
 %build
-make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" WITH_OWN_SUBPROCESS_PY=YesPlease \
+make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \
+     ETC_GITCONFIG=/etc/gitconfig \
      prefix=%{_prefix} all %{!?_without_docs: doc}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" DESTDIR=$RPM_BUILD_ROOT \
-     WITH_OWN_SUBPROCESS_PY=YesPlease \
-     prefix=%{_prefix} mandir=%{_mandir} INSTALLDIRS=vendor \
-     install %{!?_without_docs: install-doc}
+     prefix=%{_prefix} mandir=%{_mandir} \
+     ETC_GITCONFIG=/etc/gitconfig \
+     INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
@@ -144,6 +145,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/git-gui
 %{_bindir}/git-citool
+%{_datadir}/git-gui/
 # Not Yet...
 # %{!?_without_docs: %{_mandir}/man1/git-gui.1}
 # %{!?_without_docs: %doc Documentation/git-gui.html}
@@ -164,9 +166,20 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_datadir}/git-core/
 %doc README COPYING Documentation/*.txt
-%{!?_without_docs: %doc Documentation/*.html }
+%{!?_without_docs: %doc Documentation/*.html Documentation/howto}
+%{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Fri Jun 08 2007 James Bowes <jbowes@redhat.com> 1.5.2.1-1
+- git-1.5.2.1
+
+* Tue May 13 2007 Quy Tonthat <qtonthat@gmail.com>
+- Added lib files for git-gui
+- Added Documentation/technical (As needed by Git Users Manual)
+
+* Tue May 8 2007 Quy Tonthat <qtonthat@gmail.com>
+- Added howto files
+
 * Fri Mar 30 2007 Chris Wright <chrisw@redhat.com> 1.5.0.6-1
 - git-1.5.0.6
 
