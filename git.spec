@@ -1,15 +1,16 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.2.2
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
 Group: 		Development/Tools
 URL: 		http://kernel.org/pub/software/scm/git/
 Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
-BuildRequires:	perl-devel, zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
+Source1:	git-init.el
+BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel, emacs  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires:	git-core, git-svn, git-cvs, git-arch, git-email, gitk, git-gui, perl-Git
+Requires:	git-core, git-svn, git-cvs, git-arch, git-email, gitk, git-gui, perl-Git, emacs-git
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -62,24 +63,32 @@ Summary:        Git GUI tool
 Group:          Development/Tools
 Requires:       git-core = %{version}-%{release}, tk >= 8.4
 %description gui
-Git GUI tool
+Git GUI tool.
 
 %package -n gitk
-Summary:        Git revision tree visualiser ('gitk')
+Summary:        Git revision tree visualiser
 Group:          Development/Tools
 Requires:       git-core = %{version}-%{release}, tk >= 8.4
 %description -n gitk
-Git revision tree visualiser ('gitk')
+Git revision tree visualiser.
 
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
 Requires:       git-core = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-BuildRequires:  perl(Error)
+BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 
 %description -n perl-Git
-Perl interface to Git
+Perl interface to Git.
+
+%package -n emacs-git
+Summary:       Git version control system support for Emacs
+Group:         Applications/Editors
+Requires:      git-core = %{version}-%{release}, emacs-common
+
+%description -n emacs-git
+%{summary}.
 
 %prep
 %setup -q
@@ -88,6 +97,7 @@ Perl interface to Git
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \
      ETC_GITCONFIG=/etc/gitconfig \
      prefix=%{_prefix} all %{!?_without_docs: doc}
+make -C contrib/emacs
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -95,6 +105,14 @@ make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" DESTDIR=$RPM_BUILD_ROOT \
      prefix=%{_prefix} mandir=%{_mandir} \
      ETC_GITCONFIG=/etc/gitconfig \
      INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
+make -C contrib/emacs install \
+		 emacsdir=$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
+for elc in $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/*.elc ; do
+	install -pm 644 contrib/emacs/$(basename $elc .elc).el \
+	$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
+done
+install -Dpm 644 %{SOURCE1} \
+	$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
@@ -162,6 +180,11 @@ rm -rf $RPM_BUILD_ROOT
 %files -n perl-Git -f perl-files
 %defattr(-,root,root)
 
+%files -n emacs-git
+%defattr(-,root,root)
+%{_datadir}/emacs/site-lisp/*git*.el*
+%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
+
 %files core -f bin-man-doc-files
 %defattr(-,root,root)
 %{_datadir}/git-core/
@@ -170,6 +193,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Thu Jun 21 2007 Josh Boyer <jwboyer@jdub.homelinux.org> 1.5.2.2-2
+- Add emacs-git package (#235431)
+
 * Mon Jun 18 2007 James Bowes <jbowes@redhat.com> 1.5.2.2-1
 - git-1.5.2.2
 
