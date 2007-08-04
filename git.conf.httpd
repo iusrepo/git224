@@ -1,0 +1,6 @@
+Alias /git /var/www/git
+
+<Directory /var/www/git>
+  Options +ExecCGI
+  AddHandler cgi-script .cgi
+</Directory>
