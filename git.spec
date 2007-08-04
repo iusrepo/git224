@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.2.2
-Release: 	3%{?dist}
+Version: 	1.5.2.4
+Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPL
 Group: 		Development/Tools
@@ -233,6 +233,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Fri Aug 03 2007 Josh Boyer <jwboyer@jdub.homelinux.org> 1.5.2.4-1
+- git-1.5.2.4-1
+
 * Tue Jul 03 2007 Josh Boyer <jwboyer@jdub.homelinux.org> 1.5.2.2-3
 - Add git-daemon and gitweb packages
 
