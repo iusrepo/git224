@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.3.1
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Git core and tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -194,10 +194,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/git-citool
 %{_datadir}/git-gui/
 # Not Yet...
-# %{!?_without_docs: %{_mandir}/man1/git-gui.1}
-# %{!?_without_docs: %doc Documentation/git-gui.html}
-# %{!?_without_docs: %{_mandir}/man1/git-citool.1}
-# %{!?_without_docs: %doc Documentation/git-citool.html}
+%{!?_without_docs: %{_mandir}/man1/git-gui.1*}
+%{!?_without_docs: %doc Documentation/git-gui.html}
+%{!?_without_docs: %{_mandir}/man1/git-citool.1*}
+%{!?_without_docs: %doc Documentation/git-citool.html}
 
 %files -n gitk
 %defattr(-,root,root)
@@ -233,6 +233,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Thu Sep 06 2007 Josh Boyer <jwboyer@jdub.homelinux.org> 1.5.3.1-2
+- Include git-gui and git-citool docs
+
 * Thu Sep 06 2007 Josh Boyer <jwboyer@jdub.homelinux.org> 1.5.3.1-1
 - git-1.5.3.1-1
 
