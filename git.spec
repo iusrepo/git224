@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.3.4
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Git core and tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -94,7 +94,7 @@ Git revision tree visualiser.
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
-Requires:       git-core = %{version}-%{release}
+Requires:       git-core = %{version}-%{release}, perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 
@@ -233,6 +233,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Wed Oct 24 2007 Lubomir Kundrak <lkundrak@redhat.com> 1.5.3.4-2
+- git-Perl requires Error package
+
 * Tue Oct 09 2007 James Bowes <jbowes@redhat.com> 1.5.3.4-1
 - git-1.5.3.4
 
