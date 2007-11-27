@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.3.4
-Release: 	2%{?dist}
+Version: 	1.5.3.6
+Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -25,7 +25,7 @@ This is a dummy package which brings in all subpackages.
 %package core
 Summary:	Core git tools
 Group:		Development/Tools
-Requires:	zlib >= 1.2, rsync, curl, less, openssh-clients, expat
+Requires:	zlib >= 1.2, rsync, curl, less, openssh-clients, expat, perl(Error)
 %description core
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -52,7 +52,7 @@ Simple web interface to track changes in git repositories
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}, subversion
+Requires:       git-core = %{version}-%{release}, subversion, perl(Term::ReadKey)
 %description svn
 Git tools for importing Subversion repositories.
 
@@ -73,7 +73,7 @@ Git tools for importing Arch repositories.
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
-Requires:	git-core = %{version}-%{release} 
+Requires:	git-core = %{version}-%{release}, perl-Git = %{version}-%{release}
 %description email
 Git tools for sending email.
 
@@ -233,6 +233,12 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Tue Nov 27 2007 Josh Boyer <jwboyer@gmail.com> 1.5.3.6-1
+- git-1.5.3.6
+- git-core requires perl(Error) (bug 367861)
+- git-svn requires perl(Term:ReadKey) (bug 261361)
+- git-email requires perl-Git (bug 333061)
+
 * Wed Oct 24 2007 Lubomir Kundrak <lkundrak@redhat.com> 1.5.3.4-2
 - git-Perl requires Error package
 
