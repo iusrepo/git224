@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.3.6
+Version: 	1.5.3.7
 Release: 	1%{?dist}
 Summary:  	Git core and tools
 License: 	GPLv2
@@ -233,6 +233,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Mon Dec 03 2007 Josh Boyer <jwboyer@gmail.com> 1.5.3.7-1
+- git-1.5.3.7
+
 * Tue Nov 27 2007 Josh Boyer <jwboyer@gmail.com> 1.5.3.6-1
 - git-1.5.3.6
 - git-core requires perl(Error) (bug 367861)
