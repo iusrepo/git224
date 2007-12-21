@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.3.7
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Git core and tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -13,7 +13,17 @@ Source3:	git.conf.httpd
 Patch0:		git-1.5-gitweb-home-link.patch
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel, emacs  %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires:	git-core, git-svn, git-cvs, git-arch, git-email, gitk, git-gui, perl-Git, emacs-git
+
+Requires:	git-core = %{version}-%{release}
+Requires:   git-svn = %{version}-%{release}
+Requires:   git-cvs = %{version}-%{release}
+Requires:   git-arch = %{version}-%{release}
+Requires:   git-email = %{version}-%{release}
+Requires:   gitk = %{version}-%{release}
+Requires:   git-gui = %{version}-%{release}
+Requires:   perl-Git = %{version}-%{release}
+Requires:   emacs-git = %{version}-%{release}
+
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -233,6 +243,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Fri Dec 21 2007 James Bowes <jbowes@redhat.com> 1.5.3.7-2
+- Have git metapackage require explicit versions (bug 247214)
+
 * Mon Dec 03 2007 Josh Boyer <jwboyer@gmail.com> 1.5.3.7-1
 - git-1.5.3.7
 
