@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.4
-Release: 	2%{?dist}
+Release: 	3%{?dist}
 Summary:  	Git core and tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -244,6 +244,9 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Tue Feb 05 2008 Tom "spot" Callaway <tcallawa@redhat.com> 1.5.4-3
+- rebuild for new perl
+
 * Sun Feb 03 2008 James Bowes <jbowes@redhat.com> 1.5.4-1
 - Add BuidRequires on gettext.
 
