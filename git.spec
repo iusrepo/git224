@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.4.1
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Git core and tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -11,6 +11,7 @@ Source1:	git-init.el
 Source2:	git.xinetd
 Source3:	git.conf.httpd
 Patch0:		git-1.5-gitweb-home-link.patch
+Patch1:         git-gitweb-commitdiff.patch
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -122,6 +123,7 @@ Requires:      git-core = %{version}-%{release}, emacs-common
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \
@@ -244,6 +246,10 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/technical}
 
 %changelog
+* Mon Feb 11 2008 Jeremy Katz <katzj@redhat.com> - 1.5.4.1-2
+- Add upstream patch (e62a641de17b172ffc4d3a803085c8afbfbec3d1) to have 
+  gitweb rss feeds point be commitdiffs instead of commit
+
 * Sun Feb 10 2008 James Bowes <jbowes@redhat.com> 1.5.4.1-1
 - git-1.5.4.1
 
