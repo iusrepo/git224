@@ -1,8 +1,8 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.4.2
+Version: 	1.5.4.3
 Release: 	1%{?dist}
-Summary:  	Git core and tools
+Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
 URL: 		http://kernel.org/pub/software/scm/git/
@@ -11,38 +11,44 @@ Source1:	git-init.el
 Source2:	git.xinetd
 Source3:	git.conf.httpd
 Patch0:		git-1.5-gitweb-home-link.patch
-Patch1:         git-gitweb-commitdiff.patch
+Patch1:		git-gitweb-commitdiff.patch
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:	git-core = %{version}-%{release}
-Requires:   git-svn = %{version}-%{release}
-Requires:   git-cvs = %{version}-%{release}
-Requires:   git-arch = %{version}-%{release}
-Requires:   git-email = %{version}-%{release}
-Requires:   gitk = %{version}-%{release}
-Requires:   git-gui = %{version}-%{release}
-Requires:   perl-Git = %{version}-%{release}
-Requires:   emacs-git = %{version}-%{release}
-
+Requires:	perl-Git = %{version}-%{release}
+Requires:	zlib >= 1.2, rsync, curl, less, openssh-clients, expat, perl(Error)
+Provides:	git-core = %{version}-%{release}
+Obsoletes:	git-core <= 1.5.4.2
 
 %description
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
 and full access to internals.
 
-This is a dummy package which brings in all subpackages.
+The git rpm installs the core tools with minimal dependencies.  To
+install all git packages, including tools for integrating with other
+SCMs, install the git-all meta-package.
 
-%package core
-Summary:	Core git tools
+%package all
+Summary:	Meta-package to pull in all git tools
 Group:		Development/Tools
-Requires:	zlib >= 1.2, rsync, curl, less, openssh-clients, expat, perl(Error)
-%description core
+Requires:	git = %{version}-%{release}
+Requires:	git-svn = %{version}-%{release}
+Requires:	git-cvs = %{version}-%{release}
+Requires:	git-arch = %{version}-%{release}
+Requires:	git-email = %{version}-%{release}
+Requires:	gitk = %{version}-%{release}
+Requires:	git-gui = %{version}-%{release}
+Requires:	perl-Git = %{version}-%{release}
+Requires:	emacs-git = %{version}-%{release}
+Obsoletes:	git <= 1.5.4.2
+
+%description all
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
 and full access to internals.
 
-These are the core tools with minimal dependencies.
+This is a dummy package which brings in all subpackages.
 
 %package daemon
 Summary:	Git protocol dæmon
@@ -63,49 +69,49 @@ Simple web interface to track changes in git repositories
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}, subversion, perl(Term::ReadKey)
+Requires:       git = %{version}-%{release}, subversion, perl(Term::ReadKey)
 %description svn
 Git tools for importing Subversion repositories.
 
 %package cvs
 Summary:        Git tools for importing CVS repositories
 Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}, cvs, cvsps
+Requires:       git = %{version}-%{release}, cvs, cvsps
 %description cvs
 Git tools for importing CVS repositories.
 
 %package arch
 Summary:        Git tools for importing Arch repositories
 Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}, tla
+Requires:       git = %{version}-%{release}, tla
 %description arch
 Git tools for importing Arch repositories.
 
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
-Requires:	git-core = %{version}-%{release}, perl-Git = %{version}-%{release}
+Requires:	git = %{version}-%{release}, perl-Git = %{version}-%{release}
 %description email
 Git tools for sending email.
 
 %package gui
 Summary:        Git GUI tool
 Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}, tk >= 8.4
+Requires:       git = %{version}-%{release}, tk >= 8.4
 %description gui
 Git GUI tool.
 
 %package -n gitk
 Summary:        Git revision tree visualiser
 Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}, tk >= 8.4
+Requires:       git = %{version}-%{release}, tk >= 8.4
 %description -n gitk
 Git revision tree visualiser.
 
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
-Requires:       git-core = %{version}-%{release}, perl(Error)
+Requires:       git = %{version}-%{release}, perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 
@@ -115,7 +121,7 @@ Perl interface to Git.
 %package -n emacs-git
 Summary:       Git version control system support for Emacs
 Group:         Applications/Editors
-Requires:      git-core = %{version}-%{release}, emacs-common
+Requires:      git = %{version}-%{release}, emacs-common
 
 %description -n emacs-git
 %{summary}.
@@ -169,8 +175,12 @@ mkdir -p $RPM_BUILD_ROOT/srv/git
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
-# These are no files in the root package
+%files -f bin-man-doc-files
+%defattr(-,root,root)
+%{_datadir}/git-core/
+%doc README COPYING Documentation/*.txt
+%{!?_without_docs: %doc Documentation/*.html Documentation/howto}
+%{!?_without_docs: %doc Documentation/technical}
 
 %files svn
 %defattr(-,root,root)
@@ -205,7 +215,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/git-gui
 %{_bindir}/git-citool
 %{_datadir}/git-gui/
-# Not Yet...
 %{!?_without_docs: %{_mandir}/man1/git-gui.1*}
 %{!?_without_docs: %doc Documentation/git-gui.html}
 %{!?_without_docs: %{_mandir}/man1/git-citool.1*}
@@ -227,11 +236,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/emacs/site-lisp/*git*.el*
 %{_datadir}/emacs/site-lisp/site-start.d/git-init.el
 
-%files core -f bin-man-doc-files
-%defattr(-,root,root)
-%{_datadir}/git-core/
-%doc README COPYING Documentation/*.txt
-
 %files daemon
 %defattr(-,root,root)
 %{_bindir}/git-daemon
@@ -245,7 +249,15 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %doc Documentation/*.html Documentation/howto}
 %{!?_without_docs: %doc Documentation/technical}
 
+%files all
+# No files for you!
+
 %changelog
+* Sat Feb 23 2008 James Bowes <jbowes@redhat.com> 1.5.4.3-1
+- git-1.5.4.3
+- Include Kristian Høgsberg's changes to rename git-core to
+  git and git to git-all.
+
 * Sun Feb 17 2008 James Bowes <jbowes@redhat.com> 1.5.4.2-1
 - git-1.5.4.2
 
