@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.4.3
-Release: 	3%{?dist}
+Version: 	1.5.4.4
+Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -253,6 +253,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Thu Mar 13 2008 James Bowes <jbowes@redhat.com> 1.5.4.4-1
+- git-1.5.4.4
+
 * Mon Mar  3 2008 Tom "spot" Callaway <tcallawa@redhat.com> 1.5.4.3-3
 - rebuild for new perl (again)
 
