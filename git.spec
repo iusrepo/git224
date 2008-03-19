@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.4.4
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -18,7 +18,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:	perl-Git = %{version}-%{release}
 Requires:	zlib >= 1.2, rsync, curl, less, openssh-clients, expat, perl(Error)
 Provides:	git-core = %{version}-%{release}
-Obsoletes:	git-core <= 1.5.4.2
+Obsoletes:	git-core <= 1.5.4.3
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -41,7 +41,7 @@ Requires:	gitk = %{version}-%{release}
 Requires:	git-gui = %{version}-%{release}
 Requires:	perl-Git = %{version}-%{release}
 Requires:	emacs-git = %{version}-%{release}
-Obsoletes:	git <= 1.5.4.2
+Obsoletes:	git <= 1.5.4.3
 
 %description all
 Git is a fast, scalable, distributed revision control system with an
@@ -253,6 +253,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Wed Mar 19 2008 James Bowes 1.5.4.4-2
+- Obsolete git <= 1.5.4.3, to catch going from F8 to rawhide/F9
+
 * Thu Mar 13 2008 James Bowes <jbowes@redhat.com> 1.5.4.4-1
 - git-1.5.4.4
 
