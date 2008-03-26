@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.4.4
-Release: 	2%{?dist}
+Release: 	3%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -172,15 +172,22 @@ rm -rf $RPM_BUILD_ROOT%{_mandir}
 %endif
 mkdir -p $RPM_BUILD_ROOT/srv/git
 
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
+install -m 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
+
+
 %clean
 rm -rf $RPM_BUILD_ROOT
+
 
 %files -f bin-man-doc-files
 %defattr(-,root,root)
 %{_datadir}/git-core/
-%doc README COPYING Documentation/*.txt
-%{!?_without_docs: %doc Documentation/*.html Documentation/howto}
-%{!?_without_docs: %doc Documentation/technical}
+%doc README COPYING Documentation/*.txt contrib/hooks
+%{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
+%{!?_without_docs: %doc Documentation/howto Documentation/technical}
+%{_sysconfdir}/bash_completion.d/git
+
 
 %files svn
 %defattr(-,root,root)
@@ -246,13 +253,17 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 /var/www/git/
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
-%{!?_without_docs: %doc Documentation/*.html Documentation/howto}
-%{!?_without_docs: %doc Documentation/technical}
+
 
 %files all
 # No files for you!
 
 %changelog
+* Tue Mar 25 2008 James Bowes <jbowes@redhat.com> 1.5.4.4-3
+- Include the sample hooks from contrib/hooks as docs (bug 321151).
+- Install the bash completion script from contrib (bug 433255).
+- Include the html docs in the 'core' package again (bug 434271).
+
 * Wed Mar 19 2008 James Bowes 1.5.4.4-2
 - Obsolete git <= 1.5.4.3, to catch going from F8 to rawhide/F9
 
