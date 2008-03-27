@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.4.4
-Release: 	3%{?dist}
+Release: 	4%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -186,7 +186,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc README COPYING Documentation/*.txt contrib/hooks
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
-%{_sysconfdir}/bash_completion.d/git
+%{_sysconfdir}/bash_completion.d
 
 
 %files svn
@@ -259,6 +259,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Wed Mar 26 2008 James Bowes <jbowes@redhat.com> 1.5.4.4-4
+- Own /etc/bash_completion.d in case bash-completion isn't installed.
+
 * Tue Mar 25 2008 James Bowes <jbowes@redhat.com> 1.5.4.4-3
 - Include the sample hooks from contrib/hooks as docs (bug 321151).
 - Install the bash completion script from contrib (bug 433255).
