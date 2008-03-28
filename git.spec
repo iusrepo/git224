@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.4.4
-Release: 	4%{?dist}
+Version: 	1.5.4.5
+Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -259,6 +259,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Mar 28 2008 James Bowes <jbowes@redhat.com> 1.5.4.5-1
+- git-1.5.4.5
+
 * Wed Mar 26 2008 James Bowes <jbowes@redhat.com> 1.5.4.4-4
 - Own /etc/bash_completion.d in case bash-completion isn't installed.
 
