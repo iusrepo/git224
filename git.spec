@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.4.5
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -11,7 +11,6 @@ Source1:	git-init.el
 Source2:	git.xinetd
 Source3:	git.conf.httpd
 Patch0:		git-1.5-gitweb-home-link.patch
-Patch1:		git-gitweb-commitdiff.patch
 BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -129,7 +128,6 @@ Requires:      git = %{version}-%{release}, emacs-common
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \
@@ -259,6 +257,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Wed Apr 02 2008 James Bowes <jbowes@redhat.com> 1.5.4.5-2
+- Remove a patch that's already upstream.
+
 * Fri Mar 28 2008 James Bowes <jbowes@redhat.com> 1.5.4.5-1
 - git-1.5.4.5
 
