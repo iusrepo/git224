@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.4.5
-Release: 	2%{?dist}
+Release: 	3%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -52,14 +52,14 @@ This is a dummy package which brings in all subpackages.
 %package daemon
 Summary:	Git protocol dæmon
 Group:		Development/Tools
-Requires:	git-core = %{version}-%{release}
+Requires:	git = %{version}-%{release}
 %description daemon
 The git dæmon for supporting git:// access to git repositories
 
 %package -n gitweb
 Summary:        Simple web interface to git repositories
 Group:          Development/Tools
-Requires:       git-core = %{version}-%{release}
+Requires:       git = %{version}-%{release}
 
 %description -n gitweb
 Simple web interface to track changes in git repositories
@@ -257,6 +257,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Apr 04 2008 James Bowes <jbowes@redhat.com> 1.5.4.5-3
+- Remove the last two requires on git-core.
+
 * Wed Apr 02 2008 James Bowes <jbowes@redhat.com> 1.5.4.5-2
 - Remove a patch that's already upstream.
 
