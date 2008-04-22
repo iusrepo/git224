@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.5
+Version: 	1.5.5.1
 Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
@@ -257,6 +257,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Mon Apr 21 2008 James Bowes <jbowes@redhat.com> 1.5.5.1-1
+- git-1.5.5.1
+
 * Wed Apr 09 2008 James Bowes <jbowes@redhat.com> 1.5.5-1
 - git-1.5.5
 
