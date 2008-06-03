@@ -1,12 +1,12 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
 Version: 	1.5.5.3
-Release: 	1%{?dist}
+Release: 	2%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
 URL: 		http://kernel.org/pub/software/scm/git/
-Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
+Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
 Source1:	git-init.el
 Source2:	git.xinetd
 Source3:	git.conf.httpd
@@ -257,6 +257,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Tue Jun  3 2008 Stepan Kasal <skasal@redhat.com> 1.5.5.3-2
+- use tar.bz2 instead of tar.gz
+
 * Wed May 28 2008 James Bowes <jbowes@redhat.com> 1.5.5.3-1
 - git-1.5.5.3
 
