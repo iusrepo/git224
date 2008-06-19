@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.5.3
-Release: 	2%{?dist}
+Version: 	1.5.6
+Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
 Group: 		Development/Tools
@@ -257,6 +257,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Thu Jun 19 2008 James Bowes <jbowes@redhat.com> 1.5.6-1
+- git-1.5.6
+
 * Tue Jun  3 2008 Stepan Kasal <skasal@redhat.com> 1.5.5.3-2
 - use tar.bz2 instead of tar.gz
 
