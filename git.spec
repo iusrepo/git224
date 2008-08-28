@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.5.6.4
+Version: 	1.6.0.1
 Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
@@ -132,6 +132,7 @@ Requires:      git = %{version}-%{release}, emacs-common
 %build
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \
      ETC_GITCONFIG=/etc/gitconfig \
+     gitexecdir=%{_bindir} \
      prefix=%{_prefix} all %{!?_without_docs: doc}
 make -C contrib/emacs
 
@@ -140,6 +141,7 @@ rm -rf $RPM_BUILD_ROOT
 make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" DESTDIR=$RPM_BUILD_ROOT \
      prefix=%{_prefix} mandir=%{_mandir} \
      ETC_GITCONFIG=/etc/gitconfig \
+     gitexecdir=%{_bindir} \
      INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
 make -C contrib/emacs install \
 		 emacsdir=$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
@@ -257,6 +259,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Thu Aug 28 2008 James Bowes <jbowes@redhat.com> 1.6.0.1-1
+- git-1.6.0.1
+
 * Thu Jul 24 2008 James Bowes <jbowes@redhat.com> 1.5.6-4
 - git-1.5.6.4
 
