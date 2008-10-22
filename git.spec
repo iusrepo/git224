@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.6.0.1
+Version: 	1.6.0.3
 Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
@@ -11,11 +11,11 @@ Source1:	git-init.el
 Source2:	git.xinetd
 Source3:	git.conf.httpd
 Patch0:		git-1.5-gitweb-home-link.patch
-BuildRequires:	zlib-devel >= 1.2, openssl-devel, curl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
+BuildRequires:	zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:	perl-Git = %{version}-%{release}
-Requires:	zlib >= 1.2, rsync, curl, less, openssh-clients, expat, perl(Error)
+Requires:	zlib >= 1.2, rsync, libcurl, less, openssh-clients, expat, perl(Error)
 Provides:	git-core = %{version}-%{release}
 Obsoletes:	git-core <= 1.5.4.3
 
@@ -90,6 +90,7 @@ Git tools for importing Arch repositories.
 Summary:        Git tools for sending email
 Group:          Development/Tools
 Requires:	git = %{version}-%{release}, perl-Git = %{version}-%{release}
+Requires:   perl(Net::SMTP::SSL)
 %description email
 Git tools for sending email.
 
@@ -259,6 +260,11 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Wed Oct 22 2008 Josh Boyer <jwboyer@gmail.com> 1.6.0.3-1
+- git-1.6.0.3
+- Drop curl requirement in favor of libcurl (bug 449388)
+- Add requires for SMTP-SSL perl module to make git-send-email work (bug 443615)
+
 * Thu Aug 28 2008 James Bowes <jbowes@redhat.com> 1.6.0.1-1
 - git-1.6.0.1
 
