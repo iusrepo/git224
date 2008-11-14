@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.6.0.3
+Version: 	1.6.0.4
 Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
@@ -260,6 +260,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Nov 14 2008 Josh Boyer <jwboyer@gmail.com> 1.6.0.4-1
+- git-1.6.0.4
+
 * Wed Oct 22 2008 Josh Boyer <jwboyer@gmail.com> 1.6.0.3-1
 - git-1.6.0.3
 - Drop curl requirement in favor of libcurl (bug 449388)
