@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.6.0.4
+Version: 	1.6.0.5
 Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
@@ -171,7 +171,7 @@ find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
 %else
 rm -rf $RPM_BUILD_ROOT%{_mandir}
 %endif
-mkdir -p $RPM_BUILD_ROOT/srv/git
+mkdir -p $RPM_BUILD_ROOT/var/lib/git-daemon
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
 install -m 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
@@ -248,7 +248,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/git-daemon
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
-/srv/git
+/var/lib/git-daemon
 
 %files -n gitweb
 %defattr(-,root,root)
@@ -260,6 +260,12 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Thu Dec 11 2008 Josh Boyer <jboyer@gmail.com> 1.6.0.5-1
+- git-1.6.0.5
+
+* Mon Nov 17 2008 Seth Vidal <skvidal at fedoraproject.org>
+- switch from /srv/git to /var/lib/git-daemon for packaging rules compliance
+
 * Fri Nov 14 2008 Josh Boyer <jwboyer@gmail.com> 1.6.0.4-1
 - git-1.6.0.4
 
