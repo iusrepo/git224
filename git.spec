@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name: 		git
-Version: 	1.6.0.5
+Version: 	1.6.0.6
 Release: 	1%{?dist}
 Summary:  	Core git tools
 License: 	GPLv2
@@ -98,6 +98,7 @@ Git tools for sending email.
 Summary:        Git GUI tool
 Group:          Development/Tools
 Requires:       git = %{version}-%{release}, tk >= 8.4
+Requires:       gitk = %{version}-%{release}
 %description gui
 Git GUI tool.
 
@@ -260,6 +261,12 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Sat Dec 20 2008 Todd Zullinger <tmz@pobox.com> 1.6.0.6-1
+- git-1.6.0.6
+- Fixes a local privilege escalation bug in gitweb
+  (http://article.gmane.org/gmane.comp.version-control.git/103624)
+- Add gitk Requires to git-gui (bug 476308)
+
 * Thu Dec 11 2008 Josh Boyer <jboyer@gmail.com> 1.6.0.5-1
 - git-1.6.0.5
 
