@@ -1,23 +1,23 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
-Name: 		git
-Version: 	1.6.0.6
-Release: 	1%{?dist}
-Summary:  	Core git tools
-License: 	GPLv2
-Group: 		Development/Tools
-URL: 		http://kernel.org/pub/software/scm/git/
-Source: 	http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
-Source1:	git-init.el
-Source2:	git.xinetd
-Source3:	git.conf.httpd
-Patch0:		git-1.5-gitweb-home-link.patch
-BuildRequires:	zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Name:           git
+Version:        1.6.1
+Release:        1%{?dist}
+Summary:        Core git tools
+License:        GPLv2
+Group:          Development/Tools
+URL:            http://kernel.org/pub/software/scm/git/
+Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
+Source1:        git-init.el
+Source2:        git.xinetd
+Source3:        git.conf.httpd
+Patch0:         git-1.5-gitweb-home-link.patch
+BuildRequires:  zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:	perl-Git = %{version}-%{release}
-Requires:	zlib >= 1.2, rsync, libcurl, less, openssh-clients, expat, perl(Error)
-Provides:	git-core = %{version}-%{release}
-Obsoletes:	git-core <= 1.5.4.3
+Requires:       perl-Git = %{version}-%{release}
+Requires:       zlib >= 1.2, rsync, less, openssh-clients, expat, perl(Error)
+Provides:       git-core = %{version}-%{release}
+Obsoletes:      git-core <= 1.5.4.3
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -29,18 +29,18 @@ install all git packages, including tools for integrating with other
 SCMs, install the git-all meta-package.
 
 %package all
-Summary:	Meta-package to pull in all git tools
-Group:		Development/Tools
-Requires:	git = %{version}-%{release}
-Requires:	git-svn = %{version}-%{release}
-Requires:	git-cvs = %{version}-%{release}
-Requires:	git-arch = %{version}-%{release}
-Requires:	git-email = %{version}-%{release}
-Requires:	gitk = %{version}-%{release}
-Requires:	git-gui = %{version}-%{release}
-Requires:	perl-Git = %{version}-%{release}
-Requires:	emacs-git = %{version}-%{release}
-Obsoletes:	git <= 1.5.4.3
+Summary:        Meta-package to pull in all git tools
+Group:          Development/Tools
+Requires:       git = %{version}-%{release}
+Requires:       git-svn = %{version}-%{release}
+Requires:       git-cvs = %{version}-%{release}
+Requires:       git-arch = %{version}-%{release}
+Requires:       git-email = %{version}-%{release}
+Requires:       gitk = %{version}-%{release}
+Requires:       git-gui = %{version}-%{release}
+Requires:       perl-Git = %{version}-%{release}
+Requires:       emacs-git = %{version}-%{release}
+Obsoletes:      git <= 1.5.4.3
 
 %description all
 Git is a fast, scalable, distributed revision control system with an
@@ -50,9 +50,9 @@ and full access to internals.
 This is a dummy package which brings in all subpackages.
 
 %package daemon
-Summary:	Git protocol dæmon
-Group:		Development/Tools
-Requires:	git = %{version}-%{release}
+Summary:        Git protocol dæmon
+Group:          Development/Tools
+Requires:       git = %{version}-%{release}
 %description daemon
 The git dæmon for supporting git:// access to git repositories
 
@@ -89,8 +89,8 @@ Git tools for importing Arch repositories.
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
-Requires:	git = %{version}-%{release}, perl-Git = %{version}-%{release}
-Requires:   perl(Net::SMTP::SSL)
+Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
+Requires:       perl(Net::SMTP::SSL)
 %description email
 Git tools for sending email.
 
@@ -120,9 +120,9 @@ BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 Perl interface to Git.
 
 %package -n emacs-git
-Summary:       Git version control system support for Emacs
-Group:         Applications/Editors
-Requires:      git = %{version}-%{release}, emacs-common
+Summary:        Git version control system support for Emacs
+Group:          Applications/Editors
+Requires:       git = %{version}-%{release}, emacs-common
 
 %description -n emacs-git
 %{summary}.
@@ -131,51 +131,61 @@ Requires:      git = %{version}-%{release}, emacs-common
 %setup -q
 %patch0 -p1
 
+# Use these same options for every invocation of 'make'.
+# Otherwise it will rebuild in %%install due to flags changes.
+%define make_git \
+make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \\\
+     ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
+     DESTDIR=$RPM_BUILD_ROOT \\\
+     DOCBOOK_XSL_172=YesPlease \\\
+     INSTALL="install -p" \\\
+     INSTALLDIRS=vendor \\\
+     prefix=%{_prefix}
+
 %build
-make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \
-     ETC_GITCONFIG=/etc/gitconfig \
-     gitexecdir=%{_bindir} \
-     prefix=%{_prefix} all %{!?_without_docs: doc}
+%{make_git} all %{!?_without_docs: doc}
 make -C contrib/emacs
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" DESTDIR=$RPM_BUILD_ROOT \
-     prefix=%{_prefix} mandir=%{_mandir} \
-     ETC_GITCONFIG=/etc/gitconfig \
-     gitexecdir=%{_bindir} \
-     INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
+%{make_git} install %{!?_without_docs: install-doc}
 make -C contrib/emacs install \
-		 emacsdir=$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
+    emacsdir=$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
 for elc in $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/*.elc ; do
-	install -pm 644 contrib/emacs/$(basename $elc .elc).el \
-	$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
+    install -pm 644 contrib/emacs/$(basename $elc .elc).el \
+    $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
 done
 install -Dpm 644 %{SOURCE1} \
-	$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
-mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/xinetd.d
-install -m 644 %SOURCE2 $RPM_BUILD_ROOT/%{_sysconfdir}/xinetd.d/git
-mkdir -p $RPM_BUILD_ROOT/var/www/git
-install -m 644 -t $RPM_BUILD_ROOT/var/www/git gitweb/*.png gitweb/*.css
-install -m 755 -t $RPM_BUILD_ROOT/var/www/git gitweb/gitweb.cgi
+    $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
+mkdir -p $RPM_BUILD_ROOT%{_var}/www/git
+install -pm 644 -t $RPM_BUILD_ROOT%{_var}/www/git gitweb/*.png gitweb/*.css
+install -pm 755 -t $RPM_BUILD_ROOT%{_var}/www/git gitweb/gitweb.cgi
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d
-install -m 0644 %SOURCE3 $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/git.conf
+install -pm 0644 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/git.conf
 
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
 
-(find $RPM_BUILD_ROOT%{_bindir} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citooli|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@)               > bin-man-doc-files
+(find $RPM_BUILD_ROOT{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citooli|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@) > bin-man-doc-files
 (find $RPM_BUILD_ROOT%{perl_vendorlib} -type f | sed -e s@^$RPM_BUILD_ROOT@@) >> perl-files
 %if %{!?_without_docs:1}0
-(find $RPM_BUILD_ROOT%{_mandir} $RPM_BUILD_ROOT/Documentation -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
+(find $RPM_BUILD_ROOT%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
 rm -rf $RPM_BUILD_ROOT%{_mandir}
 %endif
-mkdir -p $RPM_BUILD_ROOT/var/lib/git-daemon
+
+mkdir -p $RPM_BUILD_ROOT%{_var}/lib/git
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
+install -pm 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/git
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
-install -m 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
+install -pm 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
+
+# quiet some rpmlint complaints
+chmod g-w $RPM_BUILD_ROOT%{_libexecdir}/git-core/*
+rm -f Documentation/technical/.gitignore
+chmod a-x Documentation/technical/api-index.sh
 
 
 %clean
@@ -185,6 +195,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -f bin-man-doc-files
 %defattr(-,root,root)
 %{_datadir}/git-core/
+%dir %{_libexecdir}/git-core/
 %doc README COPYING Documentation/*.txt contrib/hooks
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
@@ -193,7 +204,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files svn
 %defattr(-,root,root)
-%{_bindir}/*svn*
+%{_libexecdir}/git-core/*svn*
 %doc Documentation/*svn*.txt
 %{!?_without_docs: %{_mandir}/man1/*svn*.1*}
 %{!?_without_docs: %doc Documentation/*svn*.html }
@@ -201,28 +212,29 @@ rm -rf $RPM_BUILD_ROOT
 %files cvs
 %defattr(-,root,root)
 %doc Documentation/*git-cvs*.txt
-%{_bindir}/*cvs*
+%{_bindir}/git-cvsserver
+%{_libexecdir}/git-core/*cvs*
 %{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
 %{!?_without_docs: %doc Documentation/*git-cvs*.html }
 
 %files arch
 %defattr(-,root,root)
 %doc Documentation/git-archimport.txt
-%{_bindir}/git-archimport
+%{_libexecdir}/git-core/git-archimport
 %{!?_without_docs: %{_mandir}/man1/git-archimport.1*}
 %{!?_without_docs: %doc Documentation/git-archimport.html }
 
 %files email
 %defattr(-,root,root)
 %doc Documentation/*email*.txt
-%{_bindir}/*email*
+%{_libexecdir}/git-core/*email*
 %{!?_without_docs: %{_mandir}/man1/*email*.1*}
 %{!?_without_docs: %doc Documentation/*email*.html }
 
 %files gui
 %defattr(-,root,root)
-%{_bindir}/git-gui
-%{_bindir}/git-citool
+%{_libexecdir}/git-core/git-gui*
+%{_libexecdir}/git-core/git-citool
 %{_datadir}/git-gui/
 %{!?_without_docs: %{_mandir}/man1/git-gui.1*}
 %{!?_without_docs: %doc Documentation/git-gui.html}
@@ -247,13 +259,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files daemon
 %defattr(-,root,root)
-%{_bindir}/git-daemon
+%{_libexecdir}/git-core/git-daemon
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
-/var/lib/git-daemon
+%{_var}/lib/git
 
 %files -n gitweb
 %defattr(-,root,root)
-/var/www/git/
+%{_var}/www/git/
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 
 
@@ -261,6 +273,17 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Sat Jan 03 2009 Todd Zullinger <tmz@pobox.com> 1.6.1-1
+- Install git-* commands in %%{_libexecdir}/git-core, the upstream default
+- Remove libcurl from Requires, rpm will pick this up automatically
+- Consolidate build/install options in %%make_git (Roland McGrath)
+- Include DirectoryIndex in gitweb httpd-config (bug 471692)
+- Define DOCBOOK_XSL_172 to fix minor manpage issues
+- Rename %%{_var}/lib/git-daemon to %%{_var}/lib/git
+- Preserve timestamps on installed files
+- Quiet some rpmlint complaints
+- Use macros more consistently
+
 * Sat Dec 20 2008 Todd Zullinger <tmz@pobox.com> 1.6.0.6-1
 - git-1.6.0.6
 - Fixes a local privilege escalation bug in gitweb
@@ -514,7 +537,7 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Jan 10 2006 Chris Wright <chrisw@redhat.com> 1.1.0-1
 - Update to latest git-1.1.0 (drop git-email for now)
 - Now creates multiple packages:
--	 git-core, git-svn, git-cvs, git-arch, gitk
+-        git-core, git-svn, git-cvs, git-arch, gitk
 
 * Mon Nov 14 2005 H. Peter Anvin <hpa@zytor.com> 0.99.9j-1
 - Change subpackage names to git-<name> instead of git-core-<name>
@@ -551,7 +574,7 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Aug 17 2005 Tom "spot" Callaway <tcallawa@redhat.com> 0.99.4-3
 - use dist tag to differentiate between branches
 - use rpm optflags by default (patch0)
-- own %{_datadir}/git-core/
+- own %%{_datadir}/git-core/
 
 * Mon Aug 15 2005 Chris Wright <chrisw@osdl.org>
 - update spec file to fix Buildroot, Requires, and drop Vendor
