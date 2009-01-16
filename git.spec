@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
 Version:        1.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Core git tools
 License:        GPLv2
 Group:          Development/Tools
@@ -273,6 +273,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Jan 16 2009 Tomas Mraz <tmraz@redhat.com> 1.6.1-2
+- rebuild with new openssl
+
 * Sat Jan 03 2009 Todd Zullinger <tmz@pobox.com> 1.6.1-1
 - Install git-* commands in %%{_libexecdir}/git-core, the upstream default
 - Remove libcurl from Requires, rpm will pick this up automatically
