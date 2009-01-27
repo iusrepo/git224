@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.1
-Release:        2%{?dist}
+Version:        1.6.1.1
+Release:        1%{?dist}
 Summary:        Core git tools
 License:        GPLv2
 Group:          Development/Tools
@@ -134,7 +134,7 @@ Requires:       git = %{version}-%{release}, emacs-common
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
 %define make_git \
-make %{_smp_mflags} CFLAGS="$RPM_OPT_FLAGS" \\\
+make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
      ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
      DESTDIR=$RPM_BUILD_ROOT \\\
      DOCBOOK_XSL_172=YesPlease \\\
@@ -273,6 +273,10 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Mon Jan 26 2009 Todd Zullinger <tmz@pobox.com> 1.6.1.1-1
+- git-1.6.1.1
+- Make compile more verbose
+
 * Fri Jan 16 2009 Tomas Mraz <tmraz@redhat.com> 1.6.1-2
 - rebuild with new openssl
 
