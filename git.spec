@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.1.1
+Version:        1.6.1.2
 Release:        1%{?dist}
 Summary:        Core git tools
 License:        GPLv2
@@ -273,6 +273,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Thu Jan 29 2009 Josh Boyer <jwboyer@gmail.com> 1.6.1.2-1
+- git-1.6.1.2
+
 * Mon Jan 26 2009 Todd Zullinger <tmz@pobox.com> 1.6.1.1-1
 - git-1.6.1.1
 - Make compile more verbose
