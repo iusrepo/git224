@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.1.2
+Version:        1.6.1.3
 Release:        1%{?dist}
 Summary:        Core git tools
 License:        GPLv2
@@ -11,6 +11,8 @@ Source1:        git-init.el
 Source2:        git.xinetd
 Source3:        git.conf.httpd
 Patch0:         git-1.5-gitweb-home-link.patch
+# Submitted upstream on 2009-02-08, tmz
+Patch1:         0001-git-web-browse-Fix-check-for-bin-start.patch
 BuildRequires:  zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -130,6 +132,7 @@ Requires:       git = %{version}-%{release}, emacs-common
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -140,6 +143,7 @@ make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
      DOCBOOK_XSL_172=YesPlease \\\
      INSTALL="install -p" \\\
      INSTALLDIRS=vendor \\\
+     htmldir=%{_docdir}/%{name}-%{version} \\\
      prefix=%{_prefix}
 
 %build
@@ -170,7 +174,7 @@ find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
 (find $RPM_BUILD_ROOT{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citooli|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@) > bin-man-doc-files
 (find $RPM_BUILD_ROOT%{perl_vendorlib} -type f | sed -e s@^$RPM_BUILD_ROOT@@) >> perl-files
 %if %{!?_without_docs:1}0
-(find $RPM_BUILD_ROOT%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
+(find $RPM_BUILD_ROOT%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
 rm -rf $RPM_BUILD_ROOT%{_mandir}
 %endif
@@ -259,9 +263,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files daemon
 %defattr(-,root,root)
-%{_libexecdir}/git-core/git-daemon
+%doc Documentation/*daemon*.txt
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
+%{_libexecdir}/git-core/git-daemon
 %{_var}/lib/git
+%{!?_without_docs: %{_mandir}/man1/*daemon*.1*}
+%{!?_without_docs: %doc Documentation/*daemon*.html}
 
 %files -n gitweb
 %defattr(-,root,root)
@@ -273,6 +280,12 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Mon Feb 09 2009 Todd Zullinger <tmz@pobox.com> 1.6.1.3-1
+- git-1.6.1.3
+- Set htmldir so "git help -w <command>" works
+- Patch git-web--browse to not use "/sbin/start" to browse
+- Include git-daemon documentation in the git-daemon package
+
 * Thu Jan 29 2009 Josh Boyer <jwboyer@gmail.com> 1.6.1.2-1
 - git-1.6.1.2
 
