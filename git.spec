@@ -1,17 +1,17 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
 Version:        1.6.1.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Core git tools
 License:        GPLv2
 Group:          Development/Tools
-URL:            http://kernel.org/pub/software/scm/git/
+URL:            http://git-scm.com/
 Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
 Source1:        git-init.el
 Source2:        git.xinetd
 Source3:        git.conf.httpd
 Patch0:         git-1.5-gitweb-home-link.patch
-# Submitted upstream on 2009-02-08, tmz
+# Included upstream as f6b98e4, tmz
 Patch1:         0001-git-web-browse-Fix-check-for-bin-start.patch
 BuildRequires:  zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -33,6 +33,7 @@ SCMs, install the git-all meta-package.
 %package all
 Summary:        Meta-package to pull in all git tools
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
 Requires:       git-cvs = %{version}-%{release}
@@ -61,6 +62,7 @@ The git dæmon for supporting git:// access to git repositories
 %package -n gitweb
 Summary:        Simple web interface to git repositories
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 
 %description -n gitweb
@@ -70,6 +72,7 @@ Simple web interface to track changes in git repositories
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, subversion, perl(Term::ReadKey)
 %description svn
 Git tools for importing Subversion repositories.
@@ -77,6 +80,7 @@ Git tools for importing Subversion repositories.
 %package cvs
 Summary:        Git tools for importing CVS repositories
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, cvs, cvsps
 %description cvs
 Git tools for importing CVS repositories.
@@ -84,6 +88,7 @@ Git tools for importing CVS repositories.
 %package arch
 Summary:        Git tools for importing Arch repositories
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, tla
 %description arch
 Git tools for importing Arch repositories.
@@ -91,14 +96,16 @@ Git tools for importing Arch repositories.
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
-Requires:       perl(Net::SMTP::SSL)
+Requires:       perl(Net::SMTP::SSL), perl(Authen::SASL)
 %description email
 Git tools for sending email.
 
 %package gui
 Summary:        Git GUI tool
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, tk >= 8.4
 Requires:       gitk = %{version}-%{release}
 %description gui
@@ -107,6 +114,7 @@ Git GUI tool.
 %package -n gitk
 Summary:        Git revision tree visualiser
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, tk >= 8.4
 %description -n gitk
 Git revision tree visualiser.
@@ -114,6 +122,7 @@ Git revision tree visualiser.
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
@@ -124,6 +133,7 @@ Perl interface to Git.
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}, emacs-common
 
 %description -n emacs-git
@@ -280,6 +290,11 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Tue Feb 24 2009 Todd Zullinger <tmz@pobox.com> - 1.6.1.3-2
+- Require perl(Authen::SASL) in git-email (bug 483062)
+- Build many of the subpackages as noarch
+- Update URL field
+
 * Mon Feb 09 2009 Todd Zullinger <tmz@pobox.com> 1.6.1.3-1
 - git-1.6.1.3
 - Set htmldir so "git help -w <command>" works
