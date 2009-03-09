@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.1.3
-Release:        2%{?dist}
+Version:        1.6.2
+Release:        1%{?dist}
 Summary:        Core git tools
 License:        GPLv2
 Group:          Development/Tools
@@ -11,8 +11,6 @@ Source1:        git-init.el
 Source2:        git.xinetd
 Source3:        git.conf.httpd
 Patch0:         git-1.5-gitweb-home-link.patch
-# Included upstream as f6b98e4, tmz
-Patch1:         0001-git-web-browse-Fix-check-for-bin-start.patch
 BuildRequires:  zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -142,7 +140,6 @@ Requires:       git = %{version}-%{release}, emacs-common
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -268,6 +265,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n emacs-git
 %defattr(-,root,root)
+%doc contrib/emacs/README
 %{_datadir}/emacs/site-lisp/*git*.el*
 %{_datadir}/emacs/site-lisp/site-start.d/git-init.el
 
@@ -290,6 +288,11 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Mon Mar 09 2009 Todd Zullinger <tmz@pobox.com> - 1.6.2-1
+- git-1.6.2
+- Include contrib/emacs/README in emacs subpackage
+- Drop upstreamed git-web--browse patch
+
 * Tue Feb 24 2009 Todd Zullinger <tmz@pobox.com> - 1.6.1.3-2
 - Require perl(Authen::SASL) in git-email (bug 483062)
 - Build many of the subpackages as noarch
