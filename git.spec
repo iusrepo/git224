@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.2
+Version:        1.6.2.2
 Release:        1%{?dist}
 Summary:        Core git tools
 License:        GPLv2
@@ -11,6 +11,8 @@ Source1:        git-init.el
 Source2:        git.xinetd
 Source3:        git.conf.httpd
 Patch0:         git-1.5-gitweb-home-link.patch
+# https://bugzilla.redhat.com/490602
+Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 BuildRequires:  zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -140,6 +142,7 @@ Requires:       git = %{version}-%{release}, emacs-common
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -147,7 +150,6 @@ Requires:       git = %{version}-%{release}, emacs-common
 make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
      ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
      DESTDIR=$RPM_BUILD_ROOT \\\
-     DOCBOOK_XSL_172=YesPlease \\\
      INSTALL="install -p" \\\
      INSTALLDIRS=vendor \\\
      htmldir=%{_docdir}/%{name}-%{version} \\\
@@ -156,6 +158,12 @@ make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
 %build
 %{make_git} all %{!?_without_docs: doc}
 make -C contrib/emacs
+
+# Work around odd manpage issues (bug #485161)
+grep -rl '\\&\.ft' Documentation/ | xargs -i sed -i 's/\\&\.ft/.ft/g' {}
+
+# Remove shebang from bash-completion script
+sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -195,8 +203,9 @@ install -pm 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysc
 
 # quiet some rpmlint complaints
 chmod g-w $RPM_BUILD_ROOT%{_libexecdir}/git-core/*
-rm -f Documentation/technical/.gitignore
+rm -f {Documentation/technical,contrib/emacs}/.gitignore
 chmod a-x Documentation/technical/api-index.sh
+find contrib -type f -perm /a+x | xargs chmod -x
 
 
 %clean
@@ -207,7 +216,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_datadir}/git-core/
 %dir %{_libexecdir}/git-core/
-%doc README COPYING Documentation/*.txt contrib/hooks
+%doc README COPYING Documentation/*.txt contrib/
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
 %{_sysconfdir}/bash_completion.d
@@ -280,6 +289,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n gitweb
 %defattr(-,root,root)
+%doc gitweb/README
 %{_var}/www/git/
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 
@@ -288,6 +298,14 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Apr 03 2009 Todd Zullinger <tmz@pobox.com> - 1.6.2.2-1
+- git-1.6.2.2
+- Include contrib/ dir in %%doc (bug 492490)
+- Don't set DOCBOOK_XSL_172, fix the '\&.ft' with sed (bug 485161)
+- Ignore Branches output from cvsps-2.2b1 (bug 490602)
+- Remove shebang from bash-completion script
+- Include README in gitweb subpackage
+
 * Mon Mar 09 2009 Todd Zullinger <tmz@pobox.com> - 1.6.2-1
 - git-1.6.2
 - Include contrib/emacs/README in emacs subpackage
