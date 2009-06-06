@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.2.2
+Version:        1.6.3.2
 Release:        1%{?dist}
 Summary:        Core git tools
 License:        GPLv2
@@ -10,14 +10,32 @@ Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz
 Source1:        git-init.el
 Source2:        git.xinetd
 Source3:        git.conf.httpd
+Source4:        git-gui.desktop
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-BuildRequires:  zlib-devel >= 1.2, openssl-devel, libcurl-devel, expat-devel, emacs, gettext %{!?_without_docs:, xmlto, asciidoc > 6.0.3}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+BuildRequires:  desktop-file-utils
+%if 0%{?fedora}
+BuildRequires:  emacs >= 22.2
+BuildRequires:  libcurl-devel
+%else
+BuildRequires:  curl-devel
+%endif
+BuildRequires:  expat-devel
+BuildRequires:  gettext
+BuildRequires:  openssl-devel
+BuildRequires:  zlib-devel >= 1.2
+%{!?_without_docs:BuildRequires: asciidoc > 6.0.3, xmlto}
+
+Requires:       less
+Requires:       openssh-clients
+Requires:       perl(Error)
 Requires:       perl-Git = %{version}-%{release}
-Requires:       zlib >= 1.2, rsync, less, openssh-clients, expat, perl(Error)
+Requires:       rsync
+Requires:       zlib >= 1.2
+
 Provides:       git-core = %{version}-%{release}
 Obsoletes:      git-core <= 1.5.4.3
 
@@ -33,16 +51,20 @@ SCMs, install the git-all meta-package.
 %package all
 Summary:        Meta-package to pull in all git tools
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
 Requires:       git-cvs = %{version}-%{release}
-Requires:       git-arch = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
+%if 0%{?fedora}
 Requires:       emacs-git = %{version}-%{release}
+Requires:       git-arch = %{version}-%{release}
+%endif
 Obsoletes:      git <= 1.5.4.3
 
 %description all
@@ -55,14 +77,16 @@ This is a dummy package which brings in all subpackages.
 %package daemon
 Summary:        Git protocol dæmon
 Group:          Development/Tools
-Requires:       git = %{version}-%{release}
+Requires:       git = %{version}-%{release}, xinetd
 %description daemon
 The git dæmon for supporting git:// access to git repositories
 
 %package -n gitweb
 Summary:        Simple web interface to git repositories
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}
 
 %description -n gitweb
@@ -72,7 +96,9 @@ Simple web interface to track changes in git repositories
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}, subversion, perl(Term::ReadKey)
 %description svn
 Git tools for importing Subversion repositories.
@@ -80,23 +106,31 @@ Git tools for importing Subversion repositories.
 %package cvs
 Summary:        Git tools for importing CVS repositories
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}, cvs, cvsps
 %description cvs
 Git tools for importing CVS repositories.
 
+%if 0%{?fedora}
 %package arch
 Summary:        Git tools for importing Arch repositories
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}, tla
 %description arch
 Git tools for importing Arch repositories.
+%endif
 
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Net::SMTP::SSL), perl(Authen::SASL)
 %description email
@@ -105,7 +139,9 @@ Git tools for sending email.
 %package gui
 Summary:        Git GUI tool
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
 Requires:       gitk = %{version}-%{release}
 %description gui
@@ -114,7 +150,9 @@ Git GUI tool.
 %package -n gitk
 Summary:        Git revision tree visualiser
 Group:          Development/Tools
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
 %description -n gitk
 Git revision tree visualiser.
@@ -122,7 +160,9 @@ Git revision tree visualiser.
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
+%endif
 Requires:       git = %{version}-%{release}, perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
@@ -130,14 +170,18 @@ BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 %description -n perl-Git
 Perl interface to Git.
 
+%if 0%{?fedora}
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
+%if 0%{?fedora} >= 10
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}, emacs-common
+%endif
+Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 
 %description -n emacs-git
 %{summary}.
+%endif
 
 %prep
 %setup -q
@@ -148,6 +192,7 @@ Requires:       git = %{version}-%{release}, emacs-common
 # Otherwise it will rebuild in %%install due to flags changes.
 %define make_git \
 make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
+     ASCIIDOC8=1 ASCIIDOC_NO_ROFF=1 \\\
      ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
      DESTDIR=$RPM_BUILD_ROOT \\\
      INSTALL="install -p" \\\
@@ -157,10 +202,10 @@ make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
 
 %build
 %{make_git} all %{!?_without_docs: doc}
-make -C contrib/emacs
 
-# Work around odd manpage issues (bug #485161)
-grep -rl '\\&\.ft' Documentation/ | xargs -i sed -i 's/\\&\.ft/.ft/g' {}
+%if 0%{?fedora}
+make -C contrib/emacs
+%endif
 
 # Remove shebang from bash-completion script
 sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
@@ -168,6 +213,8 @@ sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 %install
 rm -rf $RPM_BUILD_ROOT
 %{make_git} install %{!?_without_docs: install-doc}
+
+%if 0%{?fedora}
 make -C contrib/emacs install \
     emacsdir=$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
 for elc in $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/*.elc ; do
@@ -176,6 +223,8 @@ for elc in $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/*.elc ; do
 done
 install -Dpm 644 %{SOURCE1} \
     $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
+%endif
+
 mkdir -p $RPM_BUILD_ROOT%{_var}/www/git
 install -pm 644 -t $RPM_BUILD_ROOT%{_var}/www/git gitweb/*.png gitweb/*.css
 install -pm 755 -t $RPM_BUILD_ROOT%{_var}/www/git gitweb/gitweb.cgi
@@ -185,6 +234,10 @@ install -pm 0644 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/git.conf
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
+
+%if ! 0%{?fedora}
+find $RPM_BUILD_ROOT Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
+%endif
 
 (find $RPM_BUILD_ROOT{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citooli|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@) > bin-man-doc-files
 (find $RPM_BUILD_ROOT%{perl_vendorlib} -type f | sed -e s@^$RPM_BUILD_ROOT@@) >> perl-files
@@ -200,6 +253,13 @@ install -pm 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/git
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
 install -pm 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
+
+# install git-gui .desktop file
+desktop-file-install \
+%if 0%{?rhel} && 0%{?rhel} <= 5
+    --vendor fedora \
+%endif
+    --dir=${RPM_BUILD_ROOT}%{_datadir}/applications %{SOURCE4}
 
 # quiet some rpmlint complaints
 chmod g-w $RPM_BUILD_ROOT%{_libexecdir}/git-core/*
@@ -237,12 +297,14 @@ rm -rf $RPM_BUILD_ROOT
 %{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
 %{!?_without_docs: %doc Documentation/*git-cvs*.html }
 
+%if 0%{?fedora}
 %files arch
 %defattr(-,root,root)
 %doc Documentation/git-archimport.txt
 %{_libexecdir}/git-core/git-archimport
 %{!?_without_docs: %{_mandir}/man1/git-archimport.1*}
 %{!?_without_docs: %doc Documentation/git-archimport.html }
+%endif
 
 %files email
 %defattr(-,root,root)
@@ -255,6 +317,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_libexecdir}/git-core/git-gui*
 %{_libexecdir}/git-core/git-citool
+%{_datadir}/applications/*git-gui.desktop
 %{_datadir}/git-gui/
 %{!?_without_docs: %{_mandir}/man1/git-gui.1*}
 %{!?_without_docs: %doc Documentation/git-gui.html}
@@ -272,11 +335,13 @@ rm -rf $RPM_BUILD_ROOT
 %files -n perl-Git -f perl-files
 %defattr(-,root,root)
 
+%if 0%{?fedora}
 %files -n emacs-git
 %defattr(-,root,root)
 %doc contrib/emacs/README
 %{_datadir}/emacs/site-lisp/*git*.el*
 %{_datadir}/emacs/site-lisp/site-start.d/git-init.el
+%endif
 
 %files daemon
 %defattr(-,root,root)
@@ -298,6 +363,19 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Jun 05 2009 Todd Zullinger <tmz@pobox.com> - 1.6.3.2-1
+- git-1.6.3.2
+- Require emacs >= 22.2 for emacs support (bug 495312)
+- Add a .desktop file for git-gui (bug 498801)
+- Set ASCIIDOC8 and ASCIIDOC_NO_ROFF to correct documentation issues,
+  the sed hack to fix bug 485161 should no longer be needed
+- Escape newline in git-daemon xinetd description (bug 502393)
+- Add xinetd to git-daemon Requires (bug 504105)
+- Organize BuildRequires/Requires, drop redundant expat Requires
+- Only build noarch subpackages on Fedora >= 10
+- Only build emacs and arch subpackages on Fedora
+- Handle curl/libcurl naming for EPEL and Fedora
+
 * Fri Apr 03 2009 Todd Zullinger <tmz@pobox.com> - 1.6.2.2-1
 - git-1.6.2.2
 - Include contrib/ dir in %%doc (bug 492490)
