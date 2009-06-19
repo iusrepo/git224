@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
 Version:        1.6.3.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Core git tools
 License:        GPLv2
 Group:          Development/Tools
@@ -14,6 +14,8 @@ Source4:        git-gui.desktop
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+# http://git.kernel.org/?p=git/git.git;a=commitdiff;h=73bb33a9
+Patch2:         git-1.6.3.2-daemon-extra-args.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
@@ -187,6 +189,7 @@ Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -363,6 +366,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Jun 19 2009 Todd Zullinger <tmz@pobox.com> - 1.6.3.2-2
+- Fix git-daemon hang on invalid input (CVE-2009-2108, bug 505761)
+
 * Fri Jun 05 2009 Todd Zullinger <tmz@pobox.com> - 1.6.3.2-1
 - git-1.6.3.2
 - Require emacs >= 22.2 for emacs support (bug 495312)
