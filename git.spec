@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
 Version:        1.6.3.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Core git tools
 License:        GPLv2
 Group:          Development/Tools
@@ -195,7 +195,7 @@ Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 # Otherwise it will rebuild in %%install due to flags changes.
 %define make_git \
 make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
-     ASCIIDOC8=1 ASCIIDOC_NO_ROFF=1 \\\
+     ASCIIDOC="asciidoc --unsafe" ASCIIDOC8=1 ASCIIDOC_NO_ROFF=1 \\\
      ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
      DESTDIR=$RPM_BUILD_ROOT \\\
      INSTALL="install -p" \\\
@@ -366,6 +366,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Fri Jun 19 2009 Todd Zullinger <tmz@pobox.com> - 1.6.3.2-3
+- Temporarily disable asciidoc's safe mode until bug 506953 is fixed
+
 * Fri Jun 19 2009 Todd Zullinger <tmz@pobox.com> - 1.6.3.2-2
 - Fix git-daemon hang on invalid input (CVE-2009-2108, bug 505761)
 
