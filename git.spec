@@ -1,8 +1,8 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.3.2
-Release:        3%{?dist}
-Summary:        Core git tools
+Version:        1.6.3.3
+Release:        1%{?dist}
+Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
@@ -14,8 +14,8 @@ Source4:        git-gui.desktop
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# http://git.kernel.org/?p=git/git.git;a=commitdiff;h=73bb33a9
-Patch2:         git-1.6.3.2-daemon-extra-args.patch
+# https://bugzilla.redhat.com/500137
+Patch2:         git-1.6-update-contrib-hooks-path.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
@@ -203,6 +203,17 @@ make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
      htmldir=%{_docdir}/%{name}-%{version} \\\
      prefix=%{_prefix}
 
+# Filter bogus perl requires
+# packed-refs comes from a comment in contrib/hooks/update-paranoid
+cat << \EOF > %{name}-req
+#!/bin/sh
+%{__perl_requires} $* |\
+sed -e '/perl(packed-refs)/d'
+EOF
+
+%global __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
+chmod +x %{__perl_requires}
+
 %build
 %{make_git} all %{!?_without_docs: doc}
 
@@ -257,6 +268,14 @@ install -pm 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/git
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
 install -pm 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
 
+# Move contrib/hooks out of %%docdir and make them executable
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/git-core/contrib
+mv contrib/hooks $RPM_BUILD_ROOT%{_datadir}/git-core/contrib
+chmod +x $RPM_BUILD_ROOT%{_datadir}/git-core/contrib/hooks/*
+pushd contrib > /dev/null
+ln -s ../../../git-core/contrib/hooks
+popd > /dev/null
+
 # install git-gui .desktop file
 desktop-file-install \
 %if 0%{?rhel} && 0%{?rhel} <= 5
@@ -266,6 +285,7 @@ desktop-file-install \
 
 # quiet some rpmlint complaints
 chmod g-w $RPM_BUILD_ROOT%{_libexecdir}/git-core/*
+chmod a-x $RPM_BUILD_ROOT%{_libexecdir}/git-core/git-mergetool--lib
 rm -f {Documentation/technical,contrib/emacs}/.gitignore
 chmod a-x Documentation/technical/api-index.sh
 find contrib -type f -perm /a+x | xargs chmod -x
@@ -366,6 +386,11 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Sun Jun 28 2009 Todd Zullinger <tmz@pobox.com> - 1.6.3.3-1
+- git-1.6.3.3
+- Move contributed hooks to %%{_datadir}/git-core/contrib/hooks (bug 500137)
+- Fix rpmlint warnings about Summary and git-mergetool--lib missing shebang
+
 * Fri Jun 19 2009 Todd Zullinger <tmz@pobox.com> - 1.6.3.2-3
 - Temporarily disable asciidoc's safe mode until bug 506953 is fixed
 
