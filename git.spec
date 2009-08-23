@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.4
-Release:        2%{?dist}
+Version:        1.6.4.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -386,6 +386,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Sat Aug 22 2009 Todd Zullinger <tmz@pobox.com> - 1.6.4.1-1
+- git-1.6.4.1
+
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 1.6.4-2
 - rebuilt with new openssl
 
