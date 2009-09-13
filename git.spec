@@ -387,7 +387,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Sep 13 2009 Todd Zullinger <tmz@pobox.com> - 1.6.4.3-1
-- git-1.6.4.2
+- git-1.6.4.3
 
 * Sun Aug 30 2009 Todd Zullinger <tmz@pobox.com> - 1.6.4.2-1
 - git-1.6.4.2
