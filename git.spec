@@ -1,12 +1,13 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
+%global snap .rc2
 Name:           git
-Version:        1.6.4.4
-Release:        1%{?dist}
+Version:        1.6.5
+Release:        0.2%{?snap}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
-Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
+Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}%{?snap}.tar.bz2
 Source1:        git-init.el
 Source2:        git.xinetd
 Source3:        git.conf.httpd
@@ -186,7 +187,7 @@ Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 %endif
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{?snap}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -196,6 +197,7 @@ Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 %define make_git \
 make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
      ASCIIDOC="asciidoc --unsafe" ASCIIDOC8=1 ASCIIDOC_NO_ROFF=1 \\\
+     BLK_SHA1=1 \\\
      ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
      DESTDIR=$RPM_BUILD_ROOT \\\
      INSTALL="install -p" \\\
@@ -211,7 +213,7 @@ cat << \EOF > %{name}-req
 sed -e '/perl(packed-refs)/d'
 EOF
 
-%global __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
+%global __perl_requires %{_builddir}/%{name}-%{version}%{?snap}/%{name}-req
 chmod +x %{__perl_requires}
 
 %build
@@ -386,6 +388,10 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Mon Sep 28 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5-0.2.rc2
+- git-1.6.5.rc2
+- Enable Linus' block-sha1 implementation
+
 * Wed Sep 16 2009 Todd Zullinger <tmz@pobox.com> - 1.6.4.4-1
 - git-1.6.4.4
 
