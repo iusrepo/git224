@@ -1,13 +1,12 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
-%global snap .rc2
 Name:           git
 Version:        1.6.5
-Release:        0.2%{?snap}%{?dist}
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
-Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}%{?snap}.tar.bz2
+Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
 Source1:        git-init.el
 Source2:        git.xinetd
 Source3:        git.conf.httpd
@@ -187,7 +186,7 @@ Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 %endif
 
 %prep
-%setup -q -n %{name}-%{version}%{?snap}
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -213,7 +212,7 @@ cat << \EOF > %{name}-req
 sed -e '/perl(packed-refs)/d'
 EOF
 
-%global __perl_requires %{_builddir}/%{name}-%{version}%{?snap}/%{name}-req
+%global __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
 chmod +x %{__perl_requires}
 
 %build
@@ -388,6 +387,9 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Sun Oct 11 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5-1
+- git-1.6.5
+
 * Mon Sep 28 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5-0.2.rc2
 - git-1.6.5.rc2
 - Enable Linus' block-sha1 implementation
