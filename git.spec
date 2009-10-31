@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 Name:           git
-Version:        1.6.5.1
+Version:        1.6.5.2
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -195,7 +195,7 @@ Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 # Otherwise it will rebuild in %%install due to flags changes.
 %define make_git \
 make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
-     ASCIIDOC="asciidoc --unsafe" ASCIIDOC8=1 ASCIIDOC_NO_ROFF=1 \\\
+     ASCIIDOC8=1 ASCIIDOC_NO_ROFF=1 \\\
      BLK_SHA1=1 \\\
      ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
      DESTDIR=$RPM_BUILD_ROOT \\\
@@ -241,8 +241,8 @@ install -Dpm 644 %{SOURCE1} \
 %endif
 
 mkdir -p $RPM_BUILD_ROOT%{_var}/www/git
-install -pm 644 -t $RPM_BUILD_ROOT%{_var}/www/git gitweb/*.png gitweb/*.css
-install -pm 755 -t $RPM_BUILD_ROOT%{_var}/www/git gitweb/gitweb.cgi
+install -pm 644 gitweb/*.png gitweb/*.css $RPM_BUILD_ROOT%{_var}/www/git
+install -pm 755 gitweb/gitweb.cgi $RPM_BUILD_ROOT%{_var}/www/git
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/git.conf
 
@@ -267,7 +267,7 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
 install -pm 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/git
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
-install -pm 644 -T contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
+install -pm 644 contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
 
 # Move contrib/hooks out of %%docdir and make them executable
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/git-core/contrib
@@ -289,7 +289,7 @@ chmod g-w $RPM_BUILD_ROOT%{_libexecdir}/git-core/*
 chmod a-x $RPM_BUILD_ROOT%{_libexecdir}/git-core/git-mergetool--lib
 rm -f {Documentation/technical,contrib/emacs}/.gitignore
 chmod a-x Documentation/technical/api-index.sh
-find contrib -type f -perm /a+x | xargs chmod -x
+find contrib -type f | xargs chmod -x
 
 
 %clean
@@ -387,6 +387,12 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Mon Oct 26 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.2-1
+- git-1.6.5.2
+- Drop asciidoc --unsafe option, it should not be needed anymore
+- Don't use install -t/-T, they're not compatible with older coreutils
+- Don't use -perm /a+x with find, it's incompatible with older findutils
+
 * Sat Oct 17 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.1-1
 - git-1.6.5.1
 
