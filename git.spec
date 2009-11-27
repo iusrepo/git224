@@ -1,6 +1,12 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
+%if 0%{?rhel} && 0%{?rhel} <= 5
+%global gitcoredir %{_bindir}
+%else
+%global gitcoredir %{_libexecdir}/git-core
+%endif
+
 Name:           git
-Version:        1.6.5.2
+Version:        1.6.5.3
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -33,13 +39,21 @@ BuildRequires:  zlib-devel >= 1.2
 
 Requires:       less
 Requires:       openssh-clients
+%if 0%{?fedora} || 0%{?rhel} >= 5
 Requires:       perl(Error)
+%endif
 Requires:       perl-Git = %{version}-%{release}
 Requires:       rsync
 Requires:       zlib >= 1.2
 
 Provides:       git-core = %{version}-%{release}
+%if 0%{?fedora} || 0%{?rhel} >= 5
 Obsoletes:      git-core <= 1.5.4.3
+%else
+# EL-4 has 1.5.4.7-3.el4.  We don't support this, but no point making it more
+# difficult than it needs to be (folks stuck on EL-4 have it bad enough ;).
+Obsoletes:      git-core <= 1.5.4.7-4
+%endif
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -67,7 +81,13 @@ Requires:       perl-Git = %{version}-%{release}
 Requires:       emacs-git = %{version}-%{release}
 Requires:       git-arch = %{version}-%{release}
 %endif
+%if 0%{?fedora} || 0%{?rhel} >= 5
 Obsoletes:      git <= 1.5.4.3
+%else
+# EL-4 has 1.5.4.7-3.el4.  We don't support this, but no point making it more
+# difficult than it needs to be (folks stuck on EL-4 have it bad enough ;).
+Obsoletes:      git <= 1.5.4.7-4
+%endif
 
 %description all
 Git is a fast, scalable, distributed revision control system with an
@@ -111,7 +131,10 @@ Group:          Development/Tools
 %if 0%{?fedora} >= 10
 BuildArch:      noarch
 %endif
-Requires:       git = %{version}-%{release}, cvs, cvsps
+Requires:       git = %{version}-%{release}, cvs
+%if 0%{?fedora} || 0%{?rhel} >= 5
+Requires:       cvsps
+%endif
 %description cvs
 Git tools for importing CVS repositories.
 
@@ -134,7 +157,10 @@ Group:          Development/Tools
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
-Requires:       perl(Net::SMTP::SSL), perl(Authen::SASL)
+Requires:       perl(Authen::SASL)
+%if 0%{?fedora} || 0%{?rhel} >= 5
+Requires:       perl(Net::SMTP::SSL)
+%endif
 %description email
 Git tools for sending email.
 
@@ -165,9 +191,12 @@ Group:          Development/Libraries
 %if 0%{?fedora} >= 10
 BuildArch:      noarch
 %endif
-Requires:       git = %{version}-%{release}, perl(Error)
-Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+Requires:       git = %{version}-%{release}
+%if 0%{?fedora} || 0%{?rhel} >= 5
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
+Requires:       perl(Error)
+%endif
+Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
 %description -n perl-Git
 Perl interface to Git.
@@ -193,16 +222,27 @@ Requires:       git = %{version}-%{release}, emacs-common >= 22.2
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
-%define make_git \
-make %{_smp_mflags} V=1 CFLAGS="$RPM_OPT_FLAGS" \\\
-     ASCIIDOC8=1 ASCIIDOC_NO_ROFF=1 \\\
-     BLK_SHA1=1 \\\
-     ETC_GITCONFIG=%{_sysconfdir}/gitconfig \\\
-     DESTDIR=$RPM_BUILD_ROOT \\\
-     INSTALL="install -p" \\\
-     INSTALLDIRS=vendor \\\
-     htmldir=%{_docdir}/%{name}-%{version} \\\
-     prefix=%{_prefix}
+cat << \EOF > config.mak
+V = 1
+CFLAGS = %{optflags}
+BLK_SHA1 = 1
+ETC_GITCONFIG = %{_sysconfdir}/gitconfig
+DESTDIR = %{buildroot}
+INSTALL = install -p
+htmldir = %{_docdir}/%{name}-%{version}
+prefix = %{_prefix}
+EOF
+
+%if 0%{?fedora}
+cat << \EOF >> config.mak
+ASCIIDOC8 = 1
+ASCIIDOC_NO_ROFF = 1
+EOF
+%endif
+
+%if 0%{?rhel} && 0%{?rhel} <= 5
+echo gitexecdir = %{_bindir} >> config.mak
+%endif
 
 # Filter bogus perl requires
 # packed-refs comes from a comment in contrib/hooks/update-paranoid
@@ -216,7 +256,7 @@ EOF
 chmod +x %{__perl_requires}
 
 %build
-%{make_git} all %{!?_without_docs: doc}
+make %{?_smp_mflags} all %{!?_without_docs: doc}
 
 %if 0%{?fedora}
 make -C contrib/emacs
@@ -226,53 +266,53 @@ make -C contrib/emacs
 sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%{make_git} install %{!?_without_docs: install-doc}
+rm -rf %{buildroot}
+make %{?_smp_mflags} INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
 
 %if 0%{?fedora}
 make -C contrib/emacs install \
-    emacsdir=$RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
-for elc in $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/*.elc ; do
+    emacsdir=%{buildroot}%{_datadir}/emacs/site-lisp
+for elc in %{buildroot}%{_datadir}/emacs/site-lisp/*.elc ; do
     install -pm 644 contrib/emacs/$(basename $elc .elc).el \
-    $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp
+    %{buildroot}%{_datadir}/emacs/site-lisp
 done
 install -Dpm 644 %{SOURCE1} \
-    $RPM_BUILD_ROOT%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
+    %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_var}/www/git
-install -pm 644 gitweb/*.png gitweb/*.css $RPM_BUILD_ROOT%{_var}/www/git
-install -pm 755 gitweb/gitweb.cgi $RPM_BUILD_ROOT%{_var}/www/git
-mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d
-install -pm 0644 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/httpd/conf.d/git.conf
+mkdir -p %{buildroot}%{_var}/www/git
+install -pm 644 gitweb/*.png gitweb/*.css %{buildroot}%{_var}/www/git
+install -pm 755 gitweb/gitweb.cgi %{buildroot}%{_var}/www/git
+mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d
+install -pm 0644 %{SOURCE3} %{buildroot}/%{_sysconfdir}/httpd/conf.d/git.conf
 
-find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
+find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
+find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
+find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 
 %if ! 0%{?fedora}
-find $RPM_BUILD_ROOT Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
+find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 %endif
 
-(find $RPM_BUILD_ROOT{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citooli|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@) > bin-man-doc-files
-(find $RPM_BUILD_ROOT%{perl_vendorlib} -type f | sed -e s@^$RPM_BUILD_ROOT@@) >> perl-files
+(find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
+(find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) >> perl-files
 %if %{!?_without_docs:1}0
-(find $RPM_BUILD_ROOT%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^$RPM_BUILD_ROOT@@ -e 's/$/*/' ) >> bin-man-doc-files
+(find %{buildroot}%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
-rm -rf $RPM_BUILD_ROOT%{_mandir}
+rm -rf %{buildroot}%{_mandir}
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_var}/lib/git
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
-install -pm 0644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/git
+mkdir -p %{buildroot}%{_var}/lib/git
+mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
+install -pm 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/xinetd.d/git
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d
-install -pm 644 contrib/completion/git-completion.bash $RPM_BUILD_ROOT%{_sysconfdir}/bash_completion.d/git
+mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
+install -pm 644 contrib/completion/git-completion.bash %{buildroot}%{_sysconfdir}/bash_completion.d/git
 
 # Move contrib/hooks out of %%docdir and make them executable
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/git-core/contrib
-mv contrib/hooks $RPM_BUILD_ROOT%{_datadir}/git-core/contrib
-chmod +x $RPM_BUILD_ROOT%{_datadir}/git-core/contrib/hooks/*
+mkdir -p %{buildroot}%{_datadir}/git-core/contrib
+mv contrib/hooks %{buildroot}%{_datadir}/git-core/contrib
+chmod +x %{buildroot}%{_datadir}/git-core/contrib/hooks/*
 pushd contrib > /dev/null
 ln -s ../../../git-core/contrib/hooks
 popd > /dev/null
@@ -282,24 +322,24 @@ desktop-file-install \
 %if 0%{?rhel} && 0%{?rhel} <= 5
     --vendor fedora \
 %endif
-    --dir=${RPM_BUILD_ROOT}%{_datadir}/applications %{SOURCE4}
+    --dir=%{buildroot}%{_datadir}/applications %{SOURCE4}
 
 # quiet some rpmlint complaints
-chmod g-w $RPM_BUILD_ROOT%{_libexecdir}/git-core/*
-chmod a-x $RPM_BUILD_ROOT%{_libexecdir}/git-core/git-mergetool--lib
+chmod -R g-w %{buildroot}
+find %{buildroot} -name git-mergetool--lib | xargs chmod a-x
 rm -f {Documentation/technical,contrib/emacs}/.gitignore
 chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 
 %files -f bin-man-doc-files
 %defattr(-,root,root)
 %{_datadir}/git-core/
-%dir %{_libexecdir}/git-core/
+%dir %{gitcoredir}
 %doc README COPYING Documentation/*.txt contrib/
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
@@ -308,7 +348,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files svn
 %defattr(-,root,root)
-%{_libexecdir}/git-core/*svn*
+%{gitcoredir}/*svn*
 %doc Documentation/*svn*.txt
 %{!?_without_docs: %{_mandir}/man1/*svn*.1*}
 %{!?_without_docs: %doc Documentation/*svn*.html }
@@ -317,7 +357,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc Documentation/*git-cvs*.txt
 %{_bindir}/git-cvsserver
-%{_libexecdir}/git-core/*cvs*
+%{gitcoredir}/*cvs*
 %{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
 %{!?_without_docs: %doc Documentation/*git-cvs*.html }
 
@@ -325,7 +365,7 @@ rm -rf $RPM_BUILD_ROOT
 %files arch
 %defattr(-,root,root)
 %doc Documentation/git-archimport.txt
-%{_libexecdir}/git-core/git-archimport
+%{gitcoredir}/git-archimport
 %{!?_without_docs: %{_mandir}/man1/git-archimport.1*}
 %{!?_without_docs: %doc Documentation/git-archimport.html }
 %endif
@@ -333,14 +373,14 @@ rm -rf $RPM_BUILD_ROOT
 %files email
 %defattr(-,root,root)
 %doc Documentation/*email*.txt
-%{_libexecdir}/git-core/*email*
+%{gitcoredir}/*email*
 %{!?_without_docs: %{_mandir}/man1/*email*.1*}
 %{!?_without_docs: %doc Documentation/*email*.html }
 
 %files gui
 %defattr(-,root,root)
-%{_libexecdir}/git-core/git-gui*
-%{_libexecdir}/git-core/git-citool
+%{gitcoredir}/git-gui*
+%{gitcoredir}/git-citool
 %{_datadir}/applications/*git-gui.desktop
 %{_datadir}/git-gui/
 %{!?_without_docs: %{_mandir}/man1/git-gui.1*}
@@ -371,7 +411,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc Documentation/*daemon*.txt
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
-%{_libexecdir}/git-core/git-daemon
+%{gitcoredir}/git-daemon
 %{_var}/lib/git
 %{!?_without_docs: %{_mandir}/man1/*daemon*.1*}
 %{!?_without_docs: %doc Documentation/*daemon*.html}
@@ -387,6 +427,14 @@ rm -rf $RPM_BUILD_ROOT
 # No files for you!
 
 %changelog
+* Sat Nov 21 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.3-1
+- git-1.6.5.3
+- Only BR perl(Error) on Fedora and RHEL >= 5
+- Use config.mak to set build options
+- Improve compatibility with EPEL
+- Replace $RPM_BUILD_ROOT with %%{buildroot}
+- Fix Obsoletes for those rebuilding on EL-4
+
 * Mon Oct 26 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.2-1
 - git-1.6.5.2
 - Drop asciidoc --unsafe option, it should not be needed anymore
