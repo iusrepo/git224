@@ -7,7 +7,7 @@
 
 Name:           git
 Version:        1.6.5.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -427,6 +427,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Dec  4 2009 Stepan Kasal <skasal@redhat.com> - 1.6.5.3-2
+- rebuild against perl 5.10.1
+
 * Sat Nov 21 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.3-1
 - git-1.6.5.3
 - Only BR perl(Error) on Fedora and RHEL >= 5
