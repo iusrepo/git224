@@ -6,8 +6,8 @@
 %endif
 
 Name:           git
-Version:        1.6.5.3
-Release:        2%{?dist}
+Version:        1.6.5.5
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -427,6 +427,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sun Dec 06 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.5-1
+- git-1.6.5.5
+
 * Fri Dec  4 2009 Stepan Kasal <skasal@redhat.com> - 1.6.5.3-2
 - rebuild against perl 5.10.1
 
