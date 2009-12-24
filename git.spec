@@ -6,7 +6,7 @@
 %endif
 
 Name:           git
-Version:        1.6.5.5
+Version:        1.6.6
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -427,6 +427,12 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Dec 23 2009 Todd Zullinger <tmz@pobox.com> - 1.6.6-1
+- git-1.6.6
+
+* Fri Dec 11 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.6-1
+- git-1.6.5.6
+
 * Sun Dec 06 2009 Todd Zullinger <tmz@pobox.com> - 1.6.5.5-1
 - git-1.6.5.5
 
