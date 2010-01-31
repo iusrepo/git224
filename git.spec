@@ -6,7 +6,7 @@
 %endif
 
 Name:           git
-Version:        1.6.6
+Version:        1.6.6.1
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -14,9 +14,10 @@ Group:          Development/Tools
 URL:            http://git-scm.com/
 Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
 Source1:        git-init.el
-Source2:        git.xinetd
+Source2:        git.xinetd.in
 Source3:        git.conf.httpd
 Source4:        git-gui.desktop
+Source5:        gitweb.conf.in
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
@@ -229,6 +230,7 @@ BLK_SHA1 = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
 INSTALL = install -p
+GITWEB_PROJECTROOT = %{_var}/lib/git
 htmldir = %{_docdir}/%{name}-%{version}
 prefix = %{_prefix}
 EOF
@@ -281,10 +283,12 @@ install -Dpm 644 %{SOURCE1} \
 %endif
 
 mkdir -p %{buildroot}%{_var}/www/git
-install -pm 644 gitweb/*.png gitweb/*.css %{buildroot}%{_var}/www/git
+install -pm 644 gitweb/*.{css,js,png} %{buildroot}%{_var}/www/git
 install -pm 755 gitweb/gitweb.cgi %{buildroot}%{_var}/www/git
-mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d
-install -pm 0644 %{SOURCE3} %{buildroot}/%{_sysconfdir}/httpd/conf.d/git.conf
+mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
+install -pm 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
+sed "s|@PROJECTROOT@|%{_var}/lib/git|g" \
+    %{SOURCE5} > %{buildroot}%{_sysconfdir}/gitweb.conf
 
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
@@ -304,7 +308,16 @@ rm -rf %{buildroot}%{_mandir}
 
 mkdir -p %{buildroot}%{_var}/lib/git
 mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
-install -pm 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/xinetd.d/git
+# On EL <= 5, xinetd does not enable IPv6 by default
+enable_ipv6="        # xinetd does not enable IPv6 by default
+        flags           = IPv6"
+perl -p \
+    -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
+    -e "s|\@BASE_PATH\@|%{_var}/lib/git|g;" \
+%if 0%{?rhel} && 0%{?rhel} <= 5
+    -e "s|^}|$enable_ipv6\n$&|;" \
+%endif
+    %{SOURCE2} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
 install -pm 644 contrib/completion/git-completion.bash %{buildroot}%{_sysconfdir}/bash_completion.d/git
@@ -418,15 +431,25 @@ rm -rf %{buildroot}
 
 %files -n gitweb
 %defattr(-,root,root)
-%doc gitweb/README
-%{_var}/www/git/
+%doc gitweb/INSTALL gitweb/README
+%config(noreplace)%{_sysconfdir}/gitweb.conf
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
+%{_var}/www/git/
 
 
 %files all
 # No files for you!
 
 %changelog
+* Tue Jan 26 2010 Todd Zullinger <tmz@pobox.com> - 1.6.6.1-1
+- git-1.6.6.1
+- Use %%{gitcoredir}/git-daemon as xinetd server option, for SELinux (#529682)
+- Make %%{_var}/lib/git the default gitweb projectroot (#556299)
+- Include gitweb/INSTALL file as documentation, the gitweb README refers to it
+- Ship a short example gitweb config file (%%{_sysconfdir}/gitweb.conf)
+- Remove long fixed xinetd IPv6 workaround on Fedora (#557528)
+- Install missing gitweb.js (#558740)
+
 * Wed Dec 23 2009 Todd Zullinger <tmz@pobox.com> - 1.6.6-1
 - git-1.6.6
 
