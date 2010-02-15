@@ -6,7 +6,7 @@
 %endif
 
 Name:           git
-Version:        1.6.6.1
+Version:        1.7.0
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -227,6 +227,8 @@ cat << \EOF > config.mak
 V = 1
 CFLAGS = %{optflags}
 BLK_SHA1 = 1
+NEEDS_CRYPTO_WITH_SSL = 1
+NO_PYTHON = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
 INSTALL = install -p
@@ -441,6 +443,11 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sat Feb 13 2010 Todd Zullinger <tmz@pobox.com> - 1.7.0-1
+- git-1.7.0
+- Link imap-send with libcrypto (#565147)
+- Disable building of unused python remote helper libs
+
 * Tue Jan 26 2010 Todd Zullinger <tmz@pobox.com> - 1.6.6.1-1
 - git-1.6.6.1
 - Use %%{gitcoredir}/git-daemon as xinetd server option, for SELinux (#529682)
