@@ -6,7 +6,7 @@
 %endif
 
 Name:           git
-Version:        1.7.0
+Version:        1.7.0.1
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -443,6 +443,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Mar 01 2010 Todd Zullinger <tmz@pobox.com> - 1.7.0.1-1
+- git-1.7.0.1
+
 * Sat Feb 13 2010 Todd Zullinger <tmz@pobox.com> - 1.7.0-1
 - git-1.7.0
 - Link imap-send with libcrypto (#565147)
