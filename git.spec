@@ -7,7 +7,7 @@
 
 Name:           git
 Version:        1.7.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -443,6 +443,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Apr 29 2010 Marcela Maslanova <mmaslano@redhat.com> - 1.7.0.1-2
+- Mass rebuild with perl-5.12.0
+
 * Mon Mar 01 2010 Todd Zullinger <tmz@pobox.com> - 1.7.0.1-1
 - git-1.7.0.1
 
