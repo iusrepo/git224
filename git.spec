@@ -6,8 +6,8 @@
 %endif
 
 Name:           git
-Version:        1.7.0.1
-Release:        2%{?dist}
+Version:        1.7.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -26,7 +26,7 @@ Patch2:         git-1.6-update-contrib-hooks-path.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 BuildRequires:  emacs >= 22.2
 BuildRequires:  libcurl-devel
 %else
@@ -68,19 +68,21 @@ SCMs, install the git-all meta-package.
 %package all
 Summary:        Meta-package to pull in all git tools
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
-Requires:       git-svn = %{version}-%{release}
+%if 0%{?fedora}
+Requires:       git-arch = %{version}-%{release}
+%endif
 Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
-Requires:       gitk = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
+Requires:       git-svn = %{version}-%{release}
+Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 Requires:       emacs-git = %{version}-%{release}
-Requires:       git-arch = %{version}-%{release}
 %endif
 %if 0%{?fedora} || 0%{?rhel} >= 5
 Obsoletes:      git <= 1.5.4.3
@@ -107,7 +109,7 @@ The git dæmon for supporting git:// access to git repositories
 %package -n gitweb
 Summary:        Simple web interface to git repositories
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
@@ -119,7 +121,7 @@ Simple web interface to track changes in git repositories
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, subversion, perl(Term::ReadKey)
@@ -129,7 +131,7 @@ Git tools for importing Subversion repositories.
 %package cvs
 Summary:        Git tools for importing CVS repositories
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, cvs
@@ -143,9 +145,7 @@ Git tools for importing CVS repositories.
 %package arch
 Summary:        Git tools for importing Arch repositories
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
 BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}, tla
 %description arch
 Git tools for importing Arch repositories.
@@ -154,7 +154,7 @@ Git tools for importing Arch repositories.
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
@@ -168,7 +168,7 @@ Git tools for sending email.
 %package gui
 Summary:        Git GUI tool
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
@@ -179,7 +179,7 @@ Git GUI tool.
 %package -n gitk
 Summary:        Git revision tree visualiser
 Group:          Development/Tools
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
@@ -189,7 +189,7 @@ Git revision tree visualiser.
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
-%if 0%{?fedora} >= 10
+%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
@@ -202,16 +202,23 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %description -n perl-Git
 Perl interface to Git.
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
-%if 0%{?fedora} >= 10
 BuildArch:      noarch
-%endif
-Requires:       git = %{version}-%{release}, emacs-common >= 22.2
+Requires:       git = %{version}-%{release}, emacs(bin) >= %{_emacs_version}
 
 %description -n emacs-git
+%{summary}.
+
+%package -n emacs-git-el
+Summary:        Elisp source files for git version control system support for Emacs
+Group:          Applications/Editors
+BuildArch:      noarch
+Requires:       emacs-git = %{version}-%{release}
+
+%description -n emacs-git-el
 %{summary}.
 %endif
 
@@ -237,7 +244,7 @@ htmldir = %{_docdir}/%{name}-%{version}
 prefix = %{_prefix}
 EOF
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 cat << \EOF >> config.mak
 ASCIIDOC8 = 1
 ASCIIDOC_NO_ROFF = 1
@@ -262,7 +269,7 @@ chmod +x %{__perl_requires}
 %build
 make %{?_smp_mflags} all %{!?_without_docs: doc}
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 make -C contrib/emacs
 %endif
 
@@ -273,15 +280,16 @@ sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 rm -rf %{buildroot}
 make %{?_smp_mflags} INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
+%global elispdir %{_emacs_sitelispdir}/git
 make -C contrib/emacs install \
-    emacsdir=%{buildroot}%{_datadir}/emacs/site-lisp
-for elc in %{buildroot}%{_datadir}/emacs/site-lisp/*.elc ; do
+    emacsdir=%{buildroot}%{elispdir}
+for elc in %{buildroot}%{elispdir}/*.elc ; do
     install -pm 644 contrib/emacs/$(basename $elc .elc).el \
-    %{buildroot}%{_datadir}/emacs/site-lisp
+    %{buildroot}%{elispdir}
 done
 install -Dpm 644 %{SOURCE1} \
-    %{buildroot}%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
+    %{buildroot}%{_emacs_sitestartdir}/git-init.el
 %endif
 
 mkdir -p %{buildroot}%{_var}/www/git
@@ -414,12 +422,17 @@ rm -rf %{buildroot}
 %files -n perl-Git -f perl-files
 %defattr(-,root,root)
 
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 %files -n emacs-git
 %defattr(-,root,root)
 %doc contrib/emacs/README
-%{_datadir}/emacs/site-lisp/*git*.el*
-%{_datadir}/emacs/site-lisp/site-start.d/git-init.el
+%dir %{elispdir}
+%{elispdir}/*.elc
+%{_emacs_sitestartdir}/git-init.el
+
+%files -n emacs-git-el
+%defattr(-,root,root)
+%{elispdir}/*.el
 %endif
 
 %files daemon
@@ -443,6 +456,14 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue May 04 2010 Todd Zullinger <tmz@pobox.com> - 1.7.1-1
+- git-1.7.1
+- Fix conditionals for EL-6
+- Comply with Emacs add-on packaging guidelines (#573423), Jonathan Underwood
+  - Place elisp source files in separate emacs-git-el package
+  - Place git support files in own directory under site-lisp
+  - Use Emacs packaging macros
+
 * Thu Apr 29 2010 Marcela Maslanova <mmaslano@redhat.com> - 1.7.0.1-2
 - Mass rebuild with perl-5.12.0
 
