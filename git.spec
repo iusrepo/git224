@@ -7,7 +7,7 @@
 
 Name:           git
 Version:        1.7.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -456,6 +456,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jun 25 2010 Adam Tkac <atkac redhat com> - 1.7.1-2
+- rebuild against new perl
+
 * Tue May 04 2010 Todd Zullinger <tmz@pobox.com> - 1.7.1-1
 - git-1.7.1
 - Fix conditionals for EL-6
