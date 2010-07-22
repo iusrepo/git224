@@ -1,7 +1,8 @@
---- git-1.5.0.6/gitweb/gitweb.perl~	2007-03-30 01:37:05.000000000 +0100
-+++ git-1.5.0.6/gitweb/gitweb.perl	2007-05-07 08:31:37.000000000 +0100
-@@ -39,7 +39,7 @@ our $projectroot = "++GITWEB_PROJECTROOT
- our $home_link = $my_uri || "/";
+diff -up git-1.7.2/gitweb/gitweb.perl.orig git-1.7.2/gitweb/gitweb.perl
+--- git-1.7.2/gitweb/gitweb.perl.orig	2010-07-21 23:35:25.000000000 +0200
++++ git-1.7.2/gitweb/gitweb.perl	2010-07-22 10:49:50.385707086 +0200
+@@ -79,7 +79,7 @@ our $projectroot = "++GITWEB_PROJECTROOT
+ our $project_maxdepth = "++GITWEB_PROJECT_MAXDEPTH++";
  
  # string of the home link on top of all pages
 -our $home_link_str = "++GITWEB_HOME_LINK_STR++";

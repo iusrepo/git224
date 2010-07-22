@@ -6,7 +6,7 @@
 %endif
 
 Name:           git
-Version:        1.7.1.1
+Version:        1.7.2
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -242,6 +242,7 @@ INSTALL = install -p
 GITWEB_PROJECTROOT = %{_var}/lib/git
 htmldir = %{_docdir}/%{name}-%{version}
 prefix = %{_prefix}
+gitwebdir = %{_var}/www/git
 EOF
 
 %if 0%{?fedora} || 0%{?rhel} >= 6
@@ -292,9 +293,6 @@ install -Dpm 644 %{SOURCE1} \
     %{buildroot}%{_emacs_sitestartdir}/git-init.el
 %endif
 
-mkdir -p %{buildroot}%{_var}/www/git
-install -pm 644 gitweb/*.{css,js,png} %{buildroot}%{_var}/www/git
-install -pm 755 gitweb/gitweb.cgi %{buildroot}%{_var}/www/git
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
 sed "s|@PROJECTROOT@|%{_var}/lib/git|g" \
@@ -456,6 +454,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jul 22 2010 Adam Tkac <atkac redhat com> - 1.7.2-1
+- update to 1.7.2
+
 * Fri Jul 02 2010 Adam Tkac <atkac redhat com> - 1.7.1.1-1
 - update to 1.7.1.1
 
