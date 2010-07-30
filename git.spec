@@ -7,7 +7,7 @@
 
 Name:           git
 Version:        1.7.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -23,6 +23,9 @@ Patch0:         git-1.5-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/500137
 Patch2:         git-1.6-update-contrib-hooks-path.patch
+# Do not unquote + into ' ' in URLs
+# cherry-picked from upstream
+Patch3:         git-1.7.2.1-730220de.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
@@ -227,6 +230,7 @@ Requires:       emacs-git = %{version}-%{release}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -454,6 +458,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jul 30 2010 Thomas Spura <tomspur@fedoraproject.org> - 1.7.2.1-2
+- cherry-pick: "Do not unquote + into ' ' in URLs"
+
 * Thu Jul 29 2010 Todd Zullinger <tmz@pobox.com> - 1.7.2.1-1
 - Update to git-1.7.2.1
 
