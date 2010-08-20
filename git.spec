@@ -6,8 +6,8 @@
 %endif
 
 Name:           git
-Version:        1.7.2.1
-Release:        2%{?dist}
+Version:        1.7.2.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -458,6 +458,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Aug 20 2010 Adam Tkac <atkac redhat com> - 1.7.2.2-1
+- update to 1.7.2.2
+
 * Fri Jul 30 2010 Thomas Spura <tomspur@fedoraproject.org> - 1.7.2.1-2
 - cherry-pick: "Do not unquote + into ' ' in URLs"
 
