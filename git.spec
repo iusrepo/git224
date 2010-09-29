@@ -7,7 +7,7 @@
 
 Name:           git
 Version:        1.7.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -454,6 +454,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Sep 29 2010 jkeating - 1.7.3-3
+- Rebuilt for gcc bug 634757
+
 * Mon Sep 20 2010 Todd Zullinger <tmz@pobox.com> - 1.7.3-2
 - Ensure the release notes are included in %%doc
 
