@@ -6,8 +6,8 @@
 %endif
 
 Name:           git
-Version:        1.7.3
-Release:        3%{?dist}
+Version:        1.7.3.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -454,6 +454,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Sep 30 2010 Adam Tkac <atkac redhat com> - 1.7.3.1-1
+- update to 1.7.3.1
+
 * Wed Sep 29 2010 jkeating - 1.7.3-3
 - Rebuilt for gcc bug 634757
 
