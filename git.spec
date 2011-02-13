@@ -259,15 +259,17 @@ prefix = %{_prefix}
 gitwebdir = %{_var}/www/git
 EOF
 
-%if 0%{?fedora} || 0%{?rhel} >= 6
-cat << \EOF >> config.mak
-ASCIIDOC8 = 1
-ASCIIDOC_NO_ROFF = 1
-EOF
-%endif
-
 %if 0%{?rhel} && 0%{?rhel} <= 5
 echo gitexecdir = %{_bindir} >> config.mak
+%endif
+
+%if 0%{?rhel} && 0%{?rhel} == 5
+# This is needed for 1.69.1-1.71.0
+echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
+%endif
+
+%if 0%{?rhel} && 0%{?rhel} <= 4
+echo ASCIIDOC7 = 1 >> config.mak
 %endif
 
 # Filter bogus perl requires
@@ -474,6 +476,7 @@ rm -rf %{buildroot}
 %changelog
 * Sun Feb 13 2011 Todd Zullinger <tmz@pobox.com> - 1.7.4.1-1
 - Update to 1.7.4.1
+- Clean up documentation settings (the defaults changed in 1.7.4)
 - Improve EL-5 compatibility, thanks to Kevin Fenzi for emacs testing
 
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.4-2
