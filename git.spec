@@ -23,11 +23,15 @@ Patch0:         git-1.5-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/500137
 Patch2:         git-1.6-update-contrib-hooks-path.patch
+# https://bugzilla.redhat.com/600411
+Patch3:         git-1.7-el5-emacs-support.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
+%if 0%{?fedora} || 0%{?rhel} >= 5
+BuildRequires:  emacs
+%endif
 %if 0%{?fedora} || 0%{?rhel} >= 6
-BuildRequires:  emacs >= 22.2
 BuildRequires:  libcurl-devel
 %else
 BuildRequires:  curl-devel
@@ -81,7 +85,7 @@ Requires:       git-gui = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if 0%{?fedora} || 0%{?rhel} >= 5
 Requires:       emacs-git = %{version}-%{release}
 %endif
 %if 0%{?fedora} || 0%{?rhel} >= 5
@@ -202,12 +206,17 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %description -n perl-Git
 Perl interface to Git.
 
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if 0%{?fedora} || 0%{?rhel} >= 5
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
+Requires:       git = %{version}-%{release}
+%if 0%{?fedora} || 0%{?rhel} >= 6
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}, emacs(bin) >= %{_emacs_version}
+Requires:       emacs(bin) >= %{_emacs_version}
+%else
+Requires:       emacs-common
+%endif
 
 %description -n emacs-git
 %{summary}.
@@ -215,7 +224,9 @@ Requires:       git = %{version}-%{release}, emacs(bin) >= %{_emacs_version}
 %package -n emacs-git-el
 Summary:        Elisp source files for git version control system support for Emacs
 Group:          Applications/Editors
+%if 0%{?fedora} || 0%{?rhel} >= 6
 BuildArch:      noarch
+%endif
 Requires:       emacs-git = %{version}-%{release}
 
 %description -n emacs-git-el
@@ -227,6 +238,9 @@ Requires:       emacs-git = %{version}-%{release}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%if 0%{?rhel} == 5
+%patch3 -p1
+%endif
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -270,7 +284,7 @@ chmod +x %{__perl_requires}
 %build
 make %{?_smp_mflags} all %{!?_without_docs: doc}
 
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if 0%{?fedora} || 0%{?rhel} >= 5
 make -C contrib/emacs
 %endif
 
@@ -281,7 +295,11 @@ sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 rm -rf %{buildroot}
 make %{?_smp_mflags} INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
 
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if 0%{?fedora} || 0%{?rhel} >= 5
+%if 0%{?rhel} == 5
+%global _emacs_sitelispdir %{_datadir}/emacs/site-lisp
+%global _emacs_sitestartdir %{_emacs_sitelispdir}/site-start.d
+%endif
 %global elispdir %{_emacs_sitelispdir}/git
 make -C contrib/emacs install \
     emacsdir=%{buildroot}%{elispdir}
@@ -420,7 +438,7 @@ rm -rf %{buildroot}
 %files -n perl-Git -f perl-files
 %defattr(-,root,root)
 
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if 0%{?fedora} || 0%{?rhel} >= 5
 %files -n emacs-git
 %defattr(-,root,root)
 %doc contrib/emacs/README
@@ -456,6 +474,7 @@ rm -rf %{buildroot}
 %changelog
 * Sun Feb 13 2011 Todd Zullinger <tmz@pobox.com> - 1.7.4.1-1
 - Update to 1.7.4.1
+- Improve EL-5 compatibility, thanks to Kevin Fenzi for emacs testing
 
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.4-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
