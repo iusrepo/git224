@@ -3,7 +3,3 @@
 *.tar.bz2
 /.build*.log
 /git-*/
-/git-1.7.3.1.tar.bz2
-/git-1.7.3.2.tar.bz2
-/git-1.7.3.3.tar.bz2
-/git-1.7.3.4.tar.bz2

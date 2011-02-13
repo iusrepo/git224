@@ -6,8 +6,8 @@
 %endif
 
 Name:           git
-Version:        1.7.4
-Release:        2%{?dist}
+Version:        1.7.4.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -454,6 +454,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sun Feb 13 2011 Todd Zullinger <tmz@pobox.com> - 1.7.4.1-1
+- Update to 1.7.4.1
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.4-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
