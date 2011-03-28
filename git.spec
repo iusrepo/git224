@@ -6,7 +6,7 @@
 %endif
 
 Name:           git
-Version:        1.7.4.1
+Version:        1.7.4.2
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -141,6 +141,7 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}, cvs
 %if 0%{?fedora} || 0%{?rhel} >= 5
 Requires:       cvsps
+Requires:	perl-DBD-SQLite
 %endif
 %description cvs
 Git tools for importing CVS repositories.
@@ -329,7 +330,7 @@ find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} '
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) >> perl-files
 %if %{!?_without_docs:1}0
-(find %{buildroot}%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
+(find %{buildroot}%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon|Git" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
 rm -rf %{buildroot}%{_mandir}
 %endif
@@ -439,6 +440,7 @@ rm -rf %{buildroot}
 
 %files -n perl-Git -f perl-files
 %defattr(-,root,root)
+%{!?_without_docs: %{_mandir}/man3/*Git*.3pm*}
 
 %if 0%{?fedora} || 0%{?rhel} >= 5
 %files -n emacs-git
@@ -474,6 +476,11 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Mar 28 2011 Adam Tkac <atkac redhat com> - 1.7.4.2-1
+- update to 1.7.4.2
+- move man3/Git.3pm file to perl-Git subpkg (#664889)
+- add perl-DBD-SQLite dependency to git-cvs (#602410)
+
 * Sun Feb 13 2011 Todd Zullinger <tmz@pobox.com> - 1.7.4.1-1
 - Update to 1.7.4.1
 - Clean up documentation settings (the defaults changed in 1.7.4)
