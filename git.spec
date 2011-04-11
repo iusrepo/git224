@@ -6,7 +6,7 @@
 %endif
 
 Name:           git
-Version:        1.7.4.2
+Version:        1.7.4.4
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -476,6 +476,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Apr 11 2011 Adam Tkac <atkac redhat com> - 1.7.4.4-1
+- update to 1.7.4.4
+
 * Mon Mar 28 2011 Adam Tkac <atkac redhat com> - 1.7.4.2-1
 - update to 1.7.4.2
 - move man3/Git.3pm file to perl-Git subpkg (#664889)
