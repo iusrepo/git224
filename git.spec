@@ -6,8 +6,8 @@
 %endif
 
 Name:           git
-Version:        1.7.5.4
-Release:        2%{?dist}
+Version:        1.7.6
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -476,6 +476,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Jun 29 2011 Adam Tkac <atkac redhat com> - 1.7.6-1
+- update to 1.7.6
+
 * Mon Jun 20 2011 Marcela Mašláňová <mmaslano@redhat.com> - 1.7.5.4-2
 - Perl mass rebuild
 
