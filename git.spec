@@ -7,7 +7,7 @@
 
 Name:           git
 Version:        1.7.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -476,6 +476,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Jul 20 2011 Petr Sabata <contyk@redhat.com> - 1.7.6-2
+- Perl mass rebuild
+
 * Wed Jun 29 2011 Adam Tkac <atkac redhat com> - 1.7.6-1
 - update to 1.7.6
 
