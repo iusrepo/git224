@@ -1,8 +1,63 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
+
+# Leave git-* binaries in %{_bindir} on EL <= 5
 %if 0%{?rhel} && 0%{?rhel} <= 5
 %global gitcoredir %{_bindir}
 %else
 %global gitcoredir %{_libexecdir}/git-core
+%endif
+
+# Build noarch subpackages and use libcurl-devel on Fedora and EL >= 6
+%if 0%{?fedora} || 0%{?rhel} >= 6
+%global noarch_sub 1
+%global libcurl_devel libcurl-devel
+%else
+%global noarch_sub 0
+%global libcurl_devel curl-devel
+%endif
+
+# Build git-emacs, use perl(Error) and perl(Net::SMTP::SSL), require cvsps, and
+# adjust git-core obsolete version on Fedora and EL >= 5.  (We don't really
+# support EL-4, but folks stuck using it have enough problems, no point making
+# it harder on them.)
+%if 0%{?fedora} || 0%{?rhel} >= 5
+%global emacs_support 1
+%global git_core_version 1.5.4.3
+%global perl_error 1
+%global perl_net_smtp_ssl 1
+%global require_cvsps 1
+%else
+%global emacs_support 0
+%global git_core_version 1.5.4.7-4
+%global perl_error 0
+%global perl_net_smtp_ssl 0
+%global require_cvsps 0
+%endif
+
+# Patch emacs and tweak docbook spaces on EL-5
+%if 0%{?rhel} == 5
+%global emacs_old 1
+%global docbook_suppress_sp 1
+%else
+%global emacs_old 0
+%global docbook_suppress_sp 0
+%endif
+
+# Enable ipv6 for git-daemon and use desktop --vendor option on EL <= 5
+%if 0%{?rhel} && 0%{?rhel} <= 5
+%global enable_ipv6 1
+%global use_desktop_vendor 1
+%else
+%global enable_ipv6 1
+%global use_desktop_vendor 1
+%endif
+
+# Use asciidoc-7 on EL <= 4.  Again, we don't support EL-4, but no need to make
+# it more difficult to build a modern git there.
+%if 0%{?rhel} && 0%{?rhel} <= 4
+%global asciidoc7 1
+%else
+%global asciidoc7 0
 %endif
 
 # Only build git-arch for Fedora < 16, where tla is available
@@ -35,14 +90,10 @@ Patch3:         git-1.7-el5-emacs-support.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{emacs_support}
 BuildRequires:  emacs
 %endif
-%if 0%{?fedora} || 0%{?rhel} >= 6
-BuildRequires:  libcurl-devel
-%else
-BuildRequires:  curl-devel
-%endif
+BuildRequires:  %{libcurl_devel}
 BuildRequires:  expat-devel
 BuildRequires:  gettext
 BuildRequires:  openssl-devel
@@ -51,7 +102,7 @@ BuildRequires:  zlib-devel >= 1.2
 
 Requires:       less
 Requires:       openssh-clients
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{perl_error}
 Requires:       perl(Error)
 %endif
 Requires:       perl-Git = %{version}-%{release}
@@ -59,13 +110,7 @@ Requires:       rsync
 Requires:       zlib >= 1.2
 
 Provides:       git-core = %{version}-%{release}
-%if 0%{?fedora} || 0%{?rhel} >= 5
-Obsoletes:      git-core <= 1.5.4.3
-%else
-# EL-4 has 1.5.4.7-3.el4.  We don't support this, but no point making it more
-# difficult than it needs to be (folks stuck on EL-4 have it bad enough ;).
-Obsoletes:      git-core <= 1.5.4.7-4
-%endif
+Obsoletes:      git-core <= %{git_core_version}
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -79,7 +124,7 @@ SCMs, install the git-all meta-package.
 %package all
 Summary:        Meta-package to pull in all git tools
 Group:          Development/Tools
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
@@ -92,16 +137,10 @@ Requires:       git-gui = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{emacs_support}
 Requires:       emacs-git = %{version}-%{release}
 %endif
-%if 0%{?fedora} || 0%{?rhel} >= 5
-Obsoletes:      git <= 1.5.4.3
-%else
-# EL-4 has 1.5.4.7-3.el4.  We don't support this, but no point making it more
-# difficult than it needs to be (folks stuck on EL-4 have it bad enough ;).
-Obsoletes:      git <= 1.5.4.7-4
-%endif
+Obsoletes:      git <= %{git_core_version}
 
 %description all
 Git is a fast, scalable, distributed revision control system with an
@@ -120,7 +159,7 @@ The git dæmon for supporting git:// access to git repositories
 %package -n gitweb
 Summary:        Simple web interface to git repositories
 Group:          Development/Tools
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
@@ -132,7 +171,7 @@ Simple web interface to track changes in git repositories
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, subversion, perl(Term::ReadKey)
@@ -142,11 +181,11 @@ Git tools for importing Subversion repositories.
 %package cvs
 Summary:        Git tools for importing CVS repositories
 Group:          Development/Tools
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, cvs
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{require_cvsps}
 Requires:       cvsps
 Requires:	perl-DBD-SQLite
 %endif
@@ -166,12 +205,12 @@ Git tools for importing Arch repositories.
 %package email
 Summary:        Git tools for sending email
 Group:          Development/Tools
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{perl_net_smtp_ssl}
 Requires:       perl(Net::SMTP::SSL)
 %endif
 %description email
@@ -180,7 +219,7 @@ Git tools for sending email.
 %package gui
 Summary:        Git GUI tool
 Group:          Development/Tools
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
@@ -191,7 +230,7 @@ Git GUI tool.
 %package -n gitk
 Summary:        Git revision tree visualiser
 Group:          Development/Tools
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, tk >= 8.4
@@ -201,11 +240,11 @@ Git revision tree visualiser.
 %package -n perl-Git
 Summary:        Perl interface to Git
 Group:          Development/Libraries
-%if 0%{?fedora} >= 10 || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{perl_error}
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 Requires:       perl(Error)
 %endif
@@ -214,12 +253,12 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %description -n perl-Git
 Perl interface to Git.
 
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{emacs_support}
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
 Requires:       git = %{version}-%{release}
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 Requires:       emacs(bin) >= %{_emacs_version}
 %else
@@ -232,7 +271,7 @@ Requires:       emacs-common
 %package -n emacs-git-el
 Summary:        Elisp source files for git version control system support for Emacs
 Group:          Applications/Editors
-%if 0%{?fedora} || 0%{?rhel} >= 6
+%if %{noarch_sub}
 BuildArch:      noarch
 %endif
 Requires:       emacs-git = %{version}-%{release}
@@ -246,7 +285,7 @@ Requires:       emacs-git = %{version}-%{release}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%if 0%{?rhel} == 5
+%if %{emacs_old}
 %patch3 -p1
 %endif
 
@@ -267,16 +306,16 @@ prefix = %{_prefix}
 gitwebdir = %{_var}/www/git
 EOF
 
-%if 0%{?rhel} && 0%{?rhel} <= 5
+%if "%{gitcoredir}" == "%{_bindir}"
 echo gitexecdir = %{_bindir} >> config.mak
 %endif
 
-%if 0%{?rhel} && 0%{?rhel} == 5
+%if %{docbook_suppress_sp}
 # This is needed for 1.69.1-1.71.0
 echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
 %endif
 
-%if 0%{?rhel} && 0%{?rhel} <= 4
+%if %{asciidoc7}
 echo ASCIIDOC7 = 1 >> config.mak
 %endif
 
@@ -294,7 +333,7 @@ chmod +x %{__perl_requires}
 %build
 make %{?_smp_mflags} all %{!?_without_docs: doc}
 
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{emacs_support}
 make -C contrib/emacs
 %endif
 
@@ -305,8 +344,8 @@ sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 rm -rf %{buildroot}
 make %{?_smp_mflags} INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
 
-%if 0%{?fedora} || 0%{?rhel} >= 5
-%if 0%{?rhel} == 5
+%if %{emacs_support}
+%if %{emacs_old}
 %global _emacs_sitelispdir %{_datadir}/emacs/site-lisp
 %global _emacs_sitestartdir %{_emacs_sitelispdir}/site-start.d
 %endif
@@ -350,7 +389,7 @@ enable_ipv6="        # xinetd does not enable IPv6 by default
 perl -p \
     -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
     -e "s|\@BASE_PATH\@|%{_var}/lib/git|g;" \
-%if 0%{?rhel} && 0%{?rhel} <= 5
+%if %{enable_ipv6}
     -e "s|^}|$enable_ipv6\n$&|;" \
 %endif
     %{SOURCE2} > %{buildroot}%{_sysconfdir}/xinetd.d/git
@@ -368,7 +407,7 @@ popd > /dev/null
 
 # install git-gui .desktop file
 desktop-file-install \
-%if 0%{?rhel} && 0%{?rhel} <= 5
+%if %{use_desktop_vendor}
     --vendor fedora \
 %endif
     --dir=%{buildroot}%{_datadir}/applications %{SOURCE4}
@@ -449,7 +488,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{!?_without_docs: %{_mandir}/man3/*Git*.3pm*}
 
-%if 0%{?fedora} || 0%{?rhel} >= 5
+%if %{emacs_support}
 %files -n emacs-git
 %defattr(-,root,root)
 %doc contrib/emacs/README
@@ -485,6 +524,7 @@ rm -rf %{buildroot}
 %changelog
 * Tue Jul 26 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6-4
 - Drop git-arch on fedora >= 16, the tla package has been retired
+- Rework most spec file dist conditionals to make future changes easier
 
 * Thu Jul 21 2011 Petr Sabata <contyk@redhat.com> - 1.7.6-3
 - Perl mass rebuild
