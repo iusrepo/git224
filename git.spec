@@ -5,9 +5,16 @@
 %global gitcoredir %{_libexecdir}/git-core
 %endif
 
+# Only build git-arch for Fedora < 16, where tla is available
+%if 0%{?fedora} && 0%{?fedora} < 16
+%global arch_support 1
+%else
+%global arch_support 0
+%endif
+
 Name:           git
 Version:        1.7.6
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -76,7 +83,7 @@ Group:          Development/Tools
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
-%if 0%{?fedora}
+%if %{arch_support}
 Requires:       git-arch = %{version}-%{release}
 %endif
 Requires:       git-cvs = %{version}-%{release}
@@ -146,7 +153,7 @@ Requires:	perl-DBD-SQLite
 %description cvs
 Git tools for importing CVS repositories.
 
-%if 0%{?fedora}
+%if %{arch_support}
 %package arch
 Summary:        Git tools for importing Arch repositories
 Group:          Development/Tools
@@ -323,7 +330,7 @@ find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 
-%if ! 0%{?fedora}
+%if ! %{arch_support}
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 %endif
 
@@ -403,7 +410,7 @@ rm -rf %{buildroot}
 %{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
 %{!?_without_docs: %doc Documentation/*git-cvs*.html }
 
-%if 0%{?fedora}
+%if %{arch_support}
 %files arch
 %defattr(-,root,root)
 %doc Documentation/git-archimport.txt
@@ -476,6 +483,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Jul 26 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6-4
+- Drop git-arch on fedora >= 16, the tla package has been retired
+
 * Thu Jul 21 2011 Petr Sabata <contyk@redhat.com> - 1.7.6-3
 - Perl mass rebuild
 
