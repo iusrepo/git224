@@ -114,6 +114,11 @@ Requires:       zlib >= 1.2
 Provides:       git-core = %{version}-%{release}
 Obsoletes:      git-core <= %{git_core_version}
 
+# Obsolete git-arch as needed
+%if ! %{arch_support}
+Obsoletes:      git-arch < %{version}-%{release}
+%endif
+
 %description
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -527,6 +532,7 @@ rm -rf %{buildroot}
 %changelog
 * Fri Aug 05 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6-5
 - Fix git push --quiet, thanks to Clemens Buchacher (#725593)
+- Obsolete git-arch as needed
 
 * Tue Jul 26 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6-4
 - Drop git-arch on fedora >= 16, the tla package has been retired
