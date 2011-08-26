@@ -75,11 +75,12 @@ License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
 Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
-Source1:        git-init.el
-Source2:        git.xinetd.in
-Source3:        git.conf.httpd
-Source4:        git-gui.desktop
-Source5:        gitweb.conf.in
+Source1:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2.sign
+Source2:        git-init.el
+Source3:        git.xinetd.in
+Source4:        git.conf.httpd
+Source5:        git-gui.desktop
+Source6:        gitweb.conf.in
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
@@ -361,14 +362,14 @@ for elc in %{buildroot}%{elispdir}/*.elc ; do
     install -pm 644 contrib/emacs/$(basename $elc .elc).el \
     %{buildroot}%{elispdir}
 done
-install -Dpm 644 %{SOURCE1} \
+install -Dpm 644 %{SOURCE2} \
     %{buildroot}%{_emacs_sitestartdir}/git-init.el
 %endif
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
-install -pm 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
+install -pm 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
 sed "s|@PROJECTROOT@|%{_var}/lib/git|g" \
-    %{SOURCE5} > %{buildroot}%{_sysconfdir}/gitweb.conf
+    %{SOURCE6} > %{buildroot}%{_sysconfdir}/gitweb.conf
 
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
@@ -397,7 +398,7 @@ perl -p \
 %if %{enable_ipv6}
     -e "s|^}|$enable_ipv6\n$&|;" \
 %endif
-    %{SOURCE2} > %{buildroot}%{_sysconfdir}/xinetd.d/git
+    %{SOURCE3} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
 install -pm 644 contrib/completion/git-completion.bash %{buildroot}%{_sysconfdir}/bash_completion.d/git
@@ -415,7 +416,7 @@ desktop-file-install \
 %if %{use_desktop_vendor}
     --vendor fedora \
 %endif
-    --dir=%{buildroot}%{_datadir}/applications %{SOURCE4}
+    --dir=%{buildroot}%{_datadir}/applications %{SOURCE5}
 
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
@@ -529,6 +530,7 @@ rm -rf %{buildroot}
 %changelog
 * Fri Aug 26 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6.1-1
 - Update to 1.7.6.1
+- Include gpg signature for tarball in SRPM
 
 * Fri Aug 05 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6-5
 - Fix git push --quiet, thanks to Clemens Buchacher (#725593)
