@@ -68,8 +68,8 @@
 %endif
 
 Name:           git
-Version:        1.7.6
-Release:        5%{?dist}
+Version:        1.7.6.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -87,8 +87,6 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 Patch2:         git-1.6-update-contrib-hooks-path.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
-# https://bugzilla.redhat.com/725593
-Patch4:         0001-propagate-quiet-to-send-pack-receive-pack.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
@@ -295,7 +293,6 @@ Requires:       emacs-git = %{version}-%{release}
 %if %{emacs_old}
 %patch3 -p1
 %endif
-%patch4 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -530,6 +527,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Aug 26 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6.1-1
+- Update to 1.7.6.1
+
 * Fri Aug 05 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6-5
 - Fix git push --quiet, thanks to Clemens Buchacher (#725593)
 - Obsolete git-arch as needed
