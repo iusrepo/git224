@@ -69,7 +69,7 @@
 
 Name:           git
 Version:        1.7.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -97,6 +97,7 @@ BuildRequires:  emacs
 BuildRequires:  %{libcurl_devel}
 BuildRequires:  expat-devel
 BuildRequires:  gettext
+BuildRequires:  pcre-devel
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
 %{!?_without_docs:BuildRequires: asciidoc > 6.0.3, xmlto}
@@ -303,6 +304,7 @@ CFLAGS = %{optflags}
 BLK_SHA1 = 1
 NEEDS_CRYPTO_WITH_SSL = 1
 NO_PYTHON = 1
+USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
 INSTALL = install -p
@@ -528,6 +530,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Aug 29 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6.1-2
+- Build with PCRE support (#734269)
+
 * Fri Aug 26 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6.1-1
 - Update to 1.7.6.1
 - Include gpg signature for tarball in SRPM
