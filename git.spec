@@ -68,14 +68,18 @@
 %endif
 
 Name:           git
-Version:        1.7.6.1
-Release:        2%{?dist}
+Version:        1.7.6.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
-Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
-Source1:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2.sign
+# Due to a recent intrusion at kernel.org, tarballs for 1.7.6.2 are not
+# available.  Instead, make dist was used in a git clone after verifying and
+# checking out the v1.7.6.2 tag.
+Source0:        %{name}-%{version}.tar.bz2
+#Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
+#Source1:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2.sign
 Source2:        git-init.el
 Source3:        git.xinetd.in
 Source4:        git.conf.httpd
@@ -530,6 +534,11 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Sep 07 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6.2-1
+- Update to 1.7.6.2
+- Fixes incompatibility caused by git push --quiet fix
+  http://thread.gmane.org/gmane.comp.version-control.git/180652
+
 * Mon Aug 29 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6.1-2
 - Build with PCRE support (#734269)
 
