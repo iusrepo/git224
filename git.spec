@@ -68,7 +68,7 @@
 %endif
 
 Name:           git
-Version:        1.7.6.2
+Version:        1.7.6.4
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -77,7 +77,7 @@ URL:            http://git-scm.com/
 # Due to a recent intrusion at kernel.org, tarballs for 1.7.6.2 are not
 # available.  Instead, make dist was used in a git clone after verifying and
 # checking out the v1.7.6.2 tag.
-Source0:        %{name}-%{version}.tar.bz2
+Source0:        %{name}-%{version}.tar.gz
 #Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
 #Source1:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2.sign
 Source2:        git-init.el
@@ -534,6 +534,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Sep 26 2011 Adam Tkac <atkac redhat com> - 1.7.6.4-1
+- update to 1.7.6.4
+
 * Wed Sep 07 2011 Todd Zullinger <tmz@pobox.com> - 1.7.6.2-1
 - Update to 1.7.6.2
 - Fixes incompatibility caused by git push --quiet fix
