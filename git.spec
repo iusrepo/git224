@@ -68,8 +68,8 @@
 %endif
 
 Name:           git
-Version:        1.7.6.4
-Release:        1%{?dist}
+Version:        1.7.7
+Release:        0%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -88,8 +88,6 @@ Source6:        gitweb.conf.in
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# https://bugzilla.redhat.com/500137
-Patch2:         git-1.6-update-contrib-hooks-path.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -295,7 +293,6 @@ Requires:       emacs-git = %{version}-%{release}
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 %if %{emacs_old}
 %patch3 -p1
 %endif
@@ -534,6 +531,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Oct 20 2011 Adam Tkac <atkac redhat com> - 1.7.7-1
+- update to 1.7.7
+  - git-1.6-update-contrib-hooks-path.patch is no longer needed
+
 * Mon Sep 26 2011 Adam Tkac <atkac redhat com> - 1.7.6.4-1
 - update to 1.7.6.4
 
