@@ -69,7 +69,7 @@
 
 Name:           git
 Version:        1.7.7
-Release:        0%{?dist}
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
