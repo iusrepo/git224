@@ -69,7 +69,7 @@
 
 Name:           git
 Version:        1.7.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -531,6 +531,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Oct 26 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.7-2
+- Rebuilt for glibc bug#747377
+
 * Thu Oct 20 2011 Adam Tkac <atkac redhat com> - 1.7.7-1
 - update to 1.7.7
   - git-1.6-update-contrib-hooks-path.patch is no longer needed
