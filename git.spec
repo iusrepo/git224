@@ -68,7 +68,7 @@
 %endif
 
 Name:           git
-Version:        1.7.7.2
+Version:        1.7.7.3
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -531,6 +531,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Nov 10 2011 Adam Tkac <atkac redhat com> - 1.7.7.3-1
+- update to 1.7.7.3
+
 * Mon Nov 07 2011 Adam Tkac <atkac redhat com> - 1.7.7.2-1
 - update to 1.7.7.2
 
