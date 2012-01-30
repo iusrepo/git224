@@ -421,6 +421,9 @@ desktop-file-install \
 %endif
     --dir=%{buildroot}%{_datadir}/applications %{SOURCE5}
 
+# find translations
+%find_lang %{name} %{name}.lang
+
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
 find %{buildroot} -name git-mergetool--lib | xargs chmod a-x
@@ -433,7 +436,7 @@ find contrib -type f | xargs chmod -x
 rm -rf %{buildroot}
 
 
-%files -f bin-man-doc-files
+%files -f bin-man-doc-files -f %{name}.lang
 %defattr(-,root,root)
 %{_datadir}/git-core/
 %dir %{gitcoredir}
