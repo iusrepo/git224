@@ -69,7 +69,7 @@
 
 Name:           git
 Version:        1.7.9
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -534,6 +534,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 1.7.9-2
+- Rebuild against PCRE 8.30
+
 * Mon Jan 30 2012 Adam Tkac <atkac redhat com> - 1.7.9-1
 - update to 1.7.9
 
