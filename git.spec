@@ -418,6 +418,7 @@ desktop-file-install \
 
 # find translations
 %find_lang %{name} %{name}.lang
+cat %{name}.lang >> bin-man-doc-files
 
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
@@ -431,7 +432,7 @@ find contrib -type f | xargs chmod -x
 rm -rf %{buildroot}
 
 
-%files -f bin-man-doc-files -f %{name}.lang
+%files -f bin-man-doc-files
 %defattr(-,root,root)
 %{_datadir}/git-core/
 %dir %{gitcoredir}
@@ -531,6 +532,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed Feb 15 2012 Todd Zullinger <tmz@pobox.com> - 1.7.9.1-1
 - Update to 1.7.9.1
+- Fix EPEL builds (rpm doesn't accept mutiple -f options in %files)
 
 * Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 1.7.9-2
 - Rebuild against PCRE 8.30
