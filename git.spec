@@ -68,18 +68,13 @@
 %endif
 
 Name:           git
-Version:        1.7.9
-Release:        2%{?dist}
+Version:        1.7.9.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
-# Due to a recent intrusion at kernel.org, tarballs for 1.7.6.2 are not
-# available.  Instead, make dist was used in a git clone after verifying and
-# checking out the v1.7.6.2 tag.
-Source0:        %{name}-%{version}.tar.gz
-#Source0:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2
-#Source1:        http://kernel.org/pub/software/scm/git/%{name}-%{version}.tar.bz2.sign
+Source0:        http://git-core.googlecode.com/files/%{name}-%{version}.tar.gz
 Source2:        git-init.el
 Source3:        git.xinetd.in
 Source4:        git.conf.httpd
@@ -534,6 +529,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Feb 15 2012 Todd Zullinger <tmz@pobox.com> - 1.7.9.1-1
+- Update to 1.7.9.1
+
 * Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 1.7.9-2
 - Rebuild against PCRE 8.30
 
