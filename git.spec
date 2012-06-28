@@ -69,7 +69,7 @@
 
 Name:           git
 Version:        1.7.10.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -530,6 +530,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jun 28 2012 Petr Pisar <ppisar@redhat.com> - 1.7.10.4-2
+- Perl 5.16 rebuild
+
 * Fri Jun 15 2012 Adam Tkac <atkac redhat com> - 1.7.10.4-1
 - update to 1.7.10.4
 
