@@ -69,7 +69,7 @@
 
 Name:           git
 Version:        1.7.11.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -257,6 +257,18 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %description -n perl-Git
 Perl interface to Git.
 
+%package -n perl-Git-SVN
+Summary:        Perl interface to Git::SVN
+Group:          Development/Libraries
+%if %{noarch_sub}
+BuildArch:      noarch
+%endif
+Requires:       git = %{version}-%{release}
+Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+
+%description -n perl-Git-SVN
+Perl interface to Git.
+
 %if %{emacs_support}
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
@@ -378,7 +390,10 @@ find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} '
 %endif
 
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
-(find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) >> perl-files
+(find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) >> perl-git-files
+# Split out Git::SVN files
+grep Git/SVN perl-git-files > perl-git-svn-files
+sed -i "/Git\/SVN/ d" perl-git-files
 %if %{!?_without_docs:1}0
 (find %{buildroot}%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon|Git" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
@@ -492,9 +507,14 @@ rm -rf %{buildroot}
 %{!?_without_docs: %{_mandir}/man1/*gitk*.1*}
 %{!?_without_docs: %doc Documentation/*gitk*.html }
 
-%files -n perl-Git -f perl-files
+%files -n perl-Git -f perl-git-files
 %defattr(-,root,root)
+%exclude %{_mandir}/man3/*Git*SVN*.3pm*
 %{!?_without_docs: %{_mandir}/man3/*Git*.3pm*}
+
+%files -n perl-Git-SVN -f perl-git-svn-files
+%defattr(-,root,root)
+%{!?_without_docs: %{_mandir}/man3/*Git*SVN*.3pm*}
 
 %if %{emacs_support}
 %files -n emacs-git
@@ -530,6 +550,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Jul 25 2012 Todd Zullinger <tmz@pobox.com> - 1.7.11.2-2
+- Split perl(Git::SVN) into its own package (#843182)
+
 * Mon Jul 16 2012 Adam Tkac <atkac redhat com> - 1.7.11.2-1
 - update to 1.7.11.2
 
