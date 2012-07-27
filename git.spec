@@ -69,7 +69,7 @@
 
 Name:           git
 Version:        1.7.11.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -550,6 +550,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jul 27 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.11.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Wed Jul 25 2012 Todd Zullinger <tmz@pobox.com> - 1.7.11.2-2
 - Split perl(Git::SVN) into its own package (#843182)
 
