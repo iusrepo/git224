@@ -68,7 +68,7 @@
 %endif
 
 Name:           git
-Version:        1.7.11.2
+Version:        1.7.11.4
 Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -550,6 +550,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Aug 07 2012 Adam Tkac <atkac redhat com> - 1.7.11.4-1
+- update to 1.7.11.4
+
 * Fri Jul 27 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.11.2-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
