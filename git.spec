@@ -43,10 +43,12 @@
 %global docbook_suppress_sp 0
 %endif
 
-# Enable ipv6 for git-daemon and use desktop --vendor option on EL <= 5
+# Enable ipv6 for git-daemon, use desktop --vendor option and setup python
+# macros on EL <= 5
 %if 0%{?rhel} && 0%{?rhel} <= 5
 %global enable_ipv6 1
 %global use_desktop_vendor 1
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %else
 %global enable_ipv6 1
 %global use_desktop_vendor 1
@@ -139,6 +141,7 @@ Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
+Requires:       git-p4 = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
 %if %{emacs_support}
@@ -171,6 +174,16 @@ Requires:       git = %{version}-%{release}
 %description -n gitweb
 Simple web interface to track changes in git repositories
 
+%package p4
+Summary:        Git tools for working with Perforce depots
+Group:          Development/Tools
+%if %{noarch_sub}
+BuildArch:      noarch
+%endif
+BuildRequires:  python
+Requires:       git = %{version}-%{release}
+%description p4
+%{summary}.
 
 %package svn
 Summary:        Git tools for importing Subversion repositories
@@ -311,7 +324,6 @@ V = 1
 CFLAGS = %{optflags}
 BLK_SHA1 = 1
 NEEDS_CRYPTO_WITH_SSL = 1
-NO_PYTHON = 1
 USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
@@ -385,17 +397,21 @@ find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 
+# Remove remote-helper python libraries and scripts, these are not ready for
+# use yet
+rm -rf %{buildroot}%{python_sitelib} %{buildroot}%{gitcoredir}/git-remote-testgit
+
 %if ! %{arch_support}
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 %endif
 
-(find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|svn|cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
+(find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|p4|svn|cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) >> perl-git-files
 # Split out Git::SVN files
 grep Git/SVN perl-git-files > perl-git-svn-files
 sed -i "/Git\/SVN/ d" perl-git-files
 %if %{!?_without_docs:1}0
-(find %{buildroot}%{_mandir} -type f | grep -vE "archimport|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon|Git" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
+(find %{buildroot}%{_mandir} -type f | grep -vE "archimport|p4|svn|git-cvs|email|gitk|git-gui|git-citool|git-daemon|Git" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
 rm -rf %{buildroot}%{_mandir}
 %endif
@@ -456,6 +472,13 @@ rm -rf %{buildroot}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
 %{_sysconfdir}/bash_completion.d
 
+%files p4
+%defattr(-,root,root)
+%{gitcoredir}/*p4*
+%{gitcoredir}/mergetools/p4merge
+%doc Documentation/*p4*.txt
+%{!?_without_docs: %{_mandir}/man1/*p4*.1*}
+%{!?_without_docs: %doc Documentation/*p4*.html }
 
 %files svn
 %defattr(-,root,root)
@@ -552,6 +575,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed Aug 15 2012 Todd Zullinger <tmz@pobox.com> - 1.7.11.5-1
 - Update to 1.7.11.5
+- Add git-p4 subpackage (#844008)
 
 * Tue Aug 07 2012 Adam Tkac <atkac redhat com> - 1.7.11.4-1
 - update to 1.7.11.4
