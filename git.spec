@@ -68,8 +68,8 @@
 %endif
 
 Name:           git
-Version:        1.7.11.4
-Release:        3%{?dist}
+Version:        1.7.11.5
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -550,6 +550,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Aug 15 2012 Todd Zullinger <tmz@pobox.com> - 1.7.11.5-1
+- Update to 1.7.11.5
+
 * Tue Aug 07 2012 Adam Tkac <atkac redhat com> - 1.7.11.4-1
 - update to 1.7.11.4
 
