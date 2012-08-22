@@ -70,7 +70,7 @@
 %endif
 
 Name:           git
-Version:        1.7.11.5
+Version:        1.7.12
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -573,6 +573,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Aug 22 2012 Adam Tkac <atkac redhat com> - 1.7.12-1
+- update to 1.7.12
+
 * Wed Aug 15 2012 Todd Zullinger <tmz@pobox.com> - 1.7.11.5-1
 - Update to 1.7.11.5
 - Add git-p4 subpackage (#844008)
