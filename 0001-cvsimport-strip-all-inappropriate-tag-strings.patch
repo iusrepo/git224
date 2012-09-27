@@ -1,0 +1,71 @@
+From 70b67b0792375c59f60f3e24f2d6757b24dc719c Mon Sep 17 00:00:00 2001
+From: Ken Dreyer <ktdreyer@ktdreyer.com>
+Date: Thu, 6 Sep 2012 10:36:53 -0600
+Subject: [PATCH] cvsimport: strip all inappropriate tag strings
+
+Certain characters such as "?" can be present in a CVS tag name, but
+git does not allow these characters in tags. If git-cvsimport
+encounters a CVS tag that git cannot handle, cvsimport will error and
+refuse to continue the import beyond that point.
+
+When importing CVS tags, strip all the inappropriate strings from the
+tag names as we translate them to git tag names.
+
+Provide more debugging information to the user if we've altered the
+tag and the "git tag" command still fails. Also, warn the user if we
+end up skipping an (unusable) tag altogether.
+
+Signed-off-by: Ken Dreyer <ktdreyer@ktdreyer.com>
+Signed-off-by: Junio C Hamano <gitster@pobox.com>
+---
+ git-cvsimport.perl | 33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
+
+diff --git a/git-cvsimport.perl b/git-cvsimport.perl
+index 8d41610..8032f23 100755
+--- a/git-cvsimport.perl
++++ b/git-cvsimport.perl
+@@ -889,10 +889,37 @@ sub commit {
+ 		$xtag =~ s/\s+\*\*.*$//; # Remove stuff like ** INVALID ** and ** FUNKY **
+ 		$xtag =~ tr/_/\./ if ( $opt_u );
+ 		$xtag =~ s/[\/]/$opt_s/g;
+-		$xtag =~ s/\[//g;
+ 
+-		system('git' , 'tag', '-f', $xtag, $cid) == 0
+-			or die "Cannot create tag $xtag: $!\n";
++		# See refs.c for these rules.
++		# Tag cannot contain bad chars. (See bad_ref_char in refs.c.)
++		$xtag =~ s/[ ~\^:\\\*\?\[]//g;
++		# Other bad strings for tags:
++		# (See check_refname_component in refs.c.)
++		1 while $xtag =~ s/
++			(?: \.\.        # Tag cannot contain '..'.
++			|   \@{         # Tag cannot contain '@{'.
++			| ^ -           # Tag cannot begin with '-'.
++			|   \.lock $    # Tag cannot end with '.lock'.
++			| ^ \.          # Tag cannot begin...
++			|   \. $        # ...or end with '.'
++			)//xg;
++		# Tag cannot be empty.
++		if ($xtag eq '') {
++			warn("warning: ignoring tag '$tag'",
++			" with invalid tagname\n");
++			return;
++		}
++
++		if (system('git' , 'tag', '-f', $xtag, $cid) != 0) {
++			# We did our best to sanitize the tag, but still failed
++			# for whatever reason. Bail out, and give the user
++			# enough information to understand if/how we should
++			# improve the translation in the future.
++			if ($tag ne $xtag) {
++				print "Translated '$tag' tag to '$xtag'\n";
++			}
++			die "Cannot create tag $xtag: $!\n";
++		}
+ 
+ 		print "Created tag '$xtag' on '$branch'\n" if $opt_v;
+ 	}
+-- 
+1.7.12
+

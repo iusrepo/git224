@@ -70,8 +70,8 @@
 %endif
 
 Name:           git
-Version:        1.7.12
-Release:        2%{?dist}
+Version:        1.7.12.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -87,6 +87,8 @@ Patch0:         git-1.5-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
+Patch4:         0001-cvsimport-strip-all-inappropriate-tag-strings.patch
+
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  desktop-file-utils
@@ -316,6 +318,7 @@ Requires:       emacs-git = %{version}-%{release}
 %if %{emacs_old}
 %patch3 -p1
 %endif
+%patch4 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -577,6 +580,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Sep 27 2012 Adam Tkac <atkac redhat com> - 1.7.12.1-1
+- update to 1.7.12.1
+- cvsimport should skip more characters (#850640)
+
 * Thu Aug 23 2012 Todd Zullinger <tmz@pobox.com> - 1.7.12-2
 - Install git-prompt.sh which provides __git_ps1()
 
