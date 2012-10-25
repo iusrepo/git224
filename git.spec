@@ -71,7 +71,7 @@
 
 Name:           git
 Version:        1.7.12.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -432,11 +432,9 @@ perl -p \
 %endif
     %{SOURCE3} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 
-# Setup bash completion and git prompt
+# Setup bash completion
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
 install -pm 644 contrib/completion/git-completion.bash %{buildroot}%{_sysconfdir}/bash_completion.d/git
-mkdir -p %{buildroot}%{_sysconfdir}/profile.d
-install -pm 644 contrib/completion/git-prompt.sh %{buildroot}%{_sysconfdir}/profile.d
 
 # Move contrib/hooks out of %%docdir and make them executable
 mkdir -p %{buildroot}%{_datadir}/git-core/contrib
@@ -445,6 +443,11 @@ chmod +x %{buildroot}%{_datadir}/git-core/contrib/hooks/*
 pushd contrib > /dev/null
 ln -s ../../../git-core/contrib/hooks
 popd > /dev/null
+
+# Install git-prompt.sh
+mkdir -p %{buildroot}%{_datadir}/git-core/contrib/completion
+install -pm 644 contrib/completion/git-prompt.sh \
+    %{buildroot}%{_datadir}/git-core/contrib/completion/
 
 # install git-gui .desktop file
 desktop-file-install \
@@ -477,7 +480,6 @@ rm -rf %{buildroot}
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
 %{_sysconfdir}/bash_completion.d
-%{_sysconfdir}/profile.d
 
 %files p4
 %defattr(-,root,root)
@@ -580,6 +582,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Oct 25 2012 Adam Tkac <atkac redhat com> - 1.7.12.1-2
+- move git-prompt.sh into usr/share/git-core/contrib/completion (#854061)
+
 * Thu Sep 27 2012 Adam Tkac <atkac redhat com> - 1.7.12.1-1
 - update to 1.7.12.1
 - cvsimport should skip more characters (#850640)
