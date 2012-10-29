@@ -69,9 +69,16 @@
 %global arch_support 0
 %endif
 
+# Build gnome-keyring git-credential helper on Fedora and RHEL >= 7
+%if 0%{?rhel} >= 7 || 0%{?fedora}
+%global gnome_keyring 1
+%else
+%global gnome_keyring 0
+%endif
+
 Name:           git
-Version:        1.7.12.1
-Release:        2%{?dist}
+Version:        1.8.0
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -87,7 +94,6 @@ Patch0:         git-1.5-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
-Patch4:         0001-cvsimport-strip-all-inappropriate-tag-strings.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -102,6 +108,9 @@ BuildRequires:  pcre-devel
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
 %{!?_without_docs:BuildRequires: asciidoc > 6.0.3, xmlto}
+%if %{gnome_keyring}
+BuildRequires:  libgnome-keyring-devel
+%endif
 
 Requires:       less
 Requires:       openssh-clients
@@ -318,7 +327,6 @@ Requires:       emacs-git = %{version}-%{release}
 %if %{emacs_old}
 %patch3 -p1
 %endif
-%patch4 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -368,6 +376,10 @@ make %{?_smp_mflags} all %{!?_without_docs: doc}
 make -C contrib/emacs
 %endif
 
+%if %{gnome_keyring}
+make -C contrib/credential/gnome-keyring/
+%endif
+
 # Remove shebang from bash-completion script
 sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 
@@ -389,6 +401,11 @@ for elc in %{buildroot}%{elispdir}/*.elc ; do
 done
 install -Dpm 644 %{SOURCE2} \
     %{buildroot}%{_emacs_sitestartdir}/git-init.el
+%endif
+
+%if %{gnome_keyring}
+install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
+    %{buildroot}%{gitcoredir}
 %endif
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
@@ -582,6 +599,11 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Oct 29 2012 Adam Tkac <atkac redhat com> - 1.8.0-1
+- update to 1.8.0
+- include git-credential-gnome-keyring helper in git pkg
+- 0001-cvsimport-strip-all-inappropriate-tag-strings.patch was merged
+
 * Thu Oct 25 2012 Adam Tkac <atkac redhat com> - 1.7.12.1-2
 - move git-prompt.sh into usr/share/git-core/contrib/completion (#854061)
 
