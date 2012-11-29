@@ -77,7 +77,7 @@
 %endif
 
 Name:           git
-Version:        1.8.0
+Version:        1.8.0.1
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -94,6 +94,7 @@ Patch0:         git-1.5-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
+Patch4:         0001-DESTDIR-support-in-contrib-subtree-Makefile.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -327,6 +328,7 @@ Requires:       emacs-git = %{version}-%{release}
 %if %{emacs_old}
 %patch3 -p1
 %endif
+%patch4 -p1
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -380,6 +382,8 @@ make -C contrib/emacs
 make -C contrib/credential/gnome-keyring/
 %endif
 
+make -C contrib/subtree/
+
 # Remove shebang from bash-completion script
 sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 
@@ -407,6 +411,9 @@ install -Dpm 644 %{SOURCE2} \
 install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
     %{buildroot}%{gitcoredir}
 %endif
+
+make -C contrib/subtree install
+make -C contrib/subtree install-doc
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -599,6 +606,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Nov 29 2012 Adam Tkac <atkac redhat com> - 1.8.0.1-1
+- update to 1.8.0.1
+- include git-subtree in git rpm (#864651)
+
 * Mon Oct 29 2012 Adam Tkac <atkac redhat com> - 1.8.0-1
 - update to 1.8.0
 - include git-credential-gnome-keyring helper in git pkg
