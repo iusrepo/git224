@@ -78,7 +78,7 @@
 
 Name:           git
 Version:        1.8.0.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -410,6 +410,8 @@ install -Dpm 644 %{SOURCE2} \
 %if %{gnome_keyring}
 install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
     %{buildroot}%{gitcoredir}
+# Remove built binary files, otherwise they will be installed in doc
+make -C contrib/credential/gnome-keyring/ clean
 %endif
 
 make -C contrib/subtree install
@@ -487,7 +489,7 @@ cat %{name}.lang >> bin-man-doc-files
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
 find %{buildroot} -name git-mergetool--lib | xargs chmod a-x
-rm -f {Documentation/technical,contrib/emacs}/.gitignore
+rm -f {Documentation/technical,contrib/emacs,contrib/credential/gnome-keyring}/.gitignore
 chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
@@ -606,6 +608,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Dec 06 2012 Adam Tkac <atkac redhat com> - 1.8.0.1-2
+- don't install some unneeded credential-gnome-keyring stuff
+
 * Thu Nov 29 2012 Adam Tkac <atkac redhat com> - 1.8.0.1-1
 - update to 1.8.0.1
 - include git-subtree in git rpm (#864651)
