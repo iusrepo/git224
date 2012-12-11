@@ -77,8 +77,8 @@
 %endif
 
 Name:           git
-Version:        1.8.0.1
-Release:        2%{?dist}
+Version:        1.8.0.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -608,6 +608,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Dec 11 2012 Adam Tkac <atkac redhat com> - 1.8.0.2-1
+- update to 1.8.0.2
+
 * Thu Dec 06 2012 Adam Tkac <atkac redhat com> - 1.8.0.1-2
 - don't install some unneeded credential-gnome-keyring stuff
 
