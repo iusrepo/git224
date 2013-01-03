@@ -450,6 +450,11 @@ perl -p \
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
 install -pm 644 contrib/completion/git-completion.bash %{buildroot}%{_sysconfdir}/bash_completion.d/git
 
+# Install tcsh completion
+mkdir -p %{buildroot}%{_datadir}/git-core/contrib/completion
+install -pm 644 contrib/completion/git-completion.tcsh \
+    %{buildroot}%{_datadir}/git-core/contrib/completion/
+
 # Move contrib/hooks out of %%docdir and make them executable
 mkdir -p %{buildroot}%{_datadir}/git-core/contrib
 mv contrib/hooks %{buildroot}%{_datadir}/git-core/contrib
@@ -598,6 +603,7 @@ rm -rf %{buildroot}
 * Tue Feb 26 2013 Todd Zullinger <tmz@pobox.com> - 1.8.1.4-2
 - Update asciidoc requirements, drop unsupported ASCIIDOC7
 - Define GNU_ROFF to force ASCII apostrophes in manpages (so copy/paste works)
+- Install tcsh completion (requires manual setup by users)
 
 * Wed Feb 20 2013 Adam Tkac <atkac redhat com> - 1.8.1.4-1
 - update to 1.8.1.4
