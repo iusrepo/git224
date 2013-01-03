@@ -331,6 +331,7 @@ ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
 INSTALL = install -p
 GITWEB_PROJECTROOT = %{_var}/lib/git
+GNU_ROFF = 1
 htmldir = %{_docdir}/%{name}-%{version}
 prefix = %{_prefix}
 gitwebdir = %{_var}/www/git
@@ -596,6 +597,7 @@ rm -rf %{buildroot}
 %changelog
 * Tue Feb 26 2013 Todd Zullinger <tmz@pobox.com> - 1.8.1.4-2
 - Update asciidoc requirements, drop unsupported ASCIIDOC7
+- Define GNU_ROFF to force ASCII apostrophes in manpages (so copy/paste works)
 
 * Wed Feb 20 2013 Adam Tkac <atkac redhat com> - 1.8.1.4-1
 - update to 1.8.1.4
