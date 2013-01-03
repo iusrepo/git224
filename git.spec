@@ -200,9 +200,6 @@ Requires:       git = %{version}-%{release}
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
-%if %{noarch_sub}
-BuildArch:      noarch
-%endif
 Requires:       git = %{version}-%{release}, subversion, perl(Term::ReadKey)
 %description svn
 Git tools for importing Subversion repositories.
@@ -610,6 +607,7 @@ rm -rf %{buildroot}
 %changelog
 * Thu Jan 03 2013 Adam Tkac <atkac redhat com> - 1.8.1-1
 - update to 1.8.1
+- build git-svn as arch subpkg due to new git-remote-testsvn binary
 
 * Tue Dec 11 2012 Adam Tkac <atkac redhat com> - 1.8.0.2-1
 - update to 1.8.0.2
