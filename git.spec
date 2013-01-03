@@ -54,14 +54,6 @@
 %global use_desktop_vendor 1
 %endif
 
-# Use asciidoc-7 on EL <= 4.  Again, we don't support EL-4, but no need to make
-# it more difficult to build a modern git there.
-%if 0%{?rhel} && 0%{?rhel} <= 4
-%global asciidoc7 1
-%else
-%global asciidoc7 0
-%endif
-
 # Only build git-arch for Fedora < 16, where tla is available
 %if 0%{?fedora} && 0%{?fedora} < 16
 %global arch_support 1
@@ -78,7 +70,7 @@
 
 Name:           git
 Version:        1.8.1.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -108,7 +100,7 @@ BuildRequires:  gettext
 BuildRequires:  pcre-devel
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
-%{!?_without_docs:BuildRequires: asciidoc > 6.0.3, xmlto}
+%{!?_without_docs:BuildRequires: asciidoc >= 8.4.1, xmlto}
 %if %{gnome_keyring}
 BuildRequires:  libgnome-keyring-devel
 %endif
@@ -351,10 +343,6 @@ echo gitexecdir = %{_bindir} >> config.mak
 %if %{docbook_suppress_sp}
 # This is needed for 1.69.1-1.71.0
 echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
-%endif
-
-%if %{asciidoc7}
-echo ASCIIDOC7 = 1 >> config.mak
 %endif
 
 # Filter bogus perl requires
@@ -606,6 +594,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Feb 26 2013 Todd Zullinger <tmz@pobox.com> - 1.8.1.4-2
+- Update asciidoc requirements, drop unsupported ASCIIDOC7
+
 * Wed Feb 20 2013 Adam Tkac <atkac redhat com> - 1.8.1.4-1
 - update to 1.8.1.4
 
