@@ -6,6 +6,7 @@
 # - Use proper libcurl devel package
 # - Patch emacs and tweak docbook spaces
 # - Explicitly enable ipv6 for git-daemon
+# - Use prebuilt documentation, asciidoc is too old
 # - Define missing python macro
 %if 0%{?rhel} && 0%{?rhel} <= 5
 %global gitcoredir          %{_bindir}
@@ -14,6 +15,7 @@
 %global emacs_old           1
 %global docbook_suppress_sp 1
 %global enable_ipv6         1
+%global use_prebuilt_docs   1
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %else
 %global gitcoredir          %{_libexecdir}/git-core
@@ -22,6 +24,7 @@
 %global emacs_old           0
 %global docbook_suppress_sp 0
 %global enable_ipv6         0
+%global use_prebuilt_docs   0
 %endif
 
 # Build gnome-keyring git-credential helper on Fedora and RHEL >= 7
@@ -44,6 +47,8 @@ Source3:        git.xinetd.in
 Source4:        git.conf.httpd
 Source5:        git-gui.desktop
 Source6:        gitweb.conf.in
+Source10:       http://git-core.googlecode.com/files/%{name}-manpages-%{version}.tar.gz
+Source11:       http://git-core.googlecode.com/files/%{name}-htmldocs-%{version}.tar.gz
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
@@ -53,11 +58,14 @@ Patch4:         0001-DESTDIR-support-in-contrib-subtree-Makefile.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+%if ! %{use_prebuilt_docs} && ! 0%{?_without_docs}
+BuildRequires:  asciidoc >= 8.4.1
+BuildRequires:  xmlto
+%endif
 BuildRequires:  desktop-file-utils
 BuildRequires:  emacs
 BuildRequires:  expat-devel
 BuildRequires:  gettext
-%{!?_without_docs:BuildRequires: asciidoc >= 8.4.1, xmlto}
 BuildRequires:  %{libcurl_devel}
 %if %{gnome_keyring}
 BuildRequires:  libgnome-keyring-devel
@@ -253,6 +261,15 @@ Requires:       emacs-git = %{version}-%{release}
 %endif
 %patch4 -p1
 
+%if %{use_prebuilt_docs}
+mkdir -p prebuilt_docs/{html,man}
+tar xf %{SOURCE10} -C prebuilt_docs/man
+tar xf %{SOURCE11} -C prebuilt_docs/html
+# Remove non-html files
+find prebuilt_docs/html -type f ! -name '*.html' | xargs rm
+find prebuilt_docs/html -type d | xargs rmdir --ignore-fail-on-non-empty
+%endif
+
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
 cat << \EOF > config.mak
@@ -292,7 +309,10 @@ EOF
 chmod +x %{__perl_requires}
 
 %build
-make %{?_smp_mflags} all %{!?_without_docs: doc}
+make %{?_smp_mflags} all
+%if ! %{use_prebuilt_docs} && ! 0%{?_without_docs}
+make %{?_smp_mflags} doc
+%endif
 
 make -C contrib/emacs
 
@@ -307,7 +327,13 @@ sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 
 %install
 rm -rf %{buildroot}
-make %{?_smp_mflags} INSTALLDIRS=vendor install %{!?_without_docs: install-doc}
+make %{?_smp_mflags} INSTALLDIRS=vendor install
+%if ! %{use_prebuilt_docs} && ! 0%{?_without_docs}
+make %{?_smp_mflags} INSTALLDIRS=vendor install-doc
+%else
+cp -a prebuilt_docs/man/* %{buildroot}%{_mandir}
+cp -a prebuilt_docs/html/* Documentation/
+%endif
 
 %if %{emacs_old}
 %global _emacs_sitelispdir %{_datadir}/emacs/site-lisp
@@ -331,7 +357,9 @@ make -C contrib/credential/gnome-keyring/ clean
 %endif
 
 make -C contrib/subtree install
+%if ! %{use_prebuilt_docs}
 make -C contrib/subtree install-doc
+%endif
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -520,6 +548,7 @@ rm -rf %{buildroot}
 - Define GNU_ROFF to force ASCII apostrophes in manpages (so copy/paste works)
 - Install tcsh completion (requires manual setup by users)
 - Clean up dist conditionals, don't pretend to support EL-4 builds
+- Use prebuilt documentation on EL-5, where asciidoc is too old
 
 * Wed Feb 20 2013 Adam Tkac <atkac redhat com> - 1.8.1.4-1
 - update to 1.8.1.4
