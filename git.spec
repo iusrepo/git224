@@ -55,6 +55,7 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
 Patch4:         0001-DESTDIR-support-in-contrib-subtree-Makefile.patch
+Patch5:         0001-git-subtree-Use-gitexecdir-instead-of-libexecdir.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -260,6 +261,7 @@ Requires:       emacs-git = %{version}-%{release}
 %patch3 -p1
 %endif
 %patch4 -p1
+%patch5 -p1
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
@@ -549,6 +551,7 @@ rm -rf %{buildroot}
 - Install tcsh completion (requires manual setup by users)
 - Clean up dist conditionals, don't pretend to support EL-4 builds
 - Use prebuilt documentation on EL-5, where asciidoc is too old
+- Respect gitexecdir variable in git-subtree install
 
 * Wed Feb 20 2013 Adam Tkac <atkac redhat com> - 1.8.1.4-1
 - update to 1.8.1.4
