@@ -77,7 +77,7 @@
 %endif
 
 Name:           git
-Version:        1.8.1
+Version:        1.8.1.2
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -432,7 +432,9 @@ find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} '
 %endif
 
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "archimport|p4|svn|cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
-(find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) >> perl-git-files
+(find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "archimport|p4|svn|cvs|email|gitk|git-gui|git-citool|git-daemon" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
+(find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
+(find %{buildroot}%{perl_vendorlib} -mindepth 1 -type d | sed -e 's@^%{buildroot}@%dir @') >> perl-git-files
 # Split out Git::SVN files
 grep Git/SVN perl-git-files > perl-git-svn-files
 sed -i "/Git\/SVN/ d" perl-git-files
@@ -498,7 +500,6 @@ rm -rf %{buildroot}
 %files -f bin-man-doc-files
 %defattr(-,root,root)
 %{_datadir}/git-core/
-%dir %{gitcoredir}
 %doc README COPYING Documentation/*.txt Documentation/RelNotes contrib/
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
@@ -605,6 +606,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Jan 30 2013 Adam Tkac <atkac redhat com> - 1.8.1.2-1
+- update to 1.8.1.2
+- own directories which should be owned (#902517)
+
 * Thu Jan 03 2013 Adam Tkac <atkac redhat com> - 1.8.1-1
 - update to 1.8.1
 - build git-svn as arch subpkg due to new git-remote-testsvn binary
