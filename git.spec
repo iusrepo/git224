@@ -77,7 +77,7 @@
 %endif
 
 Name:           git
-Version:        1.8.1.2
+Version:        1.8.1.4
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -606,6 +606,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Feb 20 2013 Adam Tkac <atkac redhat com> - 1.8.1.4-1
+- update to 1.8.1.4
+
 * Wed Jan 30 2013 Adam Tkac <atkac redhat com> - 1.8.1.2-1
 - update to 1.8.1.2
 - own directories which should be owned (#902517)
