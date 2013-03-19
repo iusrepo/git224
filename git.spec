@@ -35,8 +35,8 @@
 %endif
 
 Name:           git
-Version:        1.8.1.4
-Release:        2%{?dist}
+Version:        1.8.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -54,7 +54,6 @@ Patch0:         git-1.5-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
-Patch4:         0001-DESTDIR-support-in-contrib-subtree-Makefile.patch
 Patch5:         0001-git-subtree-Use-gitexecdir-instead-of-libexecdir.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -260,7 +259,6 @@ Requires:       emacs-git = %{version}-%{release}
 %if %{emacs_old}
 %patch3 -p1
 %endif
-%patch4 -p1
 %patch5 -p1
 
 %if %{use_prebuilt_docs}
@@ -545,6 +543,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Mar 19 2013 Adam Tkac <atkac redhat com> - 1.8.2-1
+- update to 1.8.2
+- 0001-DESTDIR-support-in-contrib-subtree-Makefile.patch has been merged
+
 * Tue Feb 26 2013 Todd Zullinger <tmz@pobox.com> - 1.8.1.4-2
 - Update asciidoc requirements, drop unsupported ASCIIDOC7
 - Define GNU_ROFF to force ASCII apostrophes in manpages (so copy/paste works)
