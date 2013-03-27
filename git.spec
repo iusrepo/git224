@@ -36,7 +36,7 @@
 
 Name:           git
 Version:        1.8.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -77,6 +77,7 @@ BuildRequires:  zlib-devel >= 1.2
 Requires:       less
 Requires:       openssh-clients
 Requires:       perl(Error)
+Requires:       perl(Term::ReadKey)
 Requires:       perl-Git = %{version}-%{release}
 Requires:       rsync
 Requires:       zlib >= 1.2
@@ -543,6 +544,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Mar 27 2013 Todd Zullinger <tmz@pobox.com> - 1.8.2-2
+- Require perl(Term::ReadKey) for git add --interactive (#928328)
+
 * Tue Mar 19 2013 Adam Tkac <atkac redhat com> - 1.8.2-1
 - update to 1.8.2
 - 0001-DESTDIR-support-in-contrib-subtree-Makefile.patch has been merged
