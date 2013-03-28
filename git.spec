@@ -551,6 +551,7 @@ rm -rf %{buildroot}
 * Wed Mar 27 2013 Todd Zullinger <tmz@pobox.com> - 1.8.2-2
 - Require perl(Term::ReadKey) for git add --interactive (#928328)
 - Drop DESTDIR from python instlibdir
+- Fix bogus changelog dates
 
 * Tue Mar 19 2013 Adam Tkac <atkac redhat com> - 1.8.2-1
 - update to 1.8.2
@@ -1100,7 +1101,7 @@ rm -rf %{buildroot}
 * Fri Jun 08 2007 James Bowes <jbowes@redhat.com> 1.5.2.1-1
 - git-1.5.2.1
 
-* Tue May 13 2007 Quy Tonthat <qtonthat@gmail.com>
+* Sun May 13 2007 Quy Tonthat <qtonthat@gmail.com>
 - Added lib files for git-gui
 - Added Documentation/technical (As needed by Git Users Manual)
 
@@ -1122,7 +1123,7 @@ rm -rf %{buildroot}
 * Mon Feb 26 2007 Chris Wright <chrisw@redhat.com> 1.5.0.2-1
 - git-1.5.0.2
 
-* Mon Feb 13 2007 Nicolas Pitre <nico@cam.org>
+* Tue Feb 13 2007 Nicolas Pitre <nico@cam.org>
 - Update core package description (Git isn't as stupid as it used to be)
 
 * Mon Feb 12 2007 Junio C Hamano <junkio@cox.net>
@@ -1190,7 +1191,7 @@ rm -rf %{buildroot}
 * Mon Feb 13 2006 Chris Wright <chrisw@redhat.com> 1.2.0-1
 - git-1.2.0
 
-* Tue Feb 1 2006 Chris Wright <chrisw@redhat.com> 1.1.6-1
+* Wed Feb 1 2006 Chris Wright <chrisw@redhat.com> 1.1.6-1
 - git-1.1.6
 
 * Tue Jan 24 2006 Chris Wright <chrisw@redhat.com> 1.1.4-1
@@ -1255,5 +1256,5 @@ rm -rf %{buildroot}
 * Thu Jul 14 2005 Eric Biederman <ebiederm@xmission.com>
 - Add the man pages, and the --without docs build option
 
-* Wed Jul 7 2005 Chris Wright <chris@osdl.org>
+* Thu Jul 7 2005 Chris Wright <chris@osdl.org>
 - initial git spec file
