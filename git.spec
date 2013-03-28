@@ -55,6 +55,9 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
 Patch5:         0001-git-subtree-Use-gitexecdir-instead-of-libexecdir.patch
+# This fixes the build when python is enabled.  Needs discussion upstream to
+# find a proper solution.
+Patch6:         0001-Drop-DESTDIR-from-python-instlibdir.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -261,6 +264,7 @@ Requires:       emacs-git = %{version}-%{release}
 %patch3 -p1
 %endif
 %patch5 -p1
+%patch6 -p1
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
@@ -546,6 +550,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed Mar 27 2013 Todd Zullinger <tmz@pobox.com> - 1.8.2-2
 - Require perl(Term::ReadKey) for git add --interactive (#928328)
+- Drop DESTDIR from python instlibdir
 
 * Tue Mar 19 2013 Adam Tkac <atkac redhat com> - 1.8.2-1
 - update to 1.8.2
