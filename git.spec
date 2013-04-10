@@ -34,9 +34,15 @@
 %global gnome_keyring 0
 %endif
 
+%if (0%{?fedora} && 0%{?fedora} < 19) || (0%{?rhel} && 0%{?rhel} < 7)
+%global with_desktop_vendor_tag 1
+%else
+%global with_desktop_vendor_tag 0
+%endif
+
 Name:           git
 Version:        1.8.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -431,8 +437,11 @@ install -pm 644 contrib/completion/git-prompt.sh \
     %{buildroot}%{_datadir}/git-core/contrib/completion/
 
 # install git-gui .desktop file
-desktop-file-install --vendor fedora \
-    --dir=%{buildroot}%{_datadir}/applications %{SOURCE5}
+desktop-file-install \
+%if %{with desktop_vendor_tag}
+  --vendor fedora \
+%endif
+  --dir=%{buildroot}%{_datadir}/applications %{SOURCE5}
 
 # find translations
 %find_lang %{name} %{name}.lang
@@ -548,6 +557,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Apr 10 2013 Jon Ciesla <limburgher@gmail.com> - 1.8.2-3
+- Drop desktop vendor tag for >= f19.
+
 * Wed Mar 27 2013 Todd Zullinger <tmz@pobox.com> - 1.8.2-2
 - Require perl(Term::ReadKey) for git add --interactive (#928328)
 - Drop DESTDIR from python instlibdir
