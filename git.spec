@@ -41,8 +41,8 @@
 %endif
 
 Name:           git
-Version:        1.8.2
-Release:        3%{?dist}
+Version:        1.8.2.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -557,6 +557,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sun Apr 14 2013 Todd Zullinger <tmz@pobox.com> - 1.8.2.1-1
+- Update to 1.8.2.1
+
 * Wed Apr 10 2013 Jon Ciesla <limburgher@gmail.com> - 1.8.2-3
 - Drop desktop vendor tag for >= f19.
 
