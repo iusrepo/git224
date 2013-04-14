@@ -16,6 +16,7 @@
 %global docbook_suppress_sp 1
 %global enable_ipv6         1
 %global use_prebuilt_docs   1
+%global filter_yaml_any     1
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %else
 %global gitcoredir          %{_libexecdir}/git-core
@@ -25,6 +26,7 @@
 %global docbook_suppress_sp 0
 %global enable_ipv6         0
 %global use_prebuilt_docs   0
+%global filter_yaml_any     0
 %endif
 
 # Build gnome-keyring git-credential helper on Fedora and RHEL >= 7
@@ -310,10 +312,15 @@ echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
 
 # Filter bogus perl requires
 # packed-refs comes from a comment in contrib/hooks/update-paranoid
+# YAML::Any is optional and not available on el5
 cat << \EOF > %{name}-req
 #!/bin/sh
 %{__perl_requires} $* |\
-sed -e '/perl(packed-refs)/d'
+sed \
+%if %{filter_yaml_any}
+    -e '/perl(YAML::Any)/d' \
+%endif
+    -e '/perl(packed-refs)/d'
 EOF
 
 %global __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
@@ -559,6 +566,7 @@ rm -rf %{buildroot}
 %changelog
 * Sun Apr 14 2013 Todd Zullinger <tmz@pobox.com> - 1.8.2.1-1
 - Update to 1.8.2.1
+- Exclude optional perl(YAML::Any) dependency on EL-5
 
 * Wed Apr 10 2013 Jon Ciesla <limburgher@gmail.com> - 1.8.2-3
 - Drop desktop vendor tag for >= f19.
