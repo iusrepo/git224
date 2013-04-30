@@ -44,19 +44,20 @@
 
 Name:           git
 Version:        1.8.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
 Source0:        http://git-core.googlecode.com/files/%{name}-%{version}.tar.gz
 Source2:        git-init.el
-Source3:        git.xinetd.in
 Source4:        git.conf.httpd
 Source5:        git-gui.desktop
 Source6:        gitweb.conf.in
 Source10:       http://git-core.googlecode.com/files/%{name}-manpages-%{version}.tar.gz
 Source11:       http://git-core.googlecode.com/files/%{name}-htmldocs-%{version}.tar.gz
+Source12:       git.service
+Source13:       git.socket
 Patch0:         git-1.5-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
@@ -84,6 +85,8 @@ BuildRequires:  libgnome-keyring-devel
 BuildRequires:  pcre-devel
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
+# For macros
+BuildRequires:  systemd
 
 Requires:       less
 Requires:       openssh-clients
@@ -92,6 +95,10 @@ Requires:       perl(Term::ReadKey)
 Requires:       perl-Git = %{version}-%{release}
 Requires:       rsync
 Requires:       zlib >= 1.2
+
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
 
 Provides:       git-core = %{version}-%{release}
 Obsoletes:      git-core <= 1.5.4.3
@@ -409,17 +416,8 @@ rm -rf %{buildroot}%{_mandir}
 %endif
 
 mkdir -p %{buildroot}%{_var}/lib/git
-mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
-# On EL <= 5, xinetd does not enable IPv6 by default
-enable_ipv6="        # xinetd does not enable IPv6 by default
-        flags           = IPv6"
-perl -p \
-    -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
-    -e "s|\@BASE_PATH\@|%{_var}/lib/git|g;" \
-%if %{enable_ipv6}
-    -e "s|^}|$enable_ipv6\n$&|;" \
-%endif
-    %{SOURCE3} > %{buildroot}%{_sysconfdir}/xinetd.d/git
+mkdir -p %{buildroot}%{_unitdir}
+cp -a %{SOURCE12} %{SOURCE13} %{buildroot}%{_unitdir}
 
 # Setup bash completion
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
@@ -464,6 +462,15 @@ find contrib -type f | xargs chmod -x
 
 %clean
 rm -rf %{buildroot}
+
+%post daemon
+%systemd_post git.service
+
+%preun daemon
+%systemd_preun git.service
+
+%postun
+%systemd_postun_with_restart git.service
 
 
 %files -f bin-man-doc-files
@@ -546,7 +553,8 @@ rm -rf %{buildroot}
 %files daemon
 %defattr(-,root,root)
 %doc Documentation/*daemon*.txt
-%config(noreplace)%{_sysconfdir}/xinetd.d/git
+%{_unitdir}/git.socket
+%{_unitdir}/git.service
 %{gitcoredir}/git-daemon
 %{_var}/lib/git
 %{!?_without_docs: %{_mandir}/man1/*daemon*.1*}
@@ -564,6 +572,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Apr 30 2013 Tom Callaway <spot@fedoraproject.org> - 1.8.2.1-2
+- switch to systemd instead of xinetd (bz 737183)
+
 * Sun Apr 14 2013 Todd Zullinger <tmz@pobox.com> - 1.8.2.1-1
 - Update to 1.8.2.1
 - Exclude optional perl(YAML::Any) dependency on EL-5
