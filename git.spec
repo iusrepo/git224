@@ -29,6 +29,13 @@
 %global filter_yaml_any     0
 %endif
 
+# Use systemd instead of xinetd on Fedora 19+ and RHEL 7+
+%if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
+%global use_systemd 1
+%else
+%global use_systemd 0
+%endif
+
 # Build gnome-keyring git-credential helper on Fedora and RHEL >= 7
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %global gnome_keyring 1
@@ -51,6 +58,7 @@ Group:          Development/Tools
 URL:            http://git-scm.com/
 Source0:        http://git-core.googlecode.com/files/%{name}-%{version}.tar.gz
 Source2:        git-init.el
+Source3:        git.xinetd.in
 Source4:        git.conf.httpd
 Source5:        git-gui.desktop
 Source6:        gitweb.conf.in
@@ -85,8 +93,10 @@ BuildRequires:  libgnome-keyring-devel
 BuildRequires:  pcre-devel
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
+%if %{use_systemd}
 # For macros
 BuildRequires:  systemd
+%endif
 
 Requires:       less
 Requires:       openssh-clients
@@ -95,10 +105,6 @@ Requires:       perl(Term::ReadKey)
 Requires:       perl-Git = %{version}-%{release}
 Requires:       rsync
 Requires:       zlib >= 1.2
-
-Requires(post): systemd
-Requires(preun): systemd
-Requires(postun): systemd
 
 Provides:       git-core = %{version}-%{release}
 Obsoletes:      git-core <= 1.5.4.3
@@ -142,7 +148,15 @@ This is a dummy package which brings in all subpackages.
 %package daemon
 Summary:        Git protocol dæmon
 Group:          Development/Tools
-Requires:       git = %{version}-%{release}, xinetd
+Requires:       git = %{version}-%{release}
+%if %{use_systemd}
+Requires:	systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+%else
+Requires:       xinetd
+%endif
 %description daemon
 The git dæmon for supporting git:// access to git repositories
 
@@ -416,8 +430,22 @@ rm -rf %{buildroot}%{_mandir}
 %endif
 
 mkdir -p %{buildroot}%{_var}/lib/git
+%if %{use_systemd}
 mkdir -p %{buildroot}%{_unitdir}
 cp -a %{SOURCE12} %{SOURCE13} %{buildroot}%{_unitdir}
+%else
+mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
+# On EL <= 5, xinetd does not enable IPv6 by default
+enable_ipv6="        # xinetd does not enable IPv6 by default
+        flags           = IPv6"
+perl -p \
+    -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
+    -e "s|\@BASE_PATH\@|%{_var}/lib/git|g;" \
+%if %{enable_ipv6}
+    -e "s|^}|$enable_ipv6\n$&|;" \
+%endif
+    %{SOURCE3} > %{buildroot}%{_sysconfdir}/xinetd.d/git
+%endif
 
 # Setup bash completion
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
@@ -463,15 +491,16 @@ find contrib -type f | xargs chmod -x
 %clean
 rm -rf %{buildroot}
 
+%if %{use_systemd}
 %post daemon
 %systemd_post git.service
 
 %preun daemon
 %systemd_preun git.service
 
-%postun
+%postun daemon
 %systemd_postun_with_restart git.service
-
+%endif
 
 %files -f bin-man-doc-files
 %defattr(-,root,root)
@@ -553,8 +582,12 @@ rm -rf %{buildroot}
 %files daemon
 %defattr(-,root,root)
 %doc Documentation/*daemon*.txt
+%if %{use_systemd}
 %{_unitdir}/git.socket
 %{_unitdir}/git.service
+%else
+%config(noreplace)%{_sysconfdir}/xinetd.d/git
+%endif
 %{gitcoredir}/git-daemon
 %{_var}/lib/git
 %{!?_without_docs: %{_mandir}/man1/*daemon*.1*}
@@ -572,6 +605,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed May  1 2013 Tom Callaway <spot@fedoraproject.org> - 1.8.2.1-3
+- conditionalize systemd vs xinetd
+- cleanup systemd handling (it was not quite right in -2)
+
 * Tue Apr 30 2013 Tom Callaway <spot@fedoraproject.org> - 1.8.2.1-2
 - switch to systemd instead of xinetd (bz 737183)
 
