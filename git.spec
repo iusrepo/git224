@@ -51,7 +51,7 @@
 
 Name:           git
 Version:        1.8.2.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -471,7 +471,7 @@ install -pm 644 contrib/completion/git-prompt.sh \
 
 # install git-gui .desktop file
 desktop-file-install \
-%if %{with desktop_vendor_tag}
+%if %{with_desktop_vendor_tag}
   --vendor fedora \
 %endif
   --dir=%{buildroot}%{_datadir}/applications %{SOURCE5}
@@ -605,6 +605,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon May 13 2013 Jon Ciesla <limburgher@gmail.com> - 1.8.2.1-4
+- Fix typo introduced in 1.8.2-3, fixed desktop tag.
+
 * Wed May  1 2013 Tom Callaway <spot@fedoraproject.org> - 1.8.2.1-3
 - conditionalize systemd vs xinetd
 - cleanup systemd handling (it was not quite right in -2)
