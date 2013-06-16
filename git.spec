@@ -145,6 +145,18 @@ and full access to internals.
 
 This is a dummy package which brings in all subpackages.
 
+%package bzr
+Summary:        Git tools for working with bzr repositories
+Group:          Development/Tools
+%if %{noarch_sub}
+BuildArch:      noarch
+%endif
+Requires:       git = %{version}-%{release}
+Requires:       bzr
+
+%description bzr
+%{summary}.
+
 %package daemon
 Summary:        Git protocol dæmon
 Group:          Development/Tools
@@ -170,6 +182,18 @@ Requires:       git = %{version}-%{release}
 
 %description -n gitweb
 Simple web interface to track changes in git repositories
+
+%package hg
+Summary:        Git tools for working with mercurial repositories
+Group:          Development/Tools
+%if %{noarch_sub}
+BuildArch:      noarch
+%endif
+Requires:       git = %{version}-%{release}
+Requires:       mercurial
+
+%description hg
+%{summary}.
 
 %package p4
 Summary:        Git tools for working with Perforce depots
@@ -416,7 +440,7 @@ rm -rf %{buildroot}%{python_sitelib} %{buildroot}%{gitcoredir}/git-remote-testgi
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 
-exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|gitk|p4|svn"
+exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|gitk|p4|svn"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
@@ -447,6 +471,9 @@ perl -p \
 %endif
     %{SOURCE3} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 %endif
+
+# Install bzr and hg remote helpers from contrib
+install -pm 755 contrib/remote-helpers/git-remote-{bzr,hg} %{buildroot}%{gitcoredir}
 
 # Setup bash completion
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
@@ -510,6 +537,14 @@ rm -rf %{buildroot}
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
 %{_sysconfdir}/bash_completion.d
+
+%files bzr
+%defattr(-,root,root)
+%{gitcoredir}/git-remote-bzr
+
+%files hg
+%defattr(-,root,root)
+%{gitcoredir}/git-remote-hg
 
 %files p4
 %defattr(-,root,root)
@@ -608,6 +643,7 @@ rm -rf %{buildroot}
 %changelog
 * Fri Jun 14 2013 Todd Zullinger <tmz@pobox.com> - 1.8.3.1-1
 - Update to 1.8.3.1
+- Add bzr and hg subpackages, thanks to Michael Scherer (#974800)
 
 * Mon May 13 2013 Jon Ciesla <limburgher@gmail.com> - 1.8.2.1-4
 - Fix typo introduced in 1.8.2-3, fixed desktop tag.
