@@ -50,8 +50,8 @@
 %endif
 
 Name:           git
-Version:        1.8.2.1
-Release:        4%{?dist}
+Version:        1.8.3.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -605,6 +605,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jun 14 2013 Todd Zullinger <tmz@pobox.com> - 1.8.3.1-1
+- Update to 1.8.3.1
+
 * Mon May 13 2013 Jon Ciesla <limburgher@gmail.com> - 1.8.2.1-4
 - Fix typo introduced in 1.8.2-3, fixed desktop tag.
 
