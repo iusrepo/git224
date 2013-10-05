@@ -190,7 +190,7 @@ Group:          Development/Tools
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
-Requires:       mercurial
+Requires:       mercurial >= 1.8
 
 %description hg
 %{summary}.
@@ -641,6 +641,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sat Oct 05 2013 Todd Zullinger <tmz@pobox.com>
+- Add mercurial version requirement to git-hg, for those rebuilding on EL
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.8.3.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
