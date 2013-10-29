@@ -1,4 +1,4 @@
-From 86c3e2b5188579bff1ff981910462ad5e563044b Mon Sep 17 00:00:00 2001
+From a906459c2a89938e911f1650e6ce22315a1ec84d Mon Sep 17 00:00:00 2001
 From: Todd Zullinger <tmz@pobox.com>
 Date: Fri, 4 Jan 2013 11:54:21 -0500
 Subject: [PATCH] git-subtree: Use gitexecdir instead of libexecdir
@@ -10,11 +10,11 @@ consistently.
 
 Remove the unused gitdir variable as well.
 ---
- contrib/subtree/Makefile |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
+ contrib/subtree/Makefile | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/contrib/subtree/Makefile b/contrib/subtree/Makefile
-index 36ae3e4..f87b945 100644
+index 435b2de..dc8da19 100644
 --- a/contrib/subtree/Makefile
 +++ b/contrib/subtree/Makefile
 @@ -2,9 +2,8 @@
@@ -28,15 +28,17 @@ index 36ae3e4..f87b945 100644
  man1dir ?= $(mandir)/man1
  
  gitver ?= $(word 3,$(shell git --version))
-@@ -30,7 +29,7 @@ $(GIT_SUBTREE): $(GIT_SUBTREE_SH)
+@@ -30,8 +29,8 @@ $(GIT_SUBTREE): $(GIT_SUBTREE_SH)
  doc: $(GIT_SUBTREE_DOC)
  
  install: $(GIT_SUBTREE)
+-	$(INSTALL) -d -m 755 $(DESTDIR)$(libexecdir)
 -	$(INSTALL) -m 755 $(GIT_SUBTREE) $(DESTDIR)$(libexecdir)
++	$(INSTALL) -d -m 755 $(DESTDIR)$(gitexecdir)
 +	$(INSTALL) -m 755 $(GIT_SUBTREE) $(DESTDIR)$(gitexecdir)
  
  install-doc: install-man
  
 -- 
-1.7.6
+1.8.3.1
 

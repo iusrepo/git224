@@ -50,8 +50,8 @@
 %endif
 
 Name:           git
-Version:        1.8.3.1
-Release:        3%{?dist}
+Version:        1.8.4.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -66,7 +66,7 @@ Source10:       http://git-core.googlecode.com/files/%{name}-manpages-%{version}
 Source11:       http://git-core.googlecode.com/files/%{name}-htmldocs-%{version}.tar.gz
 Source12:       git.service
 Source13:       git.socket
-Patch0:         git-1.5-gitweb-home-link.patch
+Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
@@ -641,6 +641,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Oct 29 2013 Todd Zullinger <tmz@pobox.com> - 1.8.4.2-1
+- Update to 1.8.4.2 (#1024497)
+
 * Sat Oct 05 2013 Todd Zullinger <tmz@pobox.com>
 - Add mercurial version requirement to git-hg, for those rebuilding on EL
 
