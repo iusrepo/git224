@@ -51,7 +51,7 @@
 
 Name:           git
 Version:        1.8.4.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -341,7 +341,7 @@ DESTDIR = %{buildroot}
 INSTALL = install -p
 GITWEB_PROJECTROOT = %{_var}/lib/git
 GNU_ROFF = 1
-htmldir = %{_docdir}/%{name}-%{version}
+htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 gitwebdir = %{_var}/www/git
 EOF
@@ -641,6 +641,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Nov 13 2013 Ville Skyttä <ville.skytta@iki.fi> - 1.8.4.2-2
+- Fix htmldir when doc dir is unversioned (#993779).
+
 * Tue Oct 29 2013 Todd Zullinger <tmz@pobox.com> - 1.8.4.2-1
 - Update to 1.8.4.2 (#1024497)
 
