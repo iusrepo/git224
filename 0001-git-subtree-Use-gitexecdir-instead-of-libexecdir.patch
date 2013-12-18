@@ -29,7 +29,7 @@ index 435b2de..dc8da19 100644
  
  gitver ?= $(word 3,$(shell git --version))
 @@ -30,8 +29,8 @@ $(GIT_SUBTREE): $(GIT_SUBTREE_SH)
- doc: $(GIT_SUBTREE_DOC)
+ doc: $(GIT_SUBTREE_DOC) $(GIT_SUBTREE_HTML)
  
  install: $(GIT_SUBTREE)
 -	$(INSTALL) -d -m 755 $(DESTDIR)$(libexecdir)

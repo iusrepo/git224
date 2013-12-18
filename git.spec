@@ -50,8 +50,8 @@
 %endif
 
 Name:           git
-Version:        1.8.4.2
-Release:        2%{?dist}
+Version:        1.8.5.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -317,7 +317,7 @@ Requires:       emacs-git = %{version}-%{release}
 %patch3 -p1
 %endif
 %patch5 -p1
-%patch6 -p1
+#%patch6 -p1
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
@@ -641,6 +641,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Dec 18 2013 Ondrej Oprala <ooprala@redhat.com> - 1.8.5.2-1
+* Update to 1.8.5.2
+
 * Wed Nov 13 2013 Ville Skyttä <ville.skytta@iki.fi> - 1.8.4.2-2
 - Fix htmldir when doc dir is unversioned (#993779).
 
