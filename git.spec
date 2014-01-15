@@ -29,24 +29,15 @@
 %global filter_yaml_any     0
 %endif
 
-# Use systemd instead of xinetd on Fedora 19+ and RHEL 7+
+# Settings for F-19+ and EL-7+
 %if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
-%global use_systemd 1
+%global desktop_vendor_tag  0
+%global gnome_keyring       1
+%global use_systemd         1
 %else
-%global use_systemd 0
-%endif
-
-# Build gnome-keyring git-credential helper on Fedora and RHEL >= 7
-%if 0%{?fedora} || 0%{?rhel} >= 7
-%global gnome_keyring 1
-%else
-%global gnome_keyring 0
-%endif
-
-%if (0%{?fedora} && 0%{?fedora} < 19) || (0%{?rhel} && 0%{?rhel} < 7)
-%global with_desktop_vendor_tag 1
-%else
-%global with_desktop_vendor_tag 0
+%global desktop_vendor_tag  1
+%global gnome_keyring       0
+%global use_systemd         0
 %endif
 
 Name:           git
@@ -491,7 +482,7 @@ install -pm 644 contrib/completion/git-prompt.sh \
 
 # install git-gui .desktop file
 desktop-file-install \
-%if %{with_desktop_vendor_tag}
+%if %{desktop_vendor_tag}
   --vendor fedora \
 %endif
   --dir=%{buildroot}%{_datadir}/applications %{SOURCE5}
@@ -635,6 +626,7 @@ rm -rf %{buildroot}
 %changelog
 * Thu Jan 16 2014 Todd Zullinger <tmz@pobox.com> - 1.8.5.3-2
 - Drop unused python DESTIR patch
+- Consolidate settings for Fedora 19+ and EL 7+
 
 * Thu Jan 16 2014 Ondrej Oprala <ooprala@redhat.com> - 1.8.5.3-1
 * Update to 1.8.5.3
