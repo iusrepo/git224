@@ -33,10 +33,12 @@
 %if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
 %global desktop_vendor_tag  0
 %global gnome_keyring       1
+%global use_new_rpm_filters 1
 %global use_systemd         1
 %else
 %global desktop_vendor_tag  1
 %global gnome_keyring       0
+%global use_new_rpm_filters 0
 %global use_systemd         0
 %endif
 
@@ -345,6 +347,10 @@ echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
 # Filter bogus perl requires
 # packed-refs comes from a comment in contrib/hooks/update-paranoid
 # YAML::Any is optional and not available on el5
+%if %{use_new_rpm_filters}
+%{?perl_default_filter}
+%global __requires_exclude perl\\(VMS|perl\\(Win32|perl\\(packed-refs\\)
+%else
 cat << \EOF > %{name}-req
 #!/bin/sh
 %{__perl_requires} $* |\
@@ -357,6 +363,7 @@ EOF
 
 %global __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
 chmod +x %{__perl_requires}
+%endif
 
 %build
 make %{?_smp_mflags} all
@@ -627,6 +634,7 @@ rm -rf %{buildroot}
 * Thu Jan 16 2014 Todd Zullinger <tmz@pobox.com> - 1.8.5.3-2
 - Drop unused python DESTIR patch
 - Consolidate settings for Fedora 19+ and EL 7+
+- Use new rpm filtering on Fedora 19+ and EL 7+
 
 * Thu Jan 16 2014 Ondrej Oprala <ooprala@redhat.com> - 1.8.5.3-1
 * Update to 1.8.5.3
