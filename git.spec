@@ -51,7 +51,7 @@
 
 Name:           git
 Version:        1.8.5.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -72,9 +72,6 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
 Patch5:         0001-git-subtree-Use-gitexecdir-instead-of-libexecdir.patch
-# This fixes the build when python is enabled.  Needs discussion upstream to
-# find a proper solution.
-Patch6:         0001-Drop-DESTDIR-from-python-instlibdir.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -317,7 +314,6 @@ Requires:       emacs-git = %{version}-%{release}
 %patch3 -p1
 %endif
 %patch5 -p1
-#%patch6 -p1
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
@@ -432,10 +428,6 @@ sed "s|@PROJECTROOT@|%{_var}/lib/git|g" \
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
-
-# Remove remote-helper python libraries and scripts, these are not ready for
-# use yet
-rm -rf %{buildroot}%{python_sitelib} %{buildroot}%{gitcoredir}/git-remote-testgit
 
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
@@ -641,6 +633,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jan 16 2014 Todd Zullinger <tmz@pobox.com> - 1.8.5.3-2
+- Drop unused python DESTIR patch
+
 * Thu Jan 16 2014 Ondrej Oprala <ooprala@redhat.com> - 1.8.5.3-1
 * Update to 1.8.5.3
 
