@@ -50,7 +50,7 @@
 %endif
 
 Name:           git
-Version:        1.8.5.2
+Version:        1.8.5.3
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -641,6 +641,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jan 16 2014 Ondrej Oprala <ooprala@redhat.com> - 1.8.5.3-1
+* Update to 1.8.5.3
+
 * Wed Dec 18 2013 Ondrej Oprala <ooprala@redhat.com> - 1.8.5.2-1
 * Update to 1.8.5.2
 
