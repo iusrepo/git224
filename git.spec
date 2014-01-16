@@ -635,6 +635,7 @@ rm -rf %{buildroot}
 - Drop unused python DESTIR patch
 - Consolidate settings for Fedora 19+ and EL 7+
 - Use new rpm filtering on Fedora 19+ and EL 7+
+- Rebuild with file-5.14-14 (#1026760)
 
 * Thu Jan 16 2014 Ondrej Oprala <ooprala@redhat.com> - 1.8.5.3-1
 * Update to 1.8.5.3
