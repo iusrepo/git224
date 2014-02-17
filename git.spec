@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        1.8.5.3
-Release:        2%{?dist}
+Version:        1.9.0
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -631,6 +631,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Feb 17 2014 Ondrej Oprala <ooprala@redhat.com> - 1.9.0-1
+- Update to 1.9.0
+
 * Thu Jan 16 2014 Todd Zullinger <tmz@pobox.com> - 1.8.5.3-2
 - Drop unused python DESTIR patch
 - Consolidate settings for Fedora 19+ and EL 7+
