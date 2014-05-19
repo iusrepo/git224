@@ -43,7 +43,7 @@
 %endif
 
 Name:           git
-Version:        1.9.0
+Version:        1.9.3
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -631,6 +631,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon May 19 2014 Jon Ciesla <limburgher@gmail.com> - 1.9.3-1
+- Update to 1.9.3
+
 * Mon Feb 17 2014 Ondrej Oprala <ooprala@redhat.com> - 1.9.0-1
 - Update to 1.9.0
 
