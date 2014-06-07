@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -631,6 +631,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Thu May 29 2014 Ondrej Oprala <ooprala@redhat.com> - 2.0.0-1
 - Update to 2.0.0
 
