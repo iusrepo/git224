@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.0.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -97,7 +97,9 @@ Requires:       rsync
 Requires:       zlib >= 1.2
 
 Provides:       git-core = %{version}-%{release}
+%if 0%{?rhel} && 0%{?rhel} <= 5
 Obsoletes:      git-core <= 1.5.4.3
+%endif
 
 # Obsolete git-arch
 Obsoletes:      git-arch < %{version}-%{release}
@@ -631,6 +633,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Jun 10 2014 Ondrej Oprala <ooprala@redhat.com> - 2.0.0-3
+- Conditionalize an ancient obsolete
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.0.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
