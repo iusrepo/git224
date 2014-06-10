@@ -44,19 +44,19 @@
 
 Name:           git
 Version:        2.0.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            http://git-scm.com/
-Source0:        http://git-core.googlecode.com/files/%{name}-%{version}.tar.gz
+Source0:        http://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
 Source2:        git-init.el
 Source3:        git.xinetd.in
 Source4:        git.conf.httpd
 Source5:        git-gui.desktop
 Source6:        gitweb.conf.in
-Source10:       http://git-core.googlecode.com/files/%{name}-manpages-%{version}.tar.gz
-Source11:       http://git-core.googlecode.com/files/%{name}-htmldocs-%{version}.tar.gz
+Source10:       http://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.gz
+Source11:       http://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.gz
 Source12:       git.service
 Source13:       git.socket
 Patch0:         git-1.8-gitweb-home-link.patch
@@ -633,6 +633,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Jun 10 2014 Ondrej Oprala <ooprala@redhat.com> - 2.0.0-4
+- Change source URLs, as googlecode doesn't have up-to-date tarballs
+
 * Tue Jun 10 2014 Ondrej Oprala <ooprala@redhat.com> - 2.0.0-3
 - Conditionalize an ancient obsolete
 
