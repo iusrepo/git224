@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.0.0
-Release:        4%{?dist}
+Version:        2.0.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -633,6 +633,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jul 11 2014 Ondrej Oprala <ooprala@redhat.com - 2.0.1-1
+- 2.0.1
+
 * Tue Jun 10 2014 Ondrej Oprala <ooprala@redhat.com> - 2.0.0-4
 - Change source URLs, as googlecode doesn't have up-to-date tarballs
 
