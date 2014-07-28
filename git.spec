@@ -43,7 +43,7 @@
 %endif
 
 Name:           git
-Version:        2.0.1
+Version:        2.0.3
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -633,6 +633,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jul 28 2014 Ondrej Oprala <ooprala@redhat.com - 2.0.3-1
+- 2.0.3
+
 * Fri Jul 11 2014 Ondrej Oprala <ooprala@redhat.com - 2.0.1-1
 - 2.0.1
 
