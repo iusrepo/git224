@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.1.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -90,7 +90,9 @@ BuildRequires:  systemd
 Requires:       less
 Requires:       openssh-clients
 Requires:       perl(Error)
+%if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
+%endif
 Requires:       perl-Git = %{version}-%{release}
 Requires:       rsync
 Requires:       zlib >= 1.2
@@ -126,6 +128,9 @@ Requires:       git-svn = %{version}-%{release}
 Requires:       git-p4 = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
+%if ! %{defined perl_bootstrap}
+Requires:       perl(Term::ReadKey)
+%endif
 Requires:       emacs-git = %{version}-%{release}
 Obsoletes:      git <= 1.5.4.3
 
@@ -200,7 +205,10 @@ Requires:       git = %{version}-%{release}
 %package svn
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
-Requires:       git = %{version}-%{release}, subversion, perl(Term::ReadKey)
+Requires:       git = %{version}-%{release}, subversion
+%if ! %{defined perl_bootstrap}
+Requires:       perl(Term::ReadKey)
+%endif
 %description svn
 Git tools for importing Subversion repositories.
 
@@ -349,7 +357,10 @@ echo DOCBOOK_SUPPRESS_SP = 1 >> config.mak
 # YAML::Any is optional and not available on el5
 %if %{use_new_rpm_filters}
 %{?perl_default_filter}
-%global __requires_exclude perl\\(VMS|perl\\(Win32|perl\\(packed-refs\\)
+%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}perl\\(packed-refs\\)
+%if ! %{defined perl_bootstrap}
+%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}perl\\(Term::ReadKey\\)
+%endif
 %else
 cat << \EOF > %{name}-req
 #!/bin/sh
@@ -631,6 +642,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Aug 26 2014 Jitka Plesnikova <jplesnik@redhat.com> - 2.1.0-2
+- Disable requires perl(Term::ReadKey) when perl bootstraping
+
 * Mon Aug 18 2014 Ondrej Oprala <ooprala@redhat.com - 2.1.0-1
 - 2.1.0
 
