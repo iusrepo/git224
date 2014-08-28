@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.1.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -642,6 +642,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Aug 28 2014 Jitka Plesnikova <jplesnik@redhat.com> - 2.1.0-3
+- Perl 5.20 rebuild
+
 * Tue Aug 26 2014 Jitka Plesnikova <jplesnik@redhat.com> - 2.1.0-2
 - Disable requires perl(Term::ReadKey) when perl bootstraping
 
