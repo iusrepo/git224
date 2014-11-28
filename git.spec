@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.2.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -140,18 +140,6 @@ unusually rich command set that provides both high-level operations
 and full access to internals.
 
 This is a dummy package which brings in all subpackages.
-
-%package bzr
-Summary:        Git tools for working with bzr repositories
-Group:          Development/Tools
-%if %{noarch_sub}
-BuildArch:      noarch
-%endif
-Requires:       git = %{version}-%{release}
-Requires:       bzr
-
-%description bzr
-%{summary}.
 
 %package daemon
 Summary:        Git protocol dæmon
@@ -473,8 +461,9 @@ perl -p \
     %{SOURCE3} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 %endif
 
-# Install bzr and hg remote helpers from contrib
-install -pm 755 contrib/remote-helpers/git-remote-{bzr,hg} %{buildroot}%{gitcoredir}
+# Install hg remote helpers from contrib
+# git-bzr removed - it's replaced by git-remote-bzr from separated package
+install -pm 755 contrib/remote-helpers/git-remote-hg %{buildroot}%{gitcoredir}
 
 # Setup bash completion
 mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
@@ -538,10 +527,6 @@ rm -rf %{buildroot}
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
 %{_sysconfdir}/bash_completion.d
-
-%files bzr
-%defattr(-,root,root)
-%{gitcoredir}/git-remote-bzr
 
 %files hg
 %defattr(-,root,root)
@@ -642,6 +627,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Nov 28 2014 Petr Stodulka <pstodulk@redhat.com> - 2.2.0-2
+- removed git-bzr which is replaced by git-remote-bzr from
+  separated package
+
 * Fri Nov 28 2014 Petr Stodulka <pstodulk@redhat.com> - 2.2.0-1
 - 2.2.0
 
