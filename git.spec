@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.1.0
-Release:        5%{?dist}
+Version:        2.2.0
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -642,6 +642,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Nov 28 2014 Petr Stodulka <pstodulk@redhat.com> - 2.2.0-1
+- 2.2.0
+
 * Fri Oct 24 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 2.1.0-5
 - Rename the git.service into git@.service fixing
   https://bugzilla.redhat.com/980574
