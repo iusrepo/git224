@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.2.0
-Release:        3%{?dist}
+Version:        2.2.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -608,6 +608,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jan 08 2015 Jon Ciesla <limburgher@gmail.com> - 2.2.1-1
+- Update to 2.2.1.
+
 * Thu Dec 11 2014 Petr Stodulka <pstodulk@redhat.com> - 2.2.0-3
 - removed subpackage git-hg which is replaced by git-remote-hg from
   separated package
