@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -82,6 +82,7 @@ BuildRequires:  libgnome-keyring-devel
 BuildRequires:  pcre-devel
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
+BuildRequires:  pkgconfig(bash-completion)
 %if %{use_systemd}
 # For macros
 BuildRequires:  systemd
@@ -450,8 +451,9 @@ perl -p \
 %endif
 
 # Setup bash completion
-mkdir -p %{buildroot}%{_sysconfdir}/bash_completion.d
-install -pm 644 contrib/completion/git-completion.bash %{buildroot}%{_sysconfdir}/bash_completion.d/git
+bashcompdir=$(pkg-config --variable=completionsdir bash-completion)
+install -Dpm 644 contrib/completion/git-completion.bash %{buildroot}$bashcompdir/git
+ln -s git %{buildroot}$bashcompdir/gitk
 
 # Install tcsh completion
 mkdir -p %{buildroot}%{_datadir}/git-core/contrib/completion
@@ -510,7 +512,7 @@ rm -rf %{buildroot}
 %doc README COPYING Documentation/*.txt Documentation/RelNotes contrib/
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
-%{_sysconfdir}/bash_completion.d
+%{_datadir}/bash-completion/
 
 
 %files p4
@@ -608,6 +610,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Jan 27 2015 Ville Skyttä <ville.skytta@iki.fi> - 2.2.2-2
+- Install bash completion to %%{_datadir}/bash-completion/completions
+
 * Fri Jan 23 2015 Jon Ciesla <limburgher@gmail.com> - 2.2.2-1
 - Update to 2.2.2.
 
