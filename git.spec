@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.2.2
-Release:        2%{?dist}
+Version:        2.3.0
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -610,6 +610,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Feb 06 2015 Jon Ciesla <limburgher@gmail.com> - 2.3.0-1
+- Update to 2.3.0.
+
 * Tue Jan 27 2015 Ville Skyttä <ville.skytta@iki.fi> - 2.2.2-2
 - Install bash completion to %%{_datadir}/bash-completion/completions
 
