@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.3.0
-Release:        2%{?dist}
+Version:        2.3.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -610,6 +610,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Feb 27 2015 Jon Ciesla <limburgher@gmail.com> - 2.3.1-1
+- Update to 2.3.1.
+
 * Sat Feb 21 2015 Till Maas <opensource@till.name> - 2.3.0-2
 - Rebuilt for Fedora 23 Change
   https://fedoraproject.org/wiki/Changes/Harden_all_packages_with_position-independent_code
