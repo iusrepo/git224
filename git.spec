@@ -43,7 +43,7 @@
 %endif
 
 Name:           git
-Version:        2.3.3
+Version:        2.3.4
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -610,6 +610,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Mar 24 2015 Petr Stodulka <pstodulk@redhat.com> - 2.3.4-1
+- Update to 2.3.4.
+
 * Mon Mar 16 2015 Jon Ciesla <limburgher@gmail.com> - 2.3.3-1
 - Update to 2.3.3.
 
