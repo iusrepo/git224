@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.4.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -88,20 +88,17 @@ BuildRequires:  pkgconfig(bash-completion)
 BuildRequires:  systemd
 %endif
 
-Requires:       less
-Requires:       openssh-clients
+Requires:       git-core = %{version}-%{release}
 Requires:       perl(Error)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif
 Requires:       perl-Git = %{version}-%{release}
-Requires:       rsync
-Requires:       zlib >= 1.2
 
-Provides:       git-core = %{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} <= 5
-Obsoletes:      git-core <= 1.5.4.3
-%endif
+#Provides:       git-core = %{version}-%{release}
+#%if 0%{?rhel} && 0%{?rhel} <= 5
+#Obsoletes:      git-core <= 1.5.4.3
+#%endif
 
 # Obsolete git-arch
 Obsoletes:      git-arch < %{version}-%{release}
@@ -111,9 +108,9 @@ Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
 and full access to internals.
 
-The git rpm installs the core tools with minimal dependencies.  To
-install all git packages, including tools for integrating with other
-SCMs, install the git-all meta-package.
+The git rpm installs common set of tools which are usually using with
+small amount of dependencies. To install all git packages, including
+tools for integrating with other SCMs, install the git-all meta-package.
 
 %package all
 Summary:        Meta-package to pull in all git tools
@@ -141,6 +138,23 @@ unusually rich command set that provides both high-level operations
 and full access to internals.
 
 This is a dummy package which brings in all subpackages.
+
+%package core
+Summary:        Core package of git with minimal funcionality
+Group:          Development/Tools
+Requires:       less
+Requires:       openssh-clients
+Requires:       rsync
+Requires:       zlib >= 1.2
+%description core
+Git is a fast, scalable, distributed revision control system with an
+unusually rich command set that provides both high-level operations
+and full access to internals.
+
+The git-core rpm installs really the core tools with minimal
+dependencies. Install git package for common set of tools.
+To install all git packages, including tools for integrating with
+other SCMs, install the git-all meta-package.
 
 %package daemon
 Summary:        Git protocol dæmon
@@ -491,6 +505,11 @@ rm -f {Documentation/technical,contrib/emacs,contrib/credential/gnome-keyring}/.
 chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
+# Split core files
+not_core_re="git-(add--interactive|am|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
+grep -vE "$not_core_re" bin-man-doc-files > bin-man-doc-files-core
+sed -ir "/$not_core_re/ d" bin-man-doc-files
+
 
 %clean
 rm -rf %{buildroot}
@@ -507,6 +526,13 @@ rm -rf %{buildroot}
 %endif
 
 %files -f bin-man-doc-files
+%defattr(-,root,root)
+%{_datadir}/git-core/*
+%doc Documentation/*.txt
+%{!?_without_docs: %doc Documentation/*.html}
+#%{!?_without_docs: %doc Documentation/howto/* Documentation/technical/*}
+
+%files core -f bin-man-doc-files-core
 %defattr(-,root,root)
 %{_datadir}/git-core/
 %doc README COPYING Documentation/*.txt Documentation/RelNotes contrib/
@@ -610,6 +636,13 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+% Wed Jun 03 2015 Petr Stodulka <pstodulk@redhat.com> - 2.4.2-2
+- split create subpackage git-core (perl-less) from git package
+- git package requires git-core and it has same tool set as
+  before
+- relevant docs are part of git-core package too
+- removed proved and obsoletes in git for git-core
+
 * Tue May 26 2015 Jon Ciesla <limburgher@gmail.com> - 2.4.2-1
 - Update to 2.4.2.
 
