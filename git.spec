@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.4.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -636,6 +636,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jun 05 2015 Jitka Plesnikova <jplesnik@redhat.com>
+- Perl 5.22 rebuild
+
 % Wed Jun 03 2015 Petr Stodulka <pstodulk@redhat.com> - 2.4.2-2
 - split create subpackage git-core (perl-less) from git package
 - git package requires git-core and it has same tool set as
