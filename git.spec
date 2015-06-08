@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -89,6 +89,7 @@ BuildRequires:  systemd
 %endif
 
 Requires:       git-core = %{version}-%{release}
+Requires:       git-core-doc = %{version}-%{release}
 Requires:       perl(Error)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
@@ -155,6 +156,14 @@ The git-core rpm installs really the core tools with minimal
 dependencies. Install git package for common set of tools.
 To install all git packages, including tools for integrating with
 other SCMs, install the git-all meta-package.
+
+%package core-doc
+Summary:        Documentation files for git-core
+Group:          Development/Tools
+Requires:       git-core = %{version}-%{release}
+
+%description core-doc
+Documentation files for git-core package including man pages.
 
 %package daemon
 Summary:        Git protocol dæmon
@@ -419,6 +428,9 @@ make -C contrib/subtree install
 %if ! %{use_prebuilt_docs}
 make -C contrib/subtree install-doc
 %endif
+# it's ugly hack, but this file don't need to be copied to this directory
+# it's already part of git-core-doc and it's alone here
+rm -f %{buildroot}%{_pkgdocdir}/git-subtree.html
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -507,8 +519,9 @@ find contrib -type f | xargs chmod -x
 
 # Split core files
 not_core_re="git-(add--interactive|am|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
-grep -vE "$not_core_re" bin-man-doc-files > bin-man-doc-files-core
-sed -ir "/$not_core_re/ d" bin-man-doc-files
+grep -vE "$not_core_re|\/man\/" bin-man-doc-files > bin-files-core
+grep -vE "$not_core_re" bin-man-doc-files | grep "\/man\/" > man-doc-files-core
+grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 
 
 %clean
@@ -525,20 +538,25 @@ rm -rf %{buildroot}
 %systemd_postun_with_restart git@.service
 %endif
 
-%files -f bin-man-doc-files
+%files -f bin-man-doc-git-files
 %defattr(-,root,root)
-%{_datadir}/git-core/*
-%doc Documentation/*.txt
-%{!?_without_docs: %doc Documentation/*.html}
+#%{_datadir}/git-core/*
+#%doc Documentation/*.txt
+#%{!?_without_docs: %doc Documentation/*.html}
 #%{!?_without_docs: %doc Documentation/howto/* Documentation/technical/*}
 
-%files core -f bin-man-doc-files-core
+%files core -f bin-files-core
 %defattr(-,root,root)
+%doc COPYING
 %{_datadir}/git-core/
-%doc README COPYING Documentation/*.txt Documentation/RelNotes contrib/
+%{_datadir}/bash-completion/
+
+%files core-doc -f man-doc-files-core
+%defattr(-,root,root)
+%doc README Documentation/*.txt Documentation/RelNotes contrib/
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
-%{_datadir}/bash-completion/
+%{!?_without_docs: %doc contrib/subtree/git-subtree.html Documentation/docbook-xsl.css}
 
 
 %files p4
@@ -636,13 +654,17 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jun 08 2015 Petr Stodulka <pstodulk@redhat.com> - 2.4.3-2
+- separate documentation files from git-core package to git-core-doc
+  including core man pages
+
 * Sat Jun 06 2015 Jon Ciesla <limburgher@gmail.com> - 2.4.3-1
 - Update to 2.4.3.
 
 * Fri Jun 05 2015 Jitka Plesnikova <jplesnik@redhat.com>
 - Perl 5.22 rebuild
 
-% Wed Jun 03 2015 Petr Stodulka <pstodulk@redhat.com> - 2.4.2-2
+* Wed Jun 03 2015 Petr Stodulka <pstodulk@redhat.com> - 2.4.2-2
 - split create subpackage git-core (perl-less) from git package
 - git package requires git-core and it has same tool set as
   before
