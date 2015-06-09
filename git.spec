@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.4.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -654,6 +654,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Jun 09 2015 Jitka Plesnikova <jplesnik@redhat.com> - 2.4.3-3
+- Perl 5.22 rebuild
+
 * Mon Jun 08 2015 Petr Stodulka <pstodulk@redhat.com> - 2.4.3-2
 - separate documentation files from git-core package to git-core-doc
   including core man pages
