@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.4.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -654,6 +654,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Jun 10 2015 Jitka Plesnikova <jplesnik@redhat.com> - 2.4.3-4
+- Perl 5.22 re-rebuild of bootstrapped packages
+
 * Tue Jun 09 2015 Jitka Plesnikova <jplesnik@redhat.com> - 2.4.3-3
 - Perl 5.22 rebuild
 
