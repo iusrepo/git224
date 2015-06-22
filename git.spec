@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.4.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -64,6 +64,10 @@ Patch0:         git-1.8-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1204193
+# http://thread.gmane.org/gmane.comp.version-control.git/266145
+# could be removed when update/branch of Michael will be merged in upstream
+Patch4:         git-infinite-loop.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -206,6 +210,7 @@ Requires:       git = %{version}-%{release}
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
 Requires:       git = %{version}-%{release}, subversion
+Requires:       perl-Digest-MD5
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif
@@ -315,6 +320,7 @@ Requires:       emacs-git = %{version}-%{release}
 %if %{emacs_old}
 %patch3 -p1
 %endif
+%patch4 -p1
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
@@ -654,6 +660,12 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jun 22 2015  Petr Stodulka <pstodulk@gmail.com> - 2.4.4-2
+- git-svn - added requires for perl-Digest-MD5 (#1218176)
+- solve troubles with infinite loop due to broken symlink (probably
+  shouldn't be problem here, but it's reproducible manually)
+  (#1204193)
+
 * Tue Jun 16 2015 Jon Ciesla <limburgher@gmail.com> - 2.4.4-1
 - Update to 2.4.4.
 
