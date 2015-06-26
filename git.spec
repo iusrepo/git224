@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.4.4
-Release:        2%{?dist}
+Version:        2.4.5
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -660,6 +660,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jun 26 2015 Jon Ciesla <limburgher@gmail.com> - 2.4.5-1
+- Update to 2.4.5.
+
 * Mon Jun 22 2015  Petr Stodulka <pstodulk@gmail.com> - 2.4.4-2
 - git-svn - added requires for perl-Digest-MD5 (#1218176)
 - solve troubles with infinite loop due to broken symlink (probably
