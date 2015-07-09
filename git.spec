@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.4.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -100,6 +100,15 @@ Requires:       perl(Term::ReadKey)
 %endif
 Requires:       perl-Git = %{version}-%{release}
 
+%if 0%{?fedora} >= 16 || 0%{?rhel} >= 7
+Requires:       emacs-filesystem >= %{_emacs_version}
+# These can be removed in Fedora 26
+Obsoletes:      emacs-git <= 2.4.5
+Obsoletes:      emacs-git-el <= 2.4.5
+Provides:       emacs-git <= 2.4.5
+Provides:       emacs-git-el <= 2.4.5
+%endif
+
 #Provides:       git-core = %{version}-%{release}
 #%if 0%{?rhel} && 0%{?rhel} <= 5
 #Obsoletes:      git-core <= 1.5.4.3
@@ -134,7 +143,9 @@ Requires:       perl-Git = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif
+%if 0%{?rhel} && 0%{?rhel} <= 6
 Requires:       emacs-git = %{version}-%{release}
+%endif
 Obsoletes:      git <= 1.5.4.3
 
 %description all
@@ -288,6 +299,7 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %description -n perl-Git-SVN
 Perl interface to Git.
 
+%if 0%{?rhel} && 0%{?rhel} <= 6
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
@@ -312,6 +324,7 @@ Requires:       emacs-git = %{version}-%{release}
 
 %description -n emacs-git-el
 %{summary}.
+%endif
 
 %prep
 %setup -q
@@ -546,6 +559,10 @@ rm -rf %{buildroot}
 
 %files -f bin-man-doc-git-files
 %defattr(-,root,root)
+%if 0%{?fedora} >= 16 || 0%{?rhel} >= 7
+%{elispdir}
+%{_emacs_sitestartdir}/git-init.el
+%endif
 #%{_datadir}/git-core/*
 #%doc Documentation/*.txt
 #%{!?_without_docs: %doc Documentation/*.html}
@@ -623,6 +640,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{!?_without_docs: %{_mandir}/man3/*Git*SVN*.3pm*}
 
+%if 0%{?rhel} && 0%{?rhel} <= 6
 %files -n emacs-git
 %defattr(-,root,root)
 %doc contrib/emacs/README
@@ -633,6 +651,7 @@ rm -rf %{buildroot}
 %files -n emacs-git-el
 %defattr(-,root,root)
 %{elispdir}/*.el
+%endif
 
 %files daemon
 %defattr(-,root,root)
@@ -660,6 +679,11 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Jul  7 2015 Jonathan Underwood <jonathan.underwood@gmail.com> - 2.4.5-2
+- Comply with modern Emacs packaging guidelines on recent Fedora
+  No longer split out emacs-git and emacs-git-el sub-packages on recent Fedora
+  Require emacs-filesystem on recent Fedora (#1234552)
+
 * Fri Jun 26 2015 Jon Ciesla <limburgher@gmail.com> - 2.4.5-1
 - Update to 2.4.5.
 
