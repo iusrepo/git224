@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.4.5
-Release:        2%{?dist}
+Version:        2.4.6
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -679,6 +679,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jul 16 2015 Petr Stodulka <pstodulk@redhat.com> - 2.4.6-1
+- New upstream release 2.4.6
+
 * Tue Jul  7 2015 Jonathan Underwood <jonathan.underwood@gmail.com> - 2.4.5-2
 - Comply with modern Emacs packaging guidelines on recent Fedora
   No longer split out emacs-git and emacs-git-el sub-packages on recent Fedora
