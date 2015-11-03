@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.6.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -449,7 +449,7 @@ make -C contrib/subtree install-doc
 %endif
 # it's ugly hack, but this file don't need to be copied to this directory
 # it's already part of git-core-doc and it's alone here
-rm -f %{buildroot}%{_pkgdocdir}/git-subtree.html
+rm -f %{buildroot}%{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}/git-subtree.html
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -679,6 +679,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Nov 03 2015 Petr Stodulka <pstodulk@gmail.com> - 2.6.2-2
+- provides failback for the macro _pkgdocdir (#1277550)
+
 * Sat Oct 17 2015 Jon Ciesla <limburgher@gmail.com> - 2.6.2-1
 - Update to 2.6.2.
 
