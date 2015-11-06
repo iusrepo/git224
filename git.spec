@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.6.2
-Release:        2%{?dist}
+Version:        2.6.3
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -679,6 +679,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Nov 06 2015 Jon Ciesla <limburgher@gmail.com> - 2.6.3-1
+- Update to 2.6.3.
+
 * Tue Nov 03 2015 Petr Stodulka <pstodulk@gmail.com> - 2.6.2-2
 - provides failback for the macro _pkgdocdir (#1277550)
 
