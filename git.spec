@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.6.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -185,9 +185,9 @@ Summary:        Git protocol dæmon
 Group:          Development/Tools
 Requires:       git = %{version}-%{release}
 %if %{use_systemd}
-Requires:	systemd
+Requires:       systemd
 Requires(post): systemd
-Requires(preun): systemd
+Requires(preun):  systemd
 Requires(postun): systemd
 %else
 Requires:       xinetd
@@ -236,7 +236,7 @@ BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, cvs
 Requires:       cvsps
-Requires:	perl-DBD-SQLite
+Requires:       perl-DBD-SQLite
 %description cvs
 Git tools for importing CVS repositories.
 
@@ -563,6 +563,8 @@ rm -rf %{buildroot}
 %{elispdir}
 %{_emacs_sitestartdir}/git-init.el
 %endif
+%{_datadir}/git-core/contrib/hooks/update-paranoid
+%{_datadir}/git-core/contrib/hooks/setgitperms.perl
 #%{_datadir}/git-core/*
 #%doc Documentation/*.txt
 #%{!?_without_docs: %doc Documentation/*.html}
@@ -571,8 +573,11 @@ rm -rf %{buildroot}
 %files core -f bin-files-core
 %defattr(-,root,root)
 %doc COPYING
-%{_datadir}/git-core/
+# exlude is best way here because of troubels with symlinks inside git-core/
+%exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
+%exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
 %{_datadir}/bash-completion/
+%{_datadir}/git-core/
 
 %files core-doc -f man-doc-files-core
 %defattr(-,root,root)
@@ -679,6 +684,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Nov 27 2015 Petr Stodulka <pstodulk@redhat.com> - 2.6.3-2
+- found 2 perl scripts in git-core, move them to git package
+  (#1284688)
+
 * Fri Nov 06 2015 Jon Ciesla <limburgher@gmail.com> - 2.6.3-1
 - Update to 2.6.3.
 
