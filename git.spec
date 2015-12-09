@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.6.3
-Release:        2%{?dist}
+Version:        2.6.4
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -684,6 +684,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Dec 09 2015 Jon Ciesla <limburgher@gmail.com> - 2.6.4-1
+- Update to 2.6.4.
+
 * Fri Nov 27 2015 Petr Stodulka <pstodulk@redhat.com> - 2.6.3-2
 - found 2 perl scripts in git-core, move them to git package
   (#1284688)
