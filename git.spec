@@ -43,7 +43,7 @@
 %endif
 
 Name:           git
-Version:        2.6.4
+Version:        2.7.0
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -67,7 +67,7 @@ Patch3:         git-1.7-el5-emacs-support.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1204193
 # http://thread.gmane.org/gmane.comp.version-control.git/266145
 # could be removed when update/branch of Michael will be merged in upstream
-Patch4:         git-infinite-loop.patch
+#Patch4:         git-infinite-loop.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -333,7 +333,7 @@ Requires:       emacs-git = %{version}-%{release}
 %if %{emacs_old}
 %patch3 -p1
 %endif
-%patch4 -p1
+#%patch4 -p1
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
@@ -684,6 +684,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Jan 05 2016 Jon Ciesla <limburgher@gmail.com> - 2.7.0-1
+- Update to 2.7.0.
+- Infinite loop patch appears obsolete.
+
 * Wed Dec 09 2015 Jon Ciesla <limburgher@gmail.com> - 2.6.4-1
 - Update to 2.6.4.
 
