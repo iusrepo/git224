@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.7.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -684,6 +684,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.7.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Tue Jan 05 2016 Jon Ciesla <limburgher@gmail.com> - 2.7.0-1
 - Update to 2.7.0.
 - Infinite loop patch appears obsolete.
