@@ -44,7 +44,7 @@
 
 Name:           git
 Version:        2.7.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -532,7 +532,9 @@ cat %{name}.lang >> bin-man-doc-files
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
 find %{buildroot} -name git-mergetool--lib | xargs chmod a-x
-rm -f {Documentation/technical,contrib/emacs,contrib/credential/gnome-keyring}/.gitignore
+# rm -f {Documentation/technical,contrib/emacs,contrib/credential/gnome-keyring}/.gitignore
+# These files probably are not needed
+find . -name .gitignore -delete
 chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
@@ -684,6 +686,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Feb 04 2016 Petr Stodulka <pstodulk@redhat.com> - 2.7.0-3
+- remove all '.gitignore' files from packages
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.7.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
