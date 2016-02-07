@@ -43,8 +43,8 @@
 %endif
 
 Name:           git
-Version:        2.7.0
-Release:        3%{?dist}
+Version:        2.7.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -686,6 +686,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sat Feb 06 2016 Jon Ciesla <limburgher@gmail.com> - 2.7.1-1
+- Update to 2.7.1.
+
 * Thu Feb 04 2016 Petr Stodulka <pstodulk@redhat.com> - 2.7.0-3
 - remove all '.gitignore' files from packages
 
