@@ -31,11 +31,17 @@
 
 # Settings for F-19+ and EL-7+
 %if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
+%global bashcomp_pkgconfig  1
+%global bashcompdir         %(pkg-config --variable=completionsdir bash-completion 2>/dev/null)
+%global bashcomproot        %(dirname %{bashcompdir} 2>/dev/null)
 %global desktop_vendor_tag  0
 %global gnome_keyring       1
 %global use_new_rpm_filters 1
 %global use_systemd         1
 %else
+%global bashcomp_pkgconfig  0
+%global bashcompdir         %{_sysconfdir}/bash_completion.d
+%global bashcomproot        %{bashcompdir}
 %global desktop_vendor_tag  1
 %global gnome_keyring       0
 %global use_new_rpm_filters 0
@@ -86,7 +92,9 @@ BuildRequires:  libgnome-keyring-devel
 BuildRequires:  pcre-devel
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
+%if %{bashcomp_pkgconfig}
 BuildRequires:  pkgconfig(bash-completion)
+%endif
 %if %{use_systemd}
 # For macros
 BuildRequires:  systemd
@@ -496,9 +504,8 @@ perl -p \
 %endif
 
 # Setup bash completion
-bashcompdir=$(pkg-config --variable=completionsdir bash-completion)
-install -Dpm 644 contrib/completion/git-completion.bash %{buildroot}$bashcompdir/git
-ln -s git %{buildroot}$bashcompdir/gitk
+install -Dpm 644 contrib/completion/git-completion.bash %{buildroot}%{bashcompdir}/git
+ln -s git %{buildroot}%{bashcompdir}/gitk
 
 # Install tcsh completion
 mkdir -p %{buildroot}%{_datadir}/git-core/contrib/completion
@@ -578,7 +585,7 @@ rm -rf %{buildroot}
 # exlude is best way here because of troubels with symlinks inside git-core/
 %exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
-%{_datadir}/bash-completion/
+%{bashcomproot}
 %{_datadir}/git-core/
 
 %files core-doc -f man-doc-files-core
@@ -686,6 +693,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Mar 22 2016 Todd Zullinger <tmz@pobox.com>
+- Conditionalize bash-completion pkg-config usage for EL <= 6 (bug 1320210)
+
 * Fri Mar 18 2016 David Woodhouse <dwmw2@infradead.org> - 2.7.4-1
 - Update to 2.7.4 (for CVE-2016-2315, CVE-2016-2324)
   Resolves: #1318220
