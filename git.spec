@@ -50,19 +50,19 @@
 
 Name:           git
 Version:        2.7.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
-URL:            http://git-scm.com/
-Source0:        http://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.gz
+URL:            https://git-scm.com/
+Source0:        https://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
 Source2:        git-init.el
 Source3:        git.xinetd.in
 Source4:        git.conf.httpd
 Source5:        git-gui.desktop
 Source6:        gitweb.conf.in
-Source10:       http://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.gz
-Source11:       http://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.gz
+Source10:       https://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
+Source11:       https://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.xz
 Source12:       git@.service
 Source13:       git.socket
 Patch0:         git-1.8-gitweb-home-link.patch
@@ -345,8 +345,8 @@ Requires:       emacs-git = %{version}-%{release}
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
-tar xf %{SOURCE10} -C prebuilt_docs/man
-tar xf %{SOURCE11} -C prebuilt_docs/html
+xz -dc %{SOURCE10} | tar xf - -C prebuilt_docs/man
+xz -dc %{SOURCE11} | tar xf - -C prebuilt_docs/html
 # Remove non-html files
 find prebuilt_docs/html -type f ! -name '*.html' | xargs rm
 find prebuilt_docs/html -type d | xargs rmdir --ignore-fail-on-non-empty
@@ -697,6 +697,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sun Mar 27 2016 Todd Zullinger <tmz@pobox.com> - 2.7.4-2
+- Use https for URL / Source and smaller tar.xz files
+
 * Tue Mar 22 2016 Konrad Scherer <Konrad.Scherer@windriver.com>
 - Workaround missing git subtree documentation in prebuilt docs (bug 1320210)
 - Only add git-cvsserver binary once if the core dir matches the bin dir as it

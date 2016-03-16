@@ -1,6 +1,6 @@
 *~
 *.rpm
-*.tar.gz
+*.tar.xz
 /.build*.log
 /git-*/
 /results_git/
