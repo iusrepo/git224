@@ -43,7 +43,7 @@
 %endif
 
 Name:           git
-Version:        2.7.3
+Version:        2.7.4
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -686,6 +686,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Mar 18 2016 David Woodhouse <dwmw2@infradead.org> - 2.7.4-1
+- Update to 2.7.4 (for CVE-2016-2315, CVE-2016-2324)
+  Resolves: #1318220
+
 * Mon Mar 14 2016 Jon Ciesla <limburgher@gmail.com> - 2.7.3-1
 - Update to 2.7.3.
 
