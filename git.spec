@@ -593,7 +593,9 @@ rm -rf %{buildroot}
 %doc README Documentation/*.txt Documentation/RelNotes contrib/
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
-%{!?_without_docs: %doc contrib/subtree/git-subtree.html Documentation/docbook-xsl.css}
+%if ! %{use_prebuilt_docs}
+%{!?_without_docs: %doc contrib/subtree/git-subtree.html}
+%endif
 
 
 %files p4
@@ -614,7 +616,9 @@ rm -rf %{buildroot}
 %files cvs
 %defattr(-,root,root)
 %doc Documentation/*git-cvs*.txt
+%if "%{gitcoredir}" != "%{_bindir}"
 %{_bindir}/git-cvsserver
+%endif
 %{gitcoredir}/*cvs*
 %{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
 %{!?_without_docs: %doc Documentation/*git-cvs*.html }
@@ -693,6 +697,11 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Mar 22 2016 Konrad Scherer <Konrad.Scherer@windriver.com>
+- Workaround missing git subtree documentation in prebuilt docs (bug 1320210)
+- Only add git-cvsserver binary once if the core dir matches the bin dir as it
+  does on el5 (bug 1320210)
+
 * Tue Mar 22 2016 Todd Zullinger <tmz@pobox.com>
 - Conditionalize bash-completion pkg-config usage for EL <= 6 (bug 1320210)
 
