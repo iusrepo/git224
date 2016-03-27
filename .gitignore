@@ -3,3 +3,4 @@
 *.tar.gz
 /.build*.log
 /git-*/
+/results_git/
