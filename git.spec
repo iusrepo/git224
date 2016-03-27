@@ -56,24 +56,36 @@ License:        GPLv2
 Group:          Development/Tools
 URL:            https://git-scm.com/
 Source0:        https://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
-Source2:        git-init.el
-Source3:        git.xinetd.in
-Source4:        git.conf.httpd
-Source5:        git-gui.desktop
-Source6:        gitweb.conf.in
-Source10:       https://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
-Source11:       https://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.xz
-Source12:       git@.service
-Source13:       git.socket
+Source1:        https://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.xz
+Source2:        https://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.xz
+Source3:        https://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.sign
+Source4:        https://www.kernel.org/pub/software/scm/git/%{name}-htmldocs-%{version}.tar.sign
+Source5:        https://www.kernel.org/pub/software/scm/git/%{name}-manpages-%{version}.tar.sign
+
+# Junio C Hamano's key is used to sign git releases, it can be found in the
+# junio-gpg-pub tag within git.
+#
+# (Note that the tagged blob in git contains a version of the key with an
+# expired signing subkey.  The subkey expiration has been extended on the
+# public keyservers, but the blob in git has not been updated.)
+#
+# https://git.kernel.org/cgit/git/git.git/tag/?h=junio-gpg-pub
+# https://git.kernel.org/cgit/git/git.git/blob/?h=junio-gpg-pub&id=7214aea37915ee2c4f6369eb9dea520aec7d855b
+Source9:        gpgkey-junio.asc
+
+# Local sources begin at 10 to allow for additional future upstream sources
+Source10:       git-init.el
+Source11:       git.xinetd.in
+Source12:       git.conf.httpd
+Source13:       git-gui.desktop
+Source14:       gitweb.conf.in
+Source15:       git@.service
+Source16:       git.socket
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/600411
 Patch3:         git-1.7-el5-emacs-support.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=1204193
-# http://thread.gmane.org/gmane.comp.version-control.git/266145
-# could be removed when update/branch of Michael will be merged in upstream
-#Patch4:         git-infinite-loop.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -85,6 +97,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  emacs
 BuildRequires:  expat-devel
 BuildRequires:  gettext
+BuildRequires:  gnupg2
 BuildRequires:  %{libcurl_devel}
 %if %{gnome_keyring}
 BuildRequires:  libgnome-keyring-devel
@@ -335,18 +348,32 @@ Requires:       emacs-git = %{version}-%{release}
 %endif
 
 %prep
+# Verify GPG signatures
+gpghome="$(mktemp -qd)" # Ensure we don't use any existing gpg keyrings
+key="%{SOURCE9}"
+# Ignore noisy output from GnuPG 2.0, used on EL <= 7
+# https://bugs.gnupg.org/gnupg/issue1555
+gpg2 --dearmor --quiet --batch --yes $key >/dev/null
+for src in %{SOURCE0} %{SOURCE1} %{SOURCE2}; do
+    # Upstream signs the uncompressed tarballs
+    tar=${src/%.xz/}
+    xz -dc $src > $tar
+    gpgv2 --homedir "$gpghome" --quiet --keyring $key.gpg $tar.sign $tar
+    rm -f $tar
+done
+rm -rf "$gpghome" # Cleanup tmp gpg home dir
+
 %setup -q
 %patch0 -p1
 %patch1 -p1
 %if %{emacs_old}
 %patch3 -p1
 %endif
-#%patch4 -p1
 
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
-xz -dc %{SOURCE10} | tar xf - -C prebuilt_docs/man
-xz -dc %{SOURCE11} | tar xf - -C prebuilt_docs/html
+xz -dc %{SOURCE1} | tar xf - -C prebuilt_docs/html
+xz -dc %{SOURCE2} | tar xf - -C prebuilt_docs/man
 # Remove non-html files
 find prebuilt_docs/html -type f ! -name '*.html' | xargs rm
 find prebuilt_docs/html -type d | xargs rmdir --ignore-fail-on-non-empty
@@ -441,7 +468,7 @@ for elc in %{buildroot}%{elispdir}/*.elc ; do
     install -pm 644 contrib/emacs/$(basename $elc .elc).el \
     %{buildroot}%{elispdir}
 done
-install -Dpm 644 %{SOURCE2} \
+install -Dpm 644 %{SOURCE10} \
     %{buildroot}%{_emacs_sitestartdir}/git-init.el
 
 %if %{gnome_keyring}
@@ -460,9 +487,9 @@ make -C contrib/subtree install-doc
 rm -f %{buildroot}%{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}/git-subtree.html
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
-install -pm 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
+install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
 sed "s|@PROJECTROOT@|%{_var}/lib/git|g" \
-    %{SOURCE6} > %{buildroot}%{_sysconfdir}/gitweb.conf
+    %{SOURCE14} > %{buildroot}%{_sysconfdir}/gitweb.conf
 
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
@@ -488,7 +515,7 @@ rm -rf %{buildroot}%{_mandir}
 mkdir -p %{buildroot}%{_var}/lib/git
 %if %{use_systemd}
 mkdir -p %{buildroot}%{_unitdir}
-cp -a %{SOURCE12} %{SOURCE13} %{buildroot}%{_unitdir}
+cp -a %{SOURCE15} %{SOURCE16} %{buildroot}%{_unitdir}
 %else
 mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
 # On EL <= 5, xinetd does not enable IPv6 by default
@@ -500,7 +527,7 @@ perl -p \
 %if %{enable_ipv6}
     -e "s|^}|$enable_ipv6\n$&|;" \
 %endif
-    %{SOURCE3} > %{buildroot}%{_sysconfdir}/xinetd.d/git
+    %{SOURCE11} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 %endif
 
 # Setup bash completion
@@ -530,7 +557,7 @@ desktop-file-install \
 %if %{desktop_vendor_tag}
   --vendor fedora \
 %endif
-  --dir=%{buildroot}%{_datadir}/applications %{SOURCE5}
+  --dir=%{buildroot}%{_datadir}/applications %{SOURCE13}
 
 # find translations
 %find_lang %{name} %{name}.lang
@@ -699,6 +726,7 @@ rm -rf %{buildroot}
 %changelog
 * Sun Mar 27 2016 Todd Zullinger <tmz@pobox.com> - 2.7.4-2
 - Use https for URL / Source and smaller tar.xz files
+- Check upstream GPG signatures in %%prep
 
 * Tue Mar 22 2016 Konrad Scherer <Konrad.Scherer@windriver.com>
 - Workaround missing git subtree documentation in prebuilt docs (bug 1320210)
