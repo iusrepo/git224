@@ -49,8 +49,8 @@
 %endif
 
 Name:           git
-Version:        2.7.4
-Release:        2%{?dist}
+Version:        2.8.0
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -608,7 +608,8 @@ rm -rf %{buildroot}
 
 %files core -f bin-files-core
 %defattr(-,root,root)
-%doc COPYING
+%{!?_licensedir:%global license %doc}
+%license COPYING
 # exlude is best way here because of troubels with symlinks inside git-core/
 %exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
@@ -617,7 +618,7 @@ rm -rf %{buildroot}
 
 %files core-doc -f man-doc-files-core
 %defattr(-,root,root)
-%doc README Documentation/*.txt Documentation/RelNotes contrib/
+%doc README.md Documentation/*.txt Documentation/RelNotes contrib/
 %{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
 %{!?_without_docs: %doc Documentation/howto Documentation/technical}
 %if ! %{use_prebuilt_docs}
@@ -724,6 +725,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Mar 29 2016 Neal Gompa <ngompa13{%}gmail{*}com> - 2.8.0-1
+- Update to 2.8.0
+- Use license macro for COPYING
+
 * Sun Mar 27 2016 Todd Zullinger <tmz@pobox.com> - 2.7.4-2
 - Use https for URL / Source and smaller tar.xz files
 - Check upstream GPG signatures in %%prep
