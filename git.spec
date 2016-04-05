@@ -49,7 +49,7 @@
 %endif
 
 Name:           git
-Version:        2.8.0
+Version:        2.8.1
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -725,6 +725,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Apr 05 2016 Jon Ciesla <limburgher@gmail.com> - 2.8.1-1
+- Update to 2.8.1.
+
 * Tue Mar 29 2016 Neal Gompa <ngompa13{%}gmail{*}com> - 2.8.0-1
 - Update to 2.8.0
 - Use license macro for COPYING
