@@ -50,7 +50,7 @@
 
 Name:           git
 Version:        2.8.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -103,6 +103,7 @@ BuildRequires:  %{libcurl_devel}
 BuildRequires:  libgnome-keyring-devel
 %endif
 BuildRequires:  pcre-devel
+BuildRequires:  perl(Test)
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
 %if %{bashcomp_pkgconfig}
@@ -441,6 +442,7 @@ make -C contrib/emacs
 %if %{gnome_keyring}
 make -C contrib/credential/gnome-keyring/
 %endif
+make -C contrib/credential/netrc/
 
 make -C contrib/subtree/
 
@@ -477,6 +479,8 @@ install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
 # Remove built binary files, otherwise they will be installed in doc
 make -C contrib/credential/gnome-keyring/ clean
 %endif
+install -pm 755 contrib/credential/netrc/git-credential-netrc \
+    %{buildroot}%{gitcoredir}
 
 make -C contrib/subtree install
 %if ! %{use_prebuilt_docs}
@@ -573,7 +577,7 @@ chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
 # Split core files
-not_core_re="git-(add--interactive|am|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
+not_core_re="git-(add--interactive|am|credential-netrc|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
 grep -vE "$not_core_re|\/man\/" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "\/man\/" > man-doc-files-core
 grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
@@ -725,6 +729,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Apr 06 2016 Paolo Bonzini <pbonzini@redhat.com> - 2.8.1-2
+- Install git-credentials-netrc (#1303358)
+
 * Tue Apr 05 2016 Jon Ciesla <limburgher@gmail.com> - 2.8.1-1
 - Update to 2.8.1.
 
