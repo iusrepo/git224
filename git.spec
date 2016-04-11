@@ -50,7 +50,7 @@
 
 Name:           git
 Version:        2.8.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -385,6 +385,7 @@ find prebuilt_docs/html -type d | xargs rmdir --ignore-fail-on-non-empty
 cat << \EOF > config.mak
 V = 1
 CFLAGS = %{optflags}
+LDFLAGS = %{__global_ldflags}
 BLK_SHA1 = 1
 NEEDS_CRYPTO_WITH_SSL = 1
 USE_LIBPCRE = 1
@@ -729,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Apr 11 2016 Todd Zullinger <tmz@pobox.com> - - 2.8.1-3
+- Set LDFLAGS for hardened builds (#1289728)
+
 * Wed Apr 06 2016 Paolo Bonzini <pbonzini@redhat.com> - 2.8.1-2
 - Install git-credentials-netrc (#1303358)
 
