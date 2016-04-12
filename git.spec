@@ -730,7 +730,7 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
-* Mon Apr 11 2016 Todd Zullinger <tmz@pobox.com> - - 2.8.1-3
+* Mon Apr 11 2016 Todd Zullinger <tmz@pobox.com> - 2.8.1-3
 - Set LDFLAGS for hardened builds (#1289728)
 
 * Wed Apr 06 2016 Paolo Bonzini <pbonzini@redhat.com> - 2.8.1-2
