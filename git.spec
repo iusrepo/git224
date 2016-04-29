@@ -49,8 +49,8 @@
 %endif
 
 Name:           git
-Version:        2.8.1
-Release:        3%{?dist}
+Version:        2.8.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -730,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Apr 29 2016 Todd Zullinger <tmz@pobox.com> - 2.8.2-1
+- Update to 2.8.2
+
 * Mon Apr 11 2016 Todd Zullinger <tmz@pobox.com> - 2.8.1-3
 - Set LDFLAGS for hardened builds (#1289728)
 
