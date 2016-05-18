@@ -50,7 +50,7 @@
 
 Name:           git
 Version:        2.8.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -243,7 +243,7 @@ Requires:       git = %{version}-%{release}
 Summary:        Git tools for importing Subversion repositories
 Group:          Development/Tools
 Requires:       git = %{version}-%{release}, subversion
-Requires:       perl-Digest-MD5
+Requires:       perl(Digest::MD5)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif
@@ -258,7 +258,7 @@ BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}, cvs
 Requires:       cvsps
-Requires:       perl-DBD-SQLite
+Requires:       perl(DBD::SQLite)
 %description cvs
 Git tools for importing CVS repositories.
 
@@ -730,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed May 18 2016 Todd Zullinger <tmz@pobox.com> - 2.8.2-4
+- Use perl(MOD::NAME) format for perl-DBD-SQLite and perl-Digest-MD5 deps
+
 * Wed May 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 2.8.2-3
 - Perl 5.24 re-rebuild of bootstrapped packages
 
