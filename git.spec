@@ -48,6 +48,11 @@
 %global use_systemd         0
 %endif
 
+# Settings for EL <= 7
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
+%endif
+
 Name:           git
 Version:        2.8.2
 Release:        4%{?dist}
@@ -732,6 +737,7 @@ rm -rf %{buildroot}
 %changelog
 * Wed May 18 2016 Todd Zullinger <tmz@pobox.com> - 2.8.2-4
 - Use perl(MOD::NAME) format for perl-DBD-SQLite and perl-Digest-MD5 deps
+- Define __global_ldflags on EL < 7 (#1337137)
 
 * Wed May 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 2.8.2-3
 - Perl 5.24 re-rebuild of bootstrapped packages
