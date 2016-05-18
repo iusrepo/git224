@@ -50,7 +50,7 @@
 
 Name:           git
 Version:        2.8.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -730,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed May 18 2016 Jitka Plesnikova <jplesnik@redhat.com> - 2.8.2-3
+- Perl 5.24 re-rebuild of bootstrapped packages
+
 * Sun May 15 2016 Jitka Plesnikova <jplesnik@redhat.com> - 2.8.2-2
 - Perl 5.24 rebuild
 
