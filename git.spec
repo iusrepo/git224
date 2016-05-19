@@ -55,7 +55,7 @@
 
 Name:           git
 Version:        2.8.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -735,6 +735,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu May 19 2016 Jitka Plesnikova <jplesnik@redhat.com> - 2.8.2-5
+- Perl 5.24 re-rebuild of bootstrapped packages
+
 * Wed May 18 2016 Todd Zullinger <tmz@pobox.com> - 2.8.2-4
 - Use perl(MOD::NAME) format for perl-DBD-SQLite and perl-Digest-MD5 deps
 - Define __global_ldflags on EL < 7 (#1337137)
