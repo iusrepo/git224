@@ -54,8 +54,8 @@
 %endif
 
 Name:           git
-Version:        2.8.2
-Release:        5%{?dist}
+Version:        2.8.3
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -735,6 +735,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu May 19 2016 Todd Zullinger <tmz@pobox.com> - 2.8.3-1
+- Update to 2.8.3
+
 * Thu May 19 2016 Jitka Plesnikova <jplesnik@redhat.com> - 2.8.2-5
 - Perl 5.24 re-rebuild of bootstrapped packages
 
