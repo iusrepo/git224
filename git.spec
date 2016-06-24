@@ -108,6 +108,7 @@ BuildRequires:  %{libcurl_devel}
 BuildRequires:  libgnome-keyring-devel
 %endif
 BuildRequires:  pcre-devel
+BuildRequires:  perl-generators
 BuildRequires:  perl(Test)
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
