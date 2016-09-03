@@ -54,7 +54,7 @@
 %endif
 
 Name:           git
-Version:        2.9.3
+Version:        2.10.0
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -736,6 +736,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sat Sep 03 2016 Todd Zullinger <tmz@pobox.com> - 2.10.0-1
+- Update to 2.10.0
+
 * Mon Aug 15 2016 Jon Ciesla <limburgher@gmail.com> - 2.9.3-1
 - Update to 2.9.3.
 
