@@ -598,8 +598,8 @@ find contrib -type f | xargs chmod -x
 
 # Split core files
 not_core_re="git-(add--interactive|am|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
-grep -vE "$not_core_re|\/man\/" bin-man-doc-files > bin-files-core
-grep -vE "$not_core_re" bin-man-doc-files | grep "\/man\/" > man-doc-files-core
+grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
+grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
 grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 
 %check
@@ -756,6 +756,7 @@ rm -rf %{buildroot}
 - Move gnome-keyring credential helper from git-core to git
 - Enable libsecret credential helper
 - Run git test suite
+- Use %%{_mandir} in git/git-core file list filters
 
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.11.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
