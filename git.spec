@@ -55,7 +55,7 @@
 
 Name:           git
 Version:        2.11.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -188,7 +188,6 @@ Summary:        Core package of git with minimal funcionality
 Group:          Development/Tools
 Requires:       less
 Requires:       openssh-clients
-Requires:       rsync
 Requires:       zlib >= 1.2
 %description core
 Git is a fast, scalable, distributed revision control system with an
@@ -736,6 +735,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Feb 17 2017 Todd Zullinger <tmz@pobox.com> - 2.11.1-3
+- Remove unnecessary rsync requirement from git-core
+
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.11.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
