@@ -1,7 +1,7 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 
 # Settings for EL-5
-# - Leave git-* binaries in %{_bindir}
+# - Leave git-* binaries in %%{_bindir}
 # - Don't use noarch subpackages
 # - Use proper libcurl devel package
 # - Patch emacs and tweak docbook spaces
@@ -141,11 +141,6 @@ Obsoletes:      emacs-git-el <= 2.4.5
 Provides:       emacs-git = %{version}-%{release}
 Provides:       emacs-git-el = %{version}-%{release}
 %endif
-
-#Provides:       git-core = %{version}-%{release}
-#%if 0%{?rhel} && 0%{?rhel} <= 5
-#Obsoletes:      git-core <= 1.5.4.3
-#%endif
 
 # Obsolete git-arch
 Obsoletes:      git-arch < %{version}-%{release}
@@ -633,10 +628,6 @@ rm -rf %{buildroot}
 %endif
 %{_datadir}/git-core/contrib/hooks/update-paranoid
 %{_datadir}/git-core/contrib/hooks/setgitperms.perl
-#%{_datadir}/git-core/*
-#%doc Documentation/*.txt
-#%{!?_without_docs: %doc Documentation/*.html}
-#%{!?_without_docs: %doc Documentation/howto/* Documentation/technical/*}
 
 %files core -f bin-files-core
 %defattr(-,root,root)
@@ -765,6 +756,7 @@ rm -rf %{buildroot}
 - Use %%{_mandir} in git/git-core file list filters
 - Fix version of emacs-git and emacs-git-el provides
 - Clean up contrib/{credential,subtree} to avoid cruft in git-core-doc
+- Fix a number of macro-in-comment warnings from rpmlint
 
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.11.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
@@ -1195,7 +1187,7 @@ rm -rf %{buildroot}
 
 * Wed Feb 15 2012 Todd Zullinger <tmz@pobox.com> - 1.7.9.1-1
 - Update to 1.7.9.1
-- Fix EPEL builds (rpm doesn't accept mutiple -f options in %files)
+- Fix EPEL builds (rpm doesn't accept multiple -f options in %%files)
 
 * Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 1.7.9-2
 - Rebuild against PCRE 8.30
