@@ -583,7 +583,7 @@ chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
 # Split core files
-not_core_re="git-(add--interactive|am|credential-netrc|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
+not_core_re="git-(add--interactive|am|credential-(gnome-keyring|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
 grep -vE "$not_core_re|\/man\/" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "\/man\/" > man-doc-files-core
 grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
@@ -737,7 +737,7 @@ rm -rf %{buildroot}
 %changelog
 * Fri Feb 17 2017 Todd Zullinger <tmz@pobox.com> - 2.11.1-3
 - Remove unnecessary rsync requirement from git-core
-
+- Move gnome-keyring credential helper from git-core to git
 
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.11.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
