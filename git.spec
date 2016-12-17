@@ -189,7 +189,7 @@ and full access to internals.
 This is a dummy package which brings in all subpackages.
 
 %package core
-Summary:        Core package of git with minimal funcionality
+Summary:        Core package of git with minimal functionality
 Group:          Development/Tools
 Requires:       less
 Requires:       openssh-clients
