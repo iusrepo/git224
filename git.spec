@@ -519,6 +519,12 @@ find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 
+# Clean up contrib/credential to avoid cruft in the git-core-doc docdir
+rm -rf contrib/credential
+
+# Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
+rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,sh,txt,xml}},t}
+
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 
@@ -758,6 +764,7 @@ rm -rf %{buildroot}
 - Run git test suite
 - Use %%{_mandir} in git/git-core file list filters
 - Fix version of emacs-git and emacs-git-el provides
+- Clean up contrib/{credential,subtree} to avoid cruft in git-core-doc
 
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.11.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
