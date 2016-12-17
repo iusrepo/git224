@@ -36,6 +36,7 @@
 %global bashcomproot        %(dirname %{bashcompdir} 2>/dev/null)
 %global desktop_vendor_tag  0
 %global gnome_keyring       1
+%global libsecret           1
 %global use_new_rpm_filters 1
 %global use_systemd         1
 %else
@@ -44,6 +45,7 @@
 %global bashcomproot        %{bashcompdir}
 %global desktop_vendor_tag  1
 %global gnome_keyring       0
+%global libsecret           0
 %global use_new_rpm_filters 0
 %global use_systemd         0
 %endif
@@ -106,6 +108,9 @@ BuildRequires:  gnupg2
 BuildRequires:  %{libcurl_devel}
 %if %{gnome_keyring}
 BuildRequires:  libgnome-keyring-devel
+%endif
+%if %{libsecret}
+BuildRequires:  libsecret-devel
 %endif
 BuildRequires:  pcre-devel
 BuildRequires:  perl-generators
@@ -448,6 +453,9 @@ make -C contrib/emacs
 %if %{gnome_keyring}
 make -C contrib/credential/gnome-keyring/
 %endif
+%if %{libsecret}
+make -C contrib/credential/libsecret/
+%endif
 make -C contrib/credential/netrc/
 
 make -C contrib/subtree/
@@ -484,6 +492,12 @@ install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
     %{buildroot}%{gitcoredir}
 # Remove built binary files, otherwise they will be installed in doc
 make -C contrib/credential/gnome-keyring/ clean
+%endif
+%if %{libsecret}
+install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
+    %{buildroot}%{gitcoredir}
+# Remove built binary files, otherwise they will be installed in doc
+make -C contrib/credential/libsecret/ clean
 %endif
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitcoredir}
@@ -583,7 +597,7 @@ chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
 # Split core files
-not_core_re="git-(add--interactive|am|credential-(gnome-keyring|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
+not_core_re="git-(add--interactive|am|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
 grep -vE "$not_core_re|\/man\/" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "\/man\/" > man-doc-files-core
 grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
@@ -738,6 +752,7 @@ rm -rf %{buildroot}
 * Fri Feb 17 2017 Todd Zullinger <tmz@pobox.com> - 2.11.1-3
 - Remove unnecessary rsync requirement from git-core
 - Move gnome-keyring credential helper from git-core to git
+- Enable libsecret credential helper
 
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.11.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
