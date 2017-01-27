@@ -34,7 +34,6 @@
 %global bashcomp_pkgconfig  1
 %global bashcompdir         %(pkg-config --variable=completionsdir bash-completion 2>/dev/null)
 %global bashcomproot        %(dirname %{bashcompdir} 2>/dev/null)
-%global desktop_vendor_tag  0
 %global gnome_keyring       1
 %global libsecret           1
 %global use_new_rpm_filters 1
@@ -43,11 +42,17 @@
 %global bashcomp_pkgconfig  0
 %global bashcompdir         %{_sysconfdir}/bash_completion.d
 %global bashcomproot        %{bashcompdir}
-%global desktop_vendor_tag  1
 %global gnome_keyring       0
 %global libsecret           0
 %global use_new_rpm_filters 0
 %global use_systemd         0
+%endif
+
+# This one macro is for F19+ and EL-6+
+%if 0%{?fedora} >= 19 || 0%{?rhel} >= 6
+%global desktop_vendor_tag  0
+%else
+%global desktop_vendor_tag  1
 %endif
 
 # Settings for EL <= 7
