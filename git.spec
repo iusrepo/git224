@@ -113,7 +113,9 @@ BuildRequires:  libgnome-keyring-devel
 BuildRequires:  libsecret-devel
 %endif
 BuildRequires:  pcre-devel
+%if 0%{?fedora} && 0%{?fedora} >= 21
 BuildRequires:  perl-generators
+%endif
 BuildRequires:  perl(Test)
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
@@ -189,6 +191,7 @@ Group:          Development/Tools
 Requires:       less
 Requires:       openssh-clients
 Requires:       zlib >= 1.2
+Requires:       libcurl
 %description core
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -264,6 +267,7 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}, cvs
 Requires:       cvsps
 Requires:       perl(DBD::SQLite)
+Requires:       perl(Git)
 %description cvs
 Git tools for importing CVS repositories.
 
@@ -276,6 +280,7 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
 Requires:       perl(Net::SMTP::SSL)
+Requires:       perl(Git)
 %description email
 Git tools for sending email.
 
