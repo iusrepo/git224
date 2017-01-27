@@ -208,7 +208,7 @@ Requires:       git-core = %{version}-%{release}
 Documentation files for git-core package including man pages.
 
 %package daemon
-Summary:        Git protocol dæmon
+Summary:        Git protocol daemon
 Group:          Development/Tools
 Requires:       git = %{version}-%{release}
 %if %{use_systemd}
@@ -220,7 +220,7 @@ Requires(postun): systemd
 Requires:       xinetd
 %endif
 %description daemon
-The git dæmon for supporting git:// access to git repositories
+The git daemon for supporting git:// access to git repositories
 
 %package -n gitweb
 Summary:        Simple web interface to git repositories
