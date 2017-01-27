@@ -407,11 +407,11 @@ USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 DESTDIR = %{buildroot}
 INSTALL = install -p
-GITWEB_PROJECTROOT = %{_var}/lib/git
+GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
-gitwebdir = %{_var}/www/git
+gitwebdir = %{_localstatedir}/www/git
 EOF
 
 %if "%{gitcoredir}" == "%{_bindir}"
@@ -517,7 +517,7 @@ rm -f %{buildroot}%{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}/gi
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
-sed "s|@PROJECTROOT@|%{_var}/lib/git|g" \
+sed "s|@PROJECTROOT@|%{_localstatedir}/lib/git|g" \
     %{SOURCE14} > %{buildroot}%{_sysconfdir}/gitweb.conf
 
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
@@ -547,7 +547,7 @@ sed -i "/Git\/SVN/ d" perl-git-files
 rm -rf %{buildroot}%{_mandir}
 %endif
 
-mkdir -p %{buildroot}%{_var}/lib/git
+mkdir -p %{buildroot}%{_localstatedir}/lib/git
 %if %{use_systemd}
 mkdir -p %{buildroot}%{_unitdir}
 cp -a %{SOURCE15} %{SOURCE16} %{buildroot}%{_unitdir}
@@ -558,7 +558,7 @@ enable_ipv6="        # xinetd does not enable IPv6 by default
         flags           = IPv6"
 perl -p \
     -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
-    -e "s|\@BASE_PATH\@|%{_var}/lib/git|g;" \
+    -e "s|\@BASE_PATH\@|%{_localstatedir}/lib/git|g;" \
 %if %{enable_ipv6}
     -e "s|^}|$enable_ipv6\n$&|;" \
 %endif
@@ -742,7 +742,7 @@ rm -rf %{buildroot}
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
 %endif
 %{gitcoredir}/git-daemon
-%{_var}/lib/git
+%{_localstatedir}/lib/git
 %{!?_without_docs: %{_mandir}/man1/*daemon*.1*}
 %{!?_without_docs: %doc Documentation/*daemon*.html}
 
@@ -751,7 +751,7 @@ rm -rf %{buildroot}
 %doc gitweb/INSTALL gitweb/README
 %config(noreplace)%{_sysconfdir}/gitweb.conf
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
-%{_var}/www/git/
+%{_localstatedir}/www/git/
 
 
 %files all
