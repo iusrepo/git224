@@ -54,7 +54,7 @@
 %endif
 
 Name:           git
-Version:        2.11.0
+Version:        2.11.1
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -736,6 +736,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Feb 03 2017 Jon Ciesla <limburgher@gmail.com> - 2.11.1-1
+- Update to 2.11.1
+
 * Wed Nov 30 2016 Jon Ciesla <limburgher@gmail.com> - 2.11.0-1
 - Update to 2.11.0
 
