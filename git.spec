@@ -55,7 +55,7 @@
 
 Name:           git
 Version:        2.11.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -736,6 +736,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.11.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Fri Feb 03 2017 Jon Ciesla <limburgher@gmail.com> - 2.11.1-1
 - Update to 2.11.1
 
