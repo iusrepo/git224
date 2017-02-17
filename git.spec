@@ -784,7 +784,7 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
-* Mon Feb 17 2017 Petr Stodulka <pstodulk@redhat.com> - 2.11.1-3
+* Fri Feb 17 2017 Petr Stodulka <pstodulk@redhat.com> - 2.11.1-3
 - remove non-ASCII characters from description and title of packages
 - fix requiremets
 - fix spec to be compatible for other systems
