@@ -34,7 +34,6 @@
 %global bashcomp_pkgconfig  1
 %global bashcompdir         %(pkg-config --variable=completionsdir bash-completion 2>/dev/null)
 %global bashcomproot        %(dirname %{bashcompdir} 2>/dev/null)
-%global gnome_keyring       1
 %global libsecret           1
 %global use_new_rpm_filters 1
 %global use_systemd         1
@@ -42,10 +41,19 @@
 %global bashcomp_pkgconfig  0
 %global bashcompdir         %{_sysconfdir}/bash_completion.d
 %global bashcomproot        %{bashcompdir}
-%global gnome_keyring       0
 %global libsecret           0
 %global use_new_rpm_filters 0
 %global use_systemd         0
+%endif
+
+# gnome-keyring is deprecated, however someone would like
+# to use it on older fedora instead of libsecret. So that's
+# why this ugly solution
+# TODO: we should maybe update conditions according to supported systems
+%if 0%{?fedora} >= 19 && 0%{?fedora} < 26 || 0%{?rhel} == 7
+%global gnome_keyring       1
+%else
+%global gnome_keyring       0
 %endif
 
 # This one macro is for F19+ and EL-6+
@@ -111,9 +119,6 @@ BuildRequires:  expat-devel
 BuildRequires:  gettext
 BuildRequires:  gnupg2
 BuildRequires:  %{libcurl_devel}
-%if %{gnome_keyring}
-BuildRequires:  libgnome-keyring-devel
-%endif
 %if %{libsecret}
 BuildRequires:  libsecret-devel
 %endif
@@ -168,6 +173,9 @@ Group:          Development/Tools
 BuildArch:      noarch
 %endif
 Requires:       git = %{version}-%{release}
+%if %{gnome_keyring}
+Requires:       git-gnome-keyring = %{version}-%{release}
+%endif
 Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
@@ -362,6 +370,17 @@ Requires:       emacs-git = %{version}-%{release}
 %description -n emacs-git-el
 %{summary}.
 %endif
+
+%if %{gnome_keyring}
+%package gnome-keyring
+Summary:        Git module for working with gnome-keyring
+BuildRequires:  libgnome-keyring-devel
+Requires:       git = %{version}-%{release}
+Requires:       gnome-keyring
+%description gnome-keyring
+%{summary}.
+%endif
+
 
 %prep
 # Verify GPG signatures
@@ -611,7 +630,8 @@ find contrib -type f | xargs chmod -x
 not_core_re="git-(add--interactive|am|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
-grep -E "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
+grep -E  "$not_core_re" bin-man-doc-files \
+    | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
 
 %check
 make test
@@ -753,11 +773,23 @@ rm -rf %{buildroot}
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 %{_localstatedir}/www/git/
 
+%if %{gnome_keyring}
+%files gnome-keyring
+%defattr(-,root,root)
+%{gitcoredir}/git-credential-gnome-keyring
+%endif
+
 
 %files all
 # No files for you!
 
 %changelog
+* Mon Feb 17 2017 Petr Stodulka <pstodulk@redhat.com> - 2.11.1-3
+- remove non-ASCII characters from description and title of packages
+- fix requiremets
+- fix spec to be compatible for other systems
+- remove deprecated credential-gnome-keyring
+
 * Fri Feb 17 2017 Todd Zullinger <tmz@pobox.com> - 2.11.1-3
 - Remove unnecessary rsync requirement from git-core
 - Move gnome-keyring credential helper from git-core to git
