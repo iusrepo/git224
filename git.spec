@@ -69,8 +69,8 @@
 %endif
 
 Name:           git
-Version:        2.11.1
-Release:        3%{?dist}
+Version:        2.12.0
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -784,6 +784,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Feb 27 2017 Jon Ciesla <limburgher@gmail.com> - 2.12.0-1
+- Update to 2.12.0
+
 * Fri Feb 17 2017 Petr Stodulka <pstodulk@redhat.com> - 2.11.1-3
 - remove non-ASCII characters from description and title of packages
 - fix requiremets
