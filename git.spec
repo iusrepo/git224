@@ -70,7 +70,7 @@
 
 Name:           git
 Version:        2.13.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -420,7 +420,6 @@ cat << \EOF > config.mak
 V = 1
 CFLAGS = %{optflags}
 LDFLAGS = %{__global_ldflags}
-BLK_SHA1 = 1
 NEEDS_CRYPTO_WITH_SSL = 1
 USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
@@ -784,6 +783,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed May 17 2017 Todd Zullinger <tmz@pobox.com> - 2.13.0-2
+- Use default, collision-detecting SHA1 implementation
+
 * Tue May 09 2017 Todd Zullinger <tmz@pobox.com> - 2.13.0-1
 - Update to 2.13.0 (resolves CVE-2017-8386)
 
