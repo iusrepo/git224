@@ -70,7 +70,7 @@
 
 Name:           git
 Version:        2.13.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -783,6 +783,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sun Jun 04 2017 Jitka Plesnikova <jplesnik@redhat.com> - 2.13.0-3
+- Perl 5.26 rebuild
+
 * Wed May 17 2017 Todd Zullinger <tmz@pobox.com> - 2.13.0-2
 - Use default, collision-detecting SHA1 implementation
 
