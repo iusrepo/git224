@@ -69,8 +69,8 @@
 %endif
 
 Name:           git
-Version:        2.13.0
-Release:        3%{?dist}
+Version:        2.13.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -783,6 +783,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jun 05 2017 Todd Zullinger <tmz@pobox.com> - 2.13.1-1
+- Update to 2.13.1
+
 * Sun Jun 04 2017 Jitka Plesnikova <jplesnik@redhat.com> - 2.13.0-3
 - Perl 5.26 rebuild
 
