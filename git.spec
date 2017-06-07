@@ -70,7 +70,7 @@
 
 Name:           git
 Version:        2.13.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -783,6 +783,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Jun 07 2017 Jitka Plesnikova <jplesnik@redhat.com> - 2.13.1-2
+- Perl 5.26 re-rebuild of bootstrapped packages
+
 * Mon Jun 05 2017 Todd Zullinger <tmz@pobox.com> - 2.13.1-1
 - Update to 2.13.1
 
