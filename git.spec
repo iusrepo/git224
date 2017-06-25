@@ -633,6 +633,10 @@ grep -E  "$not_core_re" bin-man-doc-files \
     | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
 
 %check
+%ifarch s390x
+# Skip grep tests which fail intermittently on s390x
+export GIT_SKIP_TESTS="t7810"
+%endif
 make test
 
 %clean
@@ -785,6 +789,7 @@ rm -rf %{buildroot}
 %changelog
 * Sun Jun 25 2017 Todd Zullinger <tmz@pobox.com> - 2.13.2-1
 - Update to 2.13.2
+- Skip grep tests which fail intermittently on s390x
 
 * Wed Jun 07 2017 Jitka Plesnikova <jplesnik@redhat.com> - 2.13.1-2
 - Perl 5.26 re-rebuild of bootstrapped packages
