@@ -532,9 +532,6 @@ make -C contrib/subtree install
 %if ! %{use_prebuilt_docs}
 make -C contrib/subtree install-doc
 %endif
-# it's ugly hack, but this file don't need to be copied to this directory
-# it's already part of git-core-doc and it's alone here
-rm -f %{buildroot}%{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}/git-subtree.html
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -549,7 +546,7 @@ find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 rm -rf contrib/credential
 
 # Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
-rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,sh,txt,xml}},t}
+rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
