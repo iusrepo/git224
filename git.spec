@@ -408,6 +408,9 @@ rm -rf "$gpghome" # Cleanup tmp gpg home dir
 %patch3 -p1
 %endif
 
+# Remove git-archimport from command list
+sed -i '/^git-archimport/d' command-list.txt
+
 %if %{use_prebuilt_docs}
 mkdir -p prebuilt_docs/{html,man}
 xz -dc %{SOURCE1} | tar xf - -C prebuilt_docs/html
