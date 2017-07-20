@@ -68,9 +68,12 @@
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 %endif
 
+# fallback for F17- && RHEL6-
+%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
+
 Name:           git
 Version:        2.13.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -619,7 +622,6 @@ cat %{name}.lang >> bin-man-doc-files
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
 find %{buildroot} -name git-mergetool--lib | xargs chmod a-x
-# rm -f {Documentation/technical,contrib/emacs,contrib/credential/gnome-keyring}/.gitignore
 # These files probably are not needed
 find . -name .gitignore -delete
 chmod a-x Documentation/technical/api-index.sh
@@ -631,6 +633,33 @@ grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
 grep -E  "$not_core_re" bin-man-doc-files \
     | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
+
+##### DOC
+# place doc files into %%{_pkgdocdir} and split them into expected packages
+# contrib
+not_core_doc_re="(git-(cvs|gui|citool|daemon))|p4|svn|email|gitk|gitweb"
+mkdir -p %{buildroot}%{_pkgdocdir}/
+cp -pr README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
+cp -p gitweb/INSTALL %{buildroot}%{_pkgdocdir}/INSTALL.gitweb
+cp -p gitweb/README %{buildroot}%{_pkgdocdir}/README.gitweb
+
+%if ! 0%{?_without_docs}
+cp -pr Documentation/*.html Documentation/docbook-xsl.css %{buildroot}%{_pkgdocdir}/
+cp -pr Documentation/{howto,technical} %{buildroot}%{_pkgdocdir}/
+find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
+    |grep -o "%{_pkgdocdir}.*$" >> man-doc-files-core
+%endif
+
+{
+    find %{buildroot}%{_pkgdocdir} -type f -maxdepth 1 \
+        | grep -o "%{_pkgdocdir}.*$" \
+        | grep -vE "$not_core_doc_re"
+    find %{buildroot}%{_pkgdocdir}/{contrib,RelNotes} -type f \
+        | grep -o "%{_pkgdocdir}.*$"
+    find %{buildroot}%{_pkgdocdir} -type d | grep -o "%{_pkgdocdir}.*$" \
+        | sed "s/^/\%dir /"
+} >> man-doc-files-core
+##### #DOC
 
 %check
 %ifarch s390x
@@ -664,6 +693,8 @@ rm -rf %{buildroot}
 
 %files core -f bin-files-core
 %defattr(-,root,root)
+#NOTE: this is only use of the %%doc macro in this spec file and should not
+#      be used elsewhere
 %{!?_licensedir:%global license %doc}
 %license COPYING
 # exlude is best way here because of troubels with symlinks inside git-core/
@@ -674,45 +705,41 @@ rm -rf %{buildroot}
 
 %files core-doc -f man-doc-files-core
 %defattr(-,root,root)
-%doc README.md Documentation/*.txt Documentation/RelNotes contrib/
-%{!?_without_docs: %doc Documentation/*.html Documentation/docbook-xsl.css}
-%{!?_without_docs: %doc Documentation/howto Documentation/technical}
-%if ! %{use_prebuilt_docs}
-%{!?_without_docs: %doc contrib/subtree/git-subtree.html}
-%endif
-
+%exclude %{_pkgdocdir}/contrib/*/*.py[co]
+%{_pkgdocdir}/contrib/hooks
 
 %files p4
 %defattr(-,root,root)
 %{gitcoredir}/*p4*
 %{gitcoredir}/mergetools/p4merge
-%doc Documentation/*p4*.txt
+%{_pkgdocdir}/*p4*.txt
 %{!?_without_docs: %{_mandir}/man1/*p4*.1*}
-%{!?_without_docs: %doc Documentation/*p4*.html }
+%{!?_without_docs: %{_pkgdocdir}/*p4*.html }
 
 %files svn
 %defattr(-,root,root)
 %{gitcoredir}/*svn*
-%doc Documentation/*svn*.txt
+#NOTE: what about svn-fe
+%{_pkgdocdir}/*svn*.txt
 %{!?_without_docs: %{_mandir}/man1/*svn*.1*}
-%{!?_without_docs: %doc Documentation/*svn*.html }
+%{!?_without_docs: %{_pkgdocdir}/*svn*.html }
 
 %files cvs
 %defattr(-,root,root)
-%doc Documentation/*git-cvs*.txt
+%{_pkgdocdir}/*git-cvs*.txt
 %if "%{gitcoredir}" != "%{_bindir}"
 %{_bindir}/git-cvsserver
 %endif
 %{gitcoredir}/*cvs*
 %{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
-%{!?_without_docs: %doc Documentation/*git-cvs*.html }
+%{!?_without_docs: %{_pkgdocdir}/*git-cvs*.html }
 
 %files email
 %defattr(-,root,root)
-%doc Documentation/*email*.txt
+%{_pkgdocdir}/*email*.txt
 %{gitcoredir}/*email*
 %{!?_without_docs: %{_mandir}/man1/*email*.1*}
-%{!?_without_docs: %doc Documentation/*email*.html }
+%{!?_without_docs: %{_pkgdocdir}/*email*.html }
 
 %files gui
 %defattr(-,root,root)
@@ -720,18 +747,20 @@ rm -rf %{buildroot}
 %{gitcoredir}/git-citool
 %{_datadir}/applications/*git-gui.desktop
 %{_datadir}/git-gui/
+%{_pkgdocdir}/git-gui.txt
+%{_pkgdocdir}/git-citool.txt
 %{!?_without_docs: %{_mandir}/man1/git-gui.1*}
-%{!?_without_docs: %doc Documentation/git-gui.html}
+%{!?_without_docs: %{_pkgdocdir}/git-gui.html}
 %{!?_without_docs: %{_mandir}/man1/git-citool.1*}
-%{!?_without_docs: %doc Documentation/git-citool.html}
+%{!?_without_docs: %{_pkgdocdir}/git-citool.html}
 
 %files -n gitk
 %defattr(-,root,root)
-%doc Documentation/*gitk*.txt
+%{_pkgdocdir}/*gitk*.txt
 %{_bindir}/*gitk*
 %{_datadir}/gitk
 %{!?_without_docs: %{_mandir}/man1/*gitk*.1*}
-%{!?_without_docs: %doc Documentation/*gitk*.html }
+%{!?_without_docs: %{_pkgdocdir}/*gitk*.html }
 
 %files -n perl-Git -f perl-git-files
 %defattr(-,root,root)
@@ -745,7 +774,7 @@ rm -rf %{buildroot}
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %files -n emacs-git
 %defattr(-,root,root)
-%doc contrib/emacs/README
+%{_pkgdocdir}/contrib/emacs/README
 %dir %{elispdir}
 %{elispdir}/*.elc
 %{_emacs_sitestartdir}/git-init.el
@@ -757,7 +786,7 @@ rm -rf %{buildroot}
 
 %files daemon
 %defattr(-,root,root)
-%doc Documentation/*daemon*.txt
+%{_pkgdocdir}/git-daemon*.txt
 %if %{use_systemd}
 %{_unitdir}/git.socket
 %{_unitdir}/git@.service
@@ -766,12 +795,14 @@ rm -rf %{buildroot}
 %endif
 %{gitcoredir}/git-daemon
 %{_localstatedir}/lib/git
-%{!?_without_docs: %{_mandir}/man1/*daemon*.1*}
-%{!?_without_docs: %doc Documentation/*daemon*.html}
+%{!?_without_docs: %{_mandir}/man1/git-daemon*.1*}
+%{!?_without_docs: %{_pkgdocdir}/git-daemon*.html}
 
 %files -n gitweb
 %defattr(-,root,root)
-%doc gitweb/INSTALL gitweb/README
+%{_pkgdocdir}/*.gitweb
+%{_pkgdocdir}/gitweb*.txt
+%{!?_without_docs: %{_pkgdocdir}/gitweb*.html}
 %config(noreplace)%{_sysconfdir}/gitweb.conf
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 %{_localstatedir}/www/git/
@@ -787,6 +818,11 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jul 20 2017 Petr Stodulka <pstodulk@redhat.com> - 2.13.3-2
+- Move documentation files from all subpackages into the %%{_pkgdocdir}
+  directory, so links inside doc and man files are correct
+  Resolves: #1357438
+
 * Thu Jul 13 2017 Gwyn Ciesla <limburgher@gmail.com> - 2.13.3-1
 - Update to 2.13.3
 
