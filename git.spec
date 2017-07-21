@@ -71,6 +71,12 @@
 # fallback for F17- && RHEL6-
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
+%if 0%{?fedora} && 0%{?fedora} >= 25
+%global test_links 1
+%else
+%global test_links 0
+%endif
+
 Name:           git
 Version:        2.13.3
 Release:        2%{?dist}
@@ -115,6 +121,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %if ! %{use_prebuilt_docs} && ! 0%{?_without_docs}
 BuildRequires:  asciidoc >= 8.4.1
 BuildRequires:  xmlto
+%if %{test_links}
+BuildRequires:  linkchecker
+%endif
 %endif
 BuildRequires:  desktop-file-utils
 BuildRequires:  emacs
@@ -662,6 +671,9 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
 ##### #DOC
 
 %check
+%if %{test_links}
+find %{buildroot}%{_pkgdocdir} -name "*.html" | xargs linkchecker
+%endif
 %ifarch s390x
 # Skip grep tests which fail intermittently on s390x
 export GIT_SKIP_TESTS="t7810"
