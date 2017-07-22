@@ -44,7 +44,7 @@
 %endif
 
 Name:           git
-Version:        2.13.4
+Version:        2.14.0
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -726,6 +726,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Aug 04 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-1
+- Update to 2.14.0
+
 * Tue Aug 01 2017 Todd Zullinger <tmz@pobox.com> - 2.13.4-1
 - Update to 2.13.4
 - Remove EL-5 and old Fedora conditionals
