@@ -79,7 +79,7 @@
 
 Name:           git
 Version:        2.13.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -829,6 +829,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sun Jul 30 2017 Florian Weimer <fweimer@redhat.com> - 2.13.3-3
+- Rebuild with binutils fix for ppc64le (#1475636)
+
 * Thu Jul 20 2017 Petr Stodulka <pstodulk@redhat.com> - 2.13.3-2
 - Move documentation files from all subpackages into the %%{_pkgdocdir}
   directory, so links inside doc and man files are correct
