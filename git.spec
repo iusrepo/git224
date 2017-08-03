@@ -220,7 +220,7 @@ Simple web interface to track changes in git repositories
 Summary:        Git tools for working with Perforce depots
 Group:          Development/Tools
 BuildArch:      noarch
-BuildRequires:  python
+BuildRequires:  python2
 Requires:       git = %{version}-%{release}
 %description p4
 %{summary}.
@@ -363,6 +363,7 @@ DESTDIR = %{buildroot}
 INSTALL = install -p
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
+PYTHON_PATH = %{__python2}
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 gitwebdir = %{_localstatedir}/www/git
@@ -729,6 +730,7 @@ rm -rf %{buildroot}
 * Fri Aug 04 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-1
 - Update to 2.14.0
 - Use pcre2 library
+- git-p4: explicitly require python2
 
 * Tue Aug 01 2017 Todd Zullinger <tmz@pobox.com> - 2.13.4-1
 - Update to 2.13.4
