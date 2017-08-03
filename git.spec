@@ -363,7 +363,6 @@ DESTDIR = %{buildroot}
 INSTALL = install -p
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
-PYTHON_PATH = %{__python2}
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 gitwebdir = %{_localstatedir}/www/git
@@ -448,6 +447,11 @@ make -C contrib/credential/libsecret/ clean
 %endif
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitcoredir}
+
+# Replace shebang in git-p4.  Setting PYTHON_PATH = %{__python2} in config.mak
+# should be the way to do this, but that causes the python-based remote svn
+# tests in t9020 to fail.
+sed -i -e '1s|#!.*python|#!%{__python2}|' %{buildroot}%{gitcoredir}/git-p4
 
 make -C contrib/subtree install
 make -C contrib/subtree install-doc
