@@ -574,7 +574,7 @@ find %{buildroot}%{_pkgdocdir} -name "*.html" | xargs linkchecker
 %endif
 %ifarch s390x
 # Skip grep tests which fail intermittently on s390x
-export GIT_SKIP_TESTS="t7810"
+export GIT_SKIP_TESTS="t7008 t7810"
 %endif
 make test
 
