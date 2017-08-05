@@ -418,9 +418,6 @@ rm -rf %{buildroot}
 make %{?_smp_mflags} INSTALLDIRS=vendor install
 %if ! 0%{?_without_docs}
 make %{?_smp_mflags} INSTALLDIRS=vendor install-doc
-%else
-cp -a prebuilt_docs/man/* %{buildroot}%{_mandir}
-cp -a prebuilt_docs/html/* Documentation/
 %endif
 
 %global elispdir %{_emacs_sitelispdir}/git
