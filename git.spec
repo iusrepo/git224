@@ -45,7 +45,7 @@
 
 Name:           git
 Version:        2.14.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -220,7 +220,7 @@ Simple web interface to track changes in git repositories
 Summary:        Git tools for working with Perforce depots
 Group:          Development/Tools
 BuildArch:      noarch
-BuildRequires:  python2
+BuildRequires:  python2-devel
 Requires:       git = %{version}-%{release}
 %description p4
 %{summary}.
@@ -728,6 +728,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Aug 08 2017 Iryna Shcherbina <ishcherb@redhat.com> - 2.14.0-2
+- Add a build-time dependency on python2-devel for p4
+
 * Fri Aug 04 2017 Todd Zullinger <tmz@pobox.com> - 2.14.0-1
 - Update to 2.14.0
 - Use pcre2 library
