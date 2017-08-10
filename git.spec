@@ -44,8 +44,8 @@
 %endif
 
 Name:           git
-Version:        2.14.0
-Release:        2%{?dist}
+Version:        2.14.1
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -730,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Aug 10 2017 Todd Zullinger <tmz@pobox.com> - 2.14.1-1
+- Update to 2.14.1 (resolves CVE-2017-1000117)
+
 * Tue Aug 08 2017 Iryna Shcherbina <ishcherb@redhat.com> - 2.14.0-2
 - Add a build-time dependency on python2-devel for p4
   Resolves: #1479713
