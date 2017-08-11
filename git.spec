@@ -45,7 +45,7 @@
 
 Name:           git
 Version:        2.14.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -730,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Aug 10 2017 Todd Zullinger <tmz@pobox.com> - 2.14.1-2
+- Rebuild for rpm-4.14 bug (#1480407)
+
 * Thu Aug 10 2017 Todd Zullinger <tmz@pobox.com> - 2.14.1-1
 - Update to 2.14.1 (resolves CVE-2017-1000117)
 
