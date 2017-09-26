@@ -44,7 +44,7 @@
 %endif
 
 Name:           git
-Version:        2.14.1
+Version:        2.14.2
 Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -730,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Sep 26 2017 Todd Zullinger <tmz@pobox.com> - 2.14.2-2
+- Update to 2.14.2
+
 * Thu Aug 10 2017 Todd Zullinger <tmz@pobox.com> - 2.14.1-2
 - Rebuild for rpm-4.14 bug (#1480407)
 
