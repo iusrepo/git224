@@ -44,7 +44,7 @@
 %endif
 
 Name:           git
-Version:        2.14.3
+Version:        2.15.0
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -730,6 +730,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
+- Update to 2.15.0
+
 * Mon Oct 23 2017 Todd Zullinger <tmz@pobox.com> - 2.14.3-1
 - Update to 2.14.3
 
