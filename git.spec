@@ -45,7 +45,7 @@
 
 Name:           git
 Version:        2.15.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -75,6 +75,10 @@ Source16:       git.socket
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+
+# https://bugzilla.redhat.com/1510455 (CVE-2017-15298)
+# https://github.com/git/git/commit/a937b37e76
+Patch2:         0001-revision-quit-pruning-diff-more-quickly-when-possibl.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -346,6 +350,7 @@ rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Remove git-archimport from command list
 sed -i '/^git-archimport/d' command-list.txt
@@ -730,6 +735,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Nov 07 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-2
+- Fix git-clone memory exhaustion (CVE-2017-15298)
+  Resolves: #1510455, #1510457
+
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
 
