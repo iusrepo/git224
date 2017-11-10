@@ -368,6 +368,7 @@ DESTDIR = %{buildroot}
 INSTALL = install -p
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
+NO_CROSS_DIRECTORY_HARDLINKS = 1
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 gitwebdir = %{_localstatedir}/www/git
@@ -738,6 +739,7 @@ rm -rf %{buildroot}
 * Tue Nov 07 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-2
 - Fix git-clone memory exhaustion (CVE-2017-15298)
   Resolves: #1510455, #1510457
+- Disable cross-directory hardlinks
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
