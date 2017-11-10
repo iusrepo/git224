@@ -358,6 +358,7 @@ INSTALL = install -p
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
 NO_CROSS_DIRECTORY_HARDLINKS = 1
+PYTHON_PATH = %{__python2}
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 gitwebdir = %{_localstatedir}/www/git
@@ -414,7 +415,8 @@ sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
     contrib/hg-to-git/hg-to-git.py \
     contrib/hooks/multimail/git_multimail.py \
     contrib/hooks/multimail/migrate-mailhook-config \
-    contrib/hooks/multimail/post-receive.example
+    contrib/hooks/multimail/post-receive.example \
+    contrib/svn-fe/svnrdump_sim.py
 
 %install
 rm -rf %{buildroot}
@@ -447,11 +449,6 @@ make -C contrib/credential/libsecret/ clean
 %endif
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitcoredir}
-
-# Replace shebang in git-p4.  Setting PYTHON_PATH = %{__python2} in config.mak
-# should be the way to do this, but that causes the python-based remote svn
-# tests in t9020 to fail.
-sed -i -e '1s|#!.*python|#!%{__python2}|' %{buildroot}%{gitcoredir}/git-p4
 
 make -C contrib/subtree install
 make -C contrib/subtree install-doc
@@ -740,6 +737,7 @@ rm -rf %{buildroot}
 - Drop ancient obsoletes for git and git-arch
 - Update summary/description of numerous subpackages
 - Fix shebang in a few places to silence rpmlint complaints
+- Fix t9020-remote-svn failure when setting PYTHON_PATH
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
