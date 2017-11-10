@@ -43,6 +43,19 @@
 %global test_links 0
 %endif
 
+# Allow tests to run in parallel.  Disabled by default due to unresolved
+# failures when building in koji.  Enabling it speeds up the test suite quite a
+# bit though.  The -O (--output-sync) option requires make > 4.0, which is not
+# available on EL <= 7.  Without it, running the tests in parallel causes the
+# output to be rather unweildy, so restrict parallel tests to Fedora.
+#
+# Pass "--with parallel_tests" or "--define 'parallel_tests 1'" to
+# rpmbuild/mock.
+%bcond_with parallel_tests
+%if %{with parallel_tests} && 0%{?fedora}
+%global make_test_opts -O %{?_smp_mflags}
+%endif
+
 Name:           git
 Version:        2.15.0
 Release:        2%{?dist}
@@ -112,6 +125,36 @@ BuildRequires:  pkgconfig(bash-completion)
 # For macros
 BuildRequires:  systemd
 %endif
+
+# Test suite requirements
+%if 0%{?fedora} && 0%{?fedora} >= 27
+# Needed by t5540-http-push-webdav.sh
+BuildRequires: apr-util-bdb
+%endif
+BuildRequires:  cvs
+BuildRequires:  cvsps
+BuildRequires:  gnupg
+%if 0%{?fedora} || ( 0%{?rhel} && 0%{?rhel} == 7 && %{_arch} != ppc64 )
+BuildRequires:  highlight
+%endif
+BuildRequires:  httpd
+%if 0%{?fedora}
+BuildRequires:  jgit
+%endif
+BuildRequires:  pcre
+BuildRequires:  perl(CGI)
+BuildRequires:  perl(CGI::Carp)
+BuildRequires:  perl(CGI::Util)
+BuildRequires:  perl(DBD::SQLite)
+BuildRequires:  perl(Digest::MD5)
+BuildRequires:  perl(IO::Pty)
+BuildRequires:  perl(Mail::Address)
+BuildRequires:  perl(Memoize)
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(Time::HiRes)
+BuildRequires:  subversion
+BuildRequires:  subversion-perl
+BuildRequires:  time
 
 Requires:       git-core = %{version}-%{release}
 Requires:       git-core-doc = %{version}-%{release}
@@ -568,13 +611,39 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
 %if %{test_links}
 find %{buildroot}%{_pkgdocdir} -name "*.html" | xargs linkchecker
 %endif
+
+# Tests to skip on all releases and architectures
+# t9128-git-svn-cmd-branch - "branch tests" fails randomnly
+# t9167-git-svn-cmd-branch-subproject - "branch tests" fails randomnly
+GIT_SKIP_TESTS="t9128.3 t9167.3"
+
+%ifarch aarch64 %{arm} %{power64}
+# Skip tests which fail on aarch64, arm, and ppc
+#
+# The following 2 tests use run_with_limited_cmdline, which calls ulimit -s 128
+# to limit the maximum stack size.
+# t5541.33 'push 2000 tags over http'
+# t5551.25 'clone the 2,000 tag repo to check OS command line overflow'
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.33 t5551.25"
+%endif
+
 %ifarch s390x
 # Skip grep tests which fail intermittently on s390x
 ## - probably it is because of current troubles with binutils on s390x. Will
 ##   try tests when troubles on s390x will be resolved
-export GIT_SKIP_TESTS="t7008 t7810 t7811 t7812 t7813 t7814"
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t7008 t7810 t7811 t7812 t7813 t7814"
 %endif
-make test
+
+export GIT_SKIP_TESTS
+
+# Set LANG so various UTF-8 tests are run
+export LANG=en_US.UTF-8
+
+# Set SVNSERVE_PORT to run svnserve tests
+export SVNSERVE_PORT=9000
+
+# Run the tests
+make %{?make_test_opts} test
 
 %clean
 rm -rf %{buildroot}
@@ -739,6 +808,7 @@ rm -rf %{buildroot}
 - Rename %%gitcoredir to %%gitexecdir; upstream uses the latter
 - Move commands which no longer require perl into git-core
 - Move filter-branch out of core, it needs perl now
+- Improve test suite coverage
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
