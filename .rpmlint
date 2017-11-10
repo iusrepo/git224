@@ -1,0 +1,17 @@
+from Config import *
+
+# the dictionary is a bit limited
+addFilter("git.* spelling-error %description .* subpackages")
+
+# We're not misusing %{buildroot} here
+addFilter("git\.(spec|src):.* rpm-buildroot-usage %prep DESTDIR = %{buildroot}")
+
+# git-core-doc requires git-core, which provides the symlink target
+addFilter("git(-core-doc)?\..*: W: dangling-relative-symlink /usr/share/doc/git/contrib/hooks ../../../git-core/contrib/hooks")
+
+# git-gui requires git, which provides the git binary
+addFilter("git-gui.noarch: W: desktopfile-without-binary /usr/share/applications/git-gui.desktop git")
+
+# ignore no doc/manpage warnings where we don't expect any documentation
+addFilter("git-(all|core|gnome-keyring)\..*: W: no-documentation")
+addFilter("git-core\..*: W: no-manual-page-for-binary")
