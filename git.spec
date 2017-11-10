@@ -160,7 +160,6 @@ Requires:       perl(Term::ReadKey)
 %if 0%{?rhel} && 0%{?rhel} <= 6
 Requires:       emacs-git = %{version}-%{release}
 %endif
-
 %description all
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -188,7 +187,6 @@ other SCMs, install the git-all meta-package.
 Summary:        Documentation files for git-core
 Group:          Development/Tools
 Requires:       git-core = %{version}-%{release}
-
 %description core-doc
 Documentation files for git-core package including man pages.
 
@@ -212,9 +210,8 @@ Summary:        Simple web interface to git repositories
 Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
-
 %description -n gitweb
-Simple web interface to track changes in git repositories
+%{summary}.
 
 %package p4
 Summary:        Git tools for working with Perforce depots
@@ -226,7 +223,7 @@ Requires:       git = %{version}-%{release}
 %{summary}.
 
 %package svn
-Summary:        Git tools for importing Subversion repositories
+Summary:        Git tools for interacting with Subversion repositories
 Group:          Development/Tools
 Requires:       git = %{version}-%{release}, subversion
 Requires:       perl(Digest::MD5)
@@ -234,7 +231,7 @@ Requires:       perl(Digest::MD5)
 Requires:       perl(Term::ReadKey)
 %endif
 %description svn
-Git tools for importing Subversion repositories.
+%{summary}.
 
 %package cvs
 Summary:        Git tools for importing CVS repositories
@@ -245,10 +242,10 @@ Requires:       cvsps
 Requires:       perl(DBD::SQLite)
 Requires:       perl(Git)
 %description cvs
-Git tools for importing CVS repositories.
+%{summary}.
 
 %package email
-Summary:        Git tools for sending email
+Summary:        Git tools for sending patches via email
 Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
@@ -256,24 +253,24 @@ Requires:       perl(Authen::SASL)
 Requires:       perl(Net::SMTP::SSL)
 Requires:       perl(Git)
 %description email
-Git tools for sending email.
+%{summary}.
 
 %package gui
-Summary:        Git GUI tool
+Summary:        Graphical interface to Git
 Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, tk >= 8.4
 Requires:       gitk = %{version}-%{release}
 %description gui
-Git GUI tool.
+%{summary}.
 
 %package -n gitk
-Summary:        Git revision tree visualiser
+Summary:        Git repository browser
 Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, tk >= 8.4
 %description -n gitk
-Git revision tree visualiser.
+%{summary}.
 
 %package -n perl-Git
 Summary:        Perl interface to Git
@@ -283,9 +280,8 @@ Requires:       git = %{version}-%{release}
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 Requires:       perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-
 %description -n perl-Git
-Perl interface to Git.
+%{summary}.
 
 %package -n perl-Git-SVN
 Summary:        Perl interface to Git::SVN
@@ -293,9 +289,8 @@ Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-
 %description -n perl-Git-SVN
-Perl interface to Git.
+%{summary}.
 
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %package -n emacs-git
@@ -304,7 +299,6 @@ Group:          Applications/Editors
 Requires:       git = %{version}-%{release}
 BuildArch:      noarch
 Requires:       emacs(bin) >= %{_emacs_version}
-
 %description -n emacs-git
 %{summary}.
 
@@ -313,14 +307,13 @@ Summary:        Elisp source files for git version control system support for Em
 Group:          Applications/Editors
 BuildArch:      noarch
 Requires:       emacs-git = %{version}-%{release}
-
 %description -n emacs-git-el
 %{summary}.
 %endif
 
 %if %{gnome_keyring}
 %package gnome-keyring
-Summary:        Git module for working with gnome-keyring
+Summary:        Git helper for accessing credentials via gnome-keyring
 BuildRequires:  libgnome-keyring-devel
 Requires:       git = %{version}-%{release}
 Requires:       gnome-keyring
@@ -737,6 +730,7 @@ rm -rf %{buildroot}
   Resolves: #1510455, #1510457
 - Disable cross-directory hardlinks
 - Drop ancient obsoletes for git and git-arch
+- Update summary/description of numerous subpackages
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
