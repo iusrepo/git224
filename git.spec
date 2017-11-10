@@ -130,9 +130,6 @@ Provides:       emacs-git = %{version}-%{release}
 Provides:       emacs-git-el = %{version}-%{release}
 %endif
 
-# Obsolete git-arch
-Obsoletes:      git-arch < %{version}-%{release}
-
 %description
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -163,7 +160,6 @@ Requires:       perl(Term::ReadKey)
 %if 0%{?rhel} && 0%{?rhel} <= 6
 Requires:       emacs-git = %{version}-%{release}
 %endif
-Obsoletes:      git <= 1.5.4.3
 
 %description all
 Git is a fast, scalable, distributed revision control system with an
@@ -740,6 +736,7 @@ rm -rf %{buildroot}
 - Fix git-clone memory exhaustion (CVE-2017-15298)
   Resolves: #1510455, #1510457
 - Disable cross-directory hardlinks
+- Drop ancient obsoletes for git and git-arch
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
