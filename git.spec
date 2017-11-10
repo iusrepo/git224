@@ -408,6 +408,14 @@ make -C contrib/subtree/
 # Remove shebang from bash-completion script
 sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
 
+# Fix shebang in a few places to silence rpmlint complaints
+sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
+    contrib/fast-import/import-zips.py \
+    contrib/hg-to-git/hg-to-git.py \
+    contrib/hooks/multimail/git_multimail.py \
+    contrib/hooks/multimail/migrate-mailhook-config \
+    contrib/hooks/multimail/post-receive.example
+
 %install
 rm -rf %{buildroot}
 make %{?_smp_mflags} INSTALLDIRS=vendor install
@@ -731,6 +739,7 @@ rm -rf %{buildroot}
 - Disable cross-directory hardlinks
 - Drop ancient obsoletes for git and git-arch
 - Update summary/description of numerous subpackages
+- Fix shebang in a few places to silence rpmlint complaints
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
