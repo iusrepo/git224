@@ -1,6 +1,6 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 
-%global gitcoredir          %{_libexecdir}/git-core
+%global gitexecdir          %{_libexecdir}/git-core
 
 # Settings for F-19+ and EL-7+
 %if 0%{?fedora} || 0%{?rhel} >= 7
@@ -364,10 +364,6 @@ prefix = %{_prefix}
 gitwebdir = %{_localstatedir}/www/git
 EOF
 
-%if "%{gitcoredir}" == "%{_bindir}"
-echo gitexecdir = %{_bindir} >> config.mak
-%endif
-
 # Filter bogus perl requires
 # packed-refs comes from a comment in contrib/hooks/update-paranoid
 # YAML::Any is optional and not available on el5
@@ -437,18 +433,18 @@ install -Dpm 644 %{SOURCE10} \
 
 %if %{gnome_keyring}
 install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
-    %{buildroot}%{gitcoredir}
+    %{buildroot}%{gitexecdir}
 # Remove built binary files, otherwise they will be installed in doc
 make -C contrib/credential/gnome-keyring/ clean
 %endif
 %if %{libsecret}
 install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
-    %{buildroot}%{gitcoredir}
+    %{buildroot}%{gitexecdir}
 # Remove built binary files, otherwise they will be installed in doc
 make -C contrib/credential/libsecret/ clean
 %endif
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
-    %{buildroot}%{gitcoredir}
+    %{buildroot}%{gitexecdir}
 
 make -C contrib/subtree install
 make -C contrib/subtree install-doc
@@ -492,7 +488,7 @@ cp -a %{SOURCE15} %{SOURCE16} %{buildroot}%{_unitdir}
 %else
 mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
 perl -p \
-    -e "s|\@GITCOREDIR\@|%{gitcoredir}|g;" \
+    -e "s|\@GITEXECDIR\@|%{gitexecdir}|g;" \
     -e "s|\@BASE_PATH\@|%{_localstatedir}/lib/git|g;" \
     %{SOURCE11} > %{buildroot}%{_sysconfdir}/xinetd.d/git
 %endif
@@ -622,15 +618,15 @@ rm -rf %{buildroot}
 
 %files p4
 %defattr(-,root,root)
-%{gitcoredir}/*p4*
-%{gitcoredir}/mergetools/p4merge
+%{gitexecdir}/*p4*
+%{gitexecdir}/mergetools/p4merge
 %{_pkgdocdir}/*p4*.txt
 %{!?_without_docs: %{_mandir}/man1/*p4*.1*}
 %{!?_without_docs: %{_pkgdocdir}/*p4*.html }
 
 %files svn
 %defattr(-,root,root)
-%{gitcoredir}/*svn*
+%{gitexecdir}/*svn*
 #NOTE: what about svn-fe
 %{_pkgdocdir}/*svn*.txt
 %{!?_without_docs: %{_mandir}/man1/*svn*.1*}
@@ -639,24 +635,22 @@ rm -rf %{buildroot}
 %files cvs
 %defattr(-,root,root)
 %{_pkgdocdir}/*git-cvs*.txt
-%if "%{gitcoredir}" != "%{_bindir}"
 %{_bindir}/git-cvsserver
-%endif
-%{gitcoredir}/*cvs*
+%{gitexecdir}/*cvs*
 %{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
 %{!?_without_docs: %{_pkgdocdir}/*git-cvs*.html }
 
 %files email
 %defattr(-,root,root)
 %{_pkgdocdir}/*email*.txt
-%{gitcoredir}/*email*
+%{gitexecdir}/*email*
 %{!?_without_docs: %{_mandir}/man1/*email*.1*}
 %{!?_without_docs: %{_pkgdocdir}/*email*.html }
 
 %files gui
 %defattr(-,root,root)
-%{gitcoredir}/git-gui*
-%{gitcoredir}/git-citool
+%{gitexecdir}/git-gui*
+%{gitexecdir}/git-citool
 %{_datadir}/applications/*git-gui.desktop
 %{_datadir}/git-gui/
 %{_pkgdocdir}/git-gui.txt
@@ -705,7 +699,7 @@ rm -rf %{buildroot}
 %else
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
 %endif
-%{gitcoredir}/git-daemon
+%{gitexecdir}/git-daemon
 %{_localstatedir}/lib/git
 %{!?_without_docs: %{_mandir}/man1/git-daemon*.1*}
 %{!?_without_docs: %{_pkgdocdir}/git-daemon*.html}
@@ -722,7 +716,7 @@ rm -rf %{buildroot}
 %if %{gnome_keyring}
 %files gnome-keyring
 %defattr(-,root,root)
-%{gitcoredir}/git-credential-gnome-keyring
+%{gitexecdir}/git-credential-gnome-keyring
 %endif
 
 
@@ -738,6 +732,7 @@ rm -rf %{buildroot}
 - Update summary/description of numerous subpackages
 - Fix shebang in a few places to silence rpmlint complaints
 - Fix t9020-remote-svn failure when setting PYTHON_PATH
+- Rename %%gitcoredir to %%gitexecdir; upstream uses the latter
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0

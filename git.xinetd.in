@@ -8,7 +8,7 @@ service git
         socket_type     = stream
         wait            = no
         user            = nobody
-        server          = @GITCOREDIR@/git-daemon
+        server          = @GITEXECDIR@/git-daemon
         server_args     = --base-path=@BASE_PATH@ --export-all --user-path=public_git --syslog --inetd --verbose
         log_on_failure  += USERID
 }
