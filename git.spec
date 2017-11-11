@@ -531,7 +531,7 @@ chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
 # Split core files
-not_core_re="git-(add--interactive|am|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|relink|request-pull|send-mail|submodule)|gitweb|prepare-commit-msg|pre-rebase"
+not_core_re="git-(add--interactive|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|request-pull|send-mail)|gitweb"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
 grep -E  "$not_core_re" bin-man-doc-files \
@@ -598,6 +598,8 @@ rm -rf %{buildroot}
 %endif
 %{_datadir}/git-core/contrib/hooks/update-paranoid
 %{_datadir}/git-core/contrib/hooks/setgitperms.perl
+%{_datadir}/git-core/templates/hooks/pre-rebase.sample
+%{_datadir}/git-core/templates/hooks/prepare-commit-msg.sample
 
 %files core -f bin-files-core
 %defattr(-,root,root)
@@ -605,9 +607,11 @@ rm -rf %{buildroot}
 #      be used elsewhere
 %{!?_licensedir:%global license %doc}
 %license COPYING
-# exlude is best way here because of troubels with symlinks inside git-core/
+# exlude is best way here because of troubles with symlinks inside git-core/
 %exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
+%exclude %{_datadir}/git-core/templates/hooks/pre-rebase.sample
+%exclude %{_datadir}/git-core/templates/hooks/prepare-commit-msg.sample
 %{bashcomproot}
 %{_datadir}/git-core/
 
@@ -733,6 +737,7 @@ rm -rf %{buildroot}
 - Fix shebang in a few places to silence rpmlint complaints
 - Fix t9020-remote-svn failure when setting PYTHON_PATH
 - Rename %%gitcoredir to %%gitexecdir; upstream uses the latter
+- Move commands which no longer require perl into git-core
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
