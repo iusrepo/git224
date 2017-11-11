@@ -531,7 +531,7 @@ chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
 # Split core files
-not_core_re="git-(add--interactive|credential-(gnome-keyring|libsecret|netrc)|difftool|instaweb|request-pull|send-mail)|gitweb"
+not_core_re="git-(add--interactive|credential-(gnome-keyring|libsecret|netrc)|difftool|filter-branch|instaweb|request-pull|send-mail)|gitweb"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
 grep -E  "$not_core_re" bin-man-doc-files \
@@ -738,6 +738,7 @@ rm -rf %{buildroot}
 - Fix t9020-remote-svn failure when setting PYTHON_PATH
 - Rename %%gitcoredir to %%gitexecdir; upstream uses the latter
 - Move commands which no longer require perl into git-core
+- Move filter-branch out of core, it needs perl now
 
 * Mon Oct 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-1
 - Update to 2.15.0
