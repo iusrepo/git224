@@ -409,7 +409,6 @@ EOF
 
 # Filter bogus perl requires
 # packed-refs comes from a comment in contrib/hooks/update-paranoid
-# YAML::Any is optional and not available on el5
 %if %{use_new_rpm_filters}
 %{?perl_default_filter}
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}perl\\(packed-refs\\)
