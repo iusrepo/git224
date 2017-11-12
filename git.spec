@@ -445,9 +445,6 @@ make -C contrib/credential/netrc/
 
 make -C contrib/subtree/
 
-# Remove shebang from bash-completion script
-sed -i '/^#!bash/,+1 d' contrib/completion/git-completion.bash
-
 # Fix shebang in a few places to silence rpmlint complaints
 sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
     contrib/fast-import/import-zips.py \
