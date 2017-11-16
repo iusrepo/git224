@@ -56,15 +56,18 @@
 %global make_test_opts -O %{?_smp_mflags}
 %endif
 
+# Define for release candidates
+#global rcrev   .rc0
+
 Name:           git
 Version:        2.15.0
-Release:        2%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
 URL:            https://git-scm.com/
-Source0:        https://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.xz
-Source1:        https://www.kernel.org/pub/software/scm/git/%{name}-%{version}.tar.sign
+Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.xz
+Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
 
 # Junio C Hamano's key is used to sign git releases, it can be found in the
 # junio-gpg-pub tag within git.
@@ -381,7 +384,7 @@ xz -dc $src > $tar
 gpgv2 --homedir "$gpghome" --quiet --keyring $key.gpg $tar.sign $tar
 rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 
-%setup -q
+%setup -q -n %{name}-%{version}%{?rcrev}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -797,6 +800,7 @@ rm -rf %{buildroot}
 %changelog
 * Tue Nov 21 2017 Todd Zullinger <tmz@pobox.com>
 - Add tcl/tk BuildRequires
+- Enable support for release candidate builds
 
 * Tue Nov 07 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-2
 - Fix git-clone memory exhaustion (CVE-2017-15298)
