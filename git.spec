@@ -118,6 +118,8 @@ BuildRequires:  perl-generators
 BuildRequires:  perl(Test)
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel >= 1.2
+BuildRequires:  tcl
+BuildRequires:  tk
 %if %{bashcomp_pkgconfig}
 BuildRequires:  pkgconfig(bash-completion)
 %endif
@@ -793,6 +795,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Nov 21 2017 Todd Zullinger <tmz@pobox.com>
+- Add tcl/tk BuildRequires
+
 * Tue Nov 07 2017 Todd Zullinger <tmz@pobox.com> - 2.15.0-2
 - Fix git-clone memory exhaustion (CVE-2017-15298)
   Resolves: #1510455, #1510457
