@@ -61,7 +61,7 @@
 
 Name:           git
 Version:        2.15.1
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -478,14 +478,10 @@ install -Dpm 644 %{SOURCE10} \
 %if %{gnome_keyring}
 install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
     %{buildroot}%{gitexecdir}
-# Remove built binary files, otherwise they will be installed in doc
-make -C contrib/credential/gnome-keyring/ clean
 %endif
 %if %{libsecret}
 install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
     %{buildroot}%{gitexecdir}
-# Remove built binary files, otherwise they will be installed in doc
-make -C contrib/credential/libsecret/ clean
 %endif
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitexecdir}
@@ -501,9 +497,6 @@ sed "s|@PROJECTROOT@|%{_localstatedir}/lib/git|g" \
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
-
-# Clean up contrib/credential to avoid cruft in the git-core-doc docdir
-rm -rf contrib/credential
 
 # Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
 rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
@@ -587,6 +580,8 @@ grep -E  "$not_core_re" bin-man-doc-files \
 not_core_doc_re="(git-(cvs|gui|citool|daemon))|p4|svn|email|gitk|gitweb"
 mkdir -p %{buildroot}%{_pkgdocdir}/
 cp -pr README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
+# Remove contrib/credential, it has nothing useful for documentation
+rm -rf %{buildroot}%{_pkgdocdir}/contrib/credential/
 cp -p gitweb/INSTALL %{buildroot}%{_pkgdocdir}/INSTALL.gitweb
 cp -p gitweb/README %{buildroot}%{_pkgdocdir}/README.gitweb
 
@@ -798,6 +793,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
+- Fix debuginfo for gnome-keyring and libsecret credential helpers
+
 * Tue Nov 28 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-1
 - Update to 2.15.1
 
