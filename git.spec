@@ -60,8 +60,8 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.15.0
-Release:        2%{?rcrev}%{?dist}
+Version:        2.15.1
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -798,6 +798,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Tue Nov 28 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-1
+- Update to 2.15.1
+
 * Tue Nov 21 2017 Todd Zullinger <tmz@pobox.com>
 - Add tcl/tk BuildRequires
 - Enable support for release candidate builds
