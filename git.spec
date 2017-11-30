@@ -639,8 +639,8 @@ export GIT_SKIP_TESTS
 # Set LANG so various UTF-8 tests are run
 export LANG=en_US.UTF-8
 
-# Set SVNSERVE_PORT to run svnserve tests
-export SVNSERVE_PORT=9000
+# Run git svn tests which use svnserve
+export GIT_TEST_SVNSERVE=true
 
 # Run the tests
 GIT_TEST_OPTS='--verbose-log' make %{?make_test_opts} test || \
@@ -804,6 +804,7 @@ rm -rf %{buildroot}
 - Remove second make invocation for doc build/install
 - Fix builds using '--without docs'
 - Mark git-core-docs sub-package noarch
+- Avoid failures in svnserve tests when run in parallel
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
