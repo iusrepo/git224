@@ -61,7 +61,7 @@
 
 Name:           git
 Version:        2.15.1
-Release:        2%{?rcrev}%{?dist}
+Release:        3%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -88,6 +88,10 @@ Source13:       git-gui.desktop
 Source14:       gitweb.conf.in
 Source15:       git@.service
 Source16:       git.socket
+
+# Script to print test failure output (used in %%check)
+Source99:       print-failed-test-output
+
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
@@ -389,6 +393,9 @@ rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 %patch1 -p1
 %patch2 -p1
 
+# Install print-failed-test-output script
+install -p -m 755 %{SOURCE99} print-failed-test-output
+
 # Remove git-archimport from command list
 sed -i '/^git-archimport/d' command-list.txt
 
@@ -639,7 +646,8 @@ export LANG=en_US.UTF-8
 export SVNSERVE_PORT=9000
 
 # Run the tests
-make %{?make_test_opts} test
+GIT_TEST_OPTS='--verbose-log' make %{?make_test_opts} test || \
+    ./print-failed-test-output
 
 %clean
 rm -rf %{buildroot}
@@ -793,6 +801,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Nov 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-3
+- Include verbose logs in build output for 'make test' failures
+
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
 

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Print output from failing tests
+dashes=$(printf "%80s" '' | tr ' ' '-')
+for exit_file in t/test-results/*.exit; do
+    [ "$(cat "$exit_file")" -eq 0 ] && continue
+    out_file="${exit_file%exit}out"
+    printf '\n%s\n%s\n%s\n' "$dashes" "$out_file" "$dashes"
+    cat "$out_file"
+done
+exit 1
