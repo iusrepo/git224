@@ -672,7 +672,7 @@ rm -rf %{buildroot}
 #      be used elsewhere
 %{!?_licensedir:%global license %doc}
 %license COPYING
-# exlude is best way here because of troubles with symlinks inside git-core/
+# exclude is best way here because of troubles with symlinks inside git-core/
 %exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
 %exclude %{_datadir}/git-core/templates/hooks/pre-rebase.sample
