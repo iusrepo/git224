@@ -388,10 +388,9 @@ xz -dc $src > $tar
 gpgv2 --homedir "$gpghome" --quiet --keyring $key.gpg $tar.sign $tar
 rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 
-%setup -q -n %{name}-%{version}%{?rcrev}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+# Ensure a blank line follows autosetup, el6 chokes otherwise
+# https://bugzilla.redhat.com/1310704
+%autosetup -p1 -n %{name}-%{version}%{?rcrev}
 
 # Install print-failed-test-output script
 install -p -m 755 %{SOURCE99} print-failed-test-output
@@ -803,6 +802,7 @@ rm -rf %{buildroot}
 %changelog
 * Thu Nov 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-3
 - Include verbose logs in build output for 'make test' failures
+- Use %%autosetup macro to unpack and patch source
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
