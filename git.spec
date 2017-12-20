@@ -239,6 +239,7 @@ other SCMs, install the git-all meta-package.
 %package core-doc
 Summary:        Documentation files for git-core
 Group:          Development/Tools
+BuildArch:      noarch
 Requires:       git-core = %{version}-%{release}
 %description core-doc
 Documentation files for git-core package including man pages.
@@ -802,6 +803,7 @@ rm -rf %{buildroot}
 - Use %%autosetup macro to unpack and patch source
 - Remove second make invocation for doc build/install
 - Fix builds using '--without docs'
+- Mark git-core-docs sub-package noarch
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
