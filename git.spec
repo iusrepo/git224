@@ -1,4 +1,5 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
+%bcond_without docs
 
 %global gitexecdir          %{_libexecdir}/git-core
 
@@ -102,7 +103,7 @@ Patch2:         0001-revision-quit-pruning-diff-more-quickly-when-possibl.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-%if ! 0%{?_without_docs}
+%if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
 BuildRequires:  xmlto
 %if %{test_links}
@@ -438,7 +439,7 @@ chmod +x %{__perl_requires}
 %endif
 
 %build
-make %{?_smp_mflags} all %{!?_without_docs:doc}
+make %{?_smp_mflags} all %{?with_docs:doc}
 
 make -C contrib/emacs
 
@@ -463,7 +464,7 @@ sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
 
 %install
 rm -rf %{buildroot}
-make %{?_smp_mflags} INSTALLDIRS=vendor install %{!?_without_docs:install-doc}
+make %{?_smp_mflags} INSTALLDIRS=vendor install %{?with_docs:install-doc}
 
 %global elispdir %{_emacs_sitelispdir}/git
 make -C contrib/emacs install \
@@ -486,7 +487,7 @@ install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitexecdir}
 
-make -C contrib/subtree install %{!?_without_docs:install-doc}
+make -C contrib/subtree install %{?with_docs:install-doc}
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -511,7 +512,7 @@ exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bz
 # Split out Git::SVN files
 grep Git/SVN perl-git-files > perl-git-svn-files
 sed -i "/Git\/SVN/ d" perl-git-files
-%if %{!?_without_docs:1}0
+%if %{with docs}
 (find %{buildroot}%{_mandir} -type f | grep -vE "$exclude_re|Git" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
 rm -rf %{buildroot}%{_mandir}
@@ -569,7 +570,10 @@ find contrib -type f | xargs chmod -x
 # Split core files
 not_core_re="git-(add--interactive|credential-(gnome-keyring|libsecret|netrc)|difftool|filter-branch|instaweb|request-pull|send-mail)|gitweb"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
+touch man-doc-files-core
+%if %{with docs}
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
+%endif
 grep -E  "$not_core_re" bin-man-doc-files \
     | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
 
@@ -584,7 +588,7 @@ rm -rf %{buildroot}%{_pkgdocdir}/contrib/credential/
 cp -p gitweb/INSTALL %{buildroot}%{_pkgdocdir}/INSTALL.gitweb
 cp -p gitweb/README %{buildroot}%{_pkgdocdir}/README.gitweb
 
-%if ! 0%{?_without_docs}
+%if %{with docs}
 cp -pr Documentation/*.html Documentation/docbook-xsl.css %{buildroot}%{_pkgdocdir}/
 cp -pr Documentation/{howto,technical} %{buildroot}%{_pkgdocdir}/
 find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
@@ -603,7 +607,7 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
 ##### #DOC
 
 %check
-%if %{test_links}
+%if %{with docs} && %{test_links}
 find %{buildroot}%{_pkgdocdir} -name "*.html" | xargs linkchecker
 %endif
 
@@ -690,31 +694,31 @@ rm -rf %{buildroot}
 %{gitexecdir}/*p4*
 %{gitexecdir}/mergetools/p4merge
 %{_pkgdocdir}/*p4*.txt
-%{!?_without_docs: %{_mandir}/man1/*p4*.1*}
-%{!?_without_docs: %{_pkgdocdir}/*p4*.html }
+%{?with_docs:%{_mandir}/man1/*p4*.1*}
+%{?with_docs:%{_pkgdocdir}/*p4*.html}
 
 %files svn
 %defattr(-,root,root)
 %{gitexecdir}/*svn*
 #NOTE: what about svn-fe
 %{_pkgdocdir}/*svn*.txt
-%{!?_without_docs: %{_mandir}/man1/*svn*.1*}
-%{!?_without_docs: %{_pkgdocdir}/*svn*.html }
+%{?with_docs:%{_mandir}/man1/*svn*.1*}
+%{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %files cvs
 %defattr(-,root,root)
 %{_pkgdocdir}/*git-cvs*.txt
 %{_bindir}/git-cvsserver
 %{gitexecdir}/*cvs*
-%{!?_without_docs: %{_mandir}/man1/*cvs*.1*}
-%{!?_without_docs: %{_pkgdocdir}/*git-cvs*.html }
+%{?with_docs:%{_mandir}/man1/*cvs*.1*}
+%{?with_docs:%{_pkgdocdir}/*git-cvs*.html}
 
 %files email
 %defattr(-,root,root)
 %{_pkgdocdir}/*email*.txt
 %{gitexecdir}/*email*
-%{!?_without_docs: %{_mandir}/man1/*email*.1*}
-%{!?_without_docs: %{_pkgdocdir}/*email*.html }
+%{?with_docs:%{_mandir}/man1/*email*.1*}
+%{?with_docs:%{_pkgdocdir}/*email*.html}
 
 %files gui
 %defattr(-,root,root)
@@ -724,27 +728,27 @@ rm -rf %{buildroot}
 %{_datadir}/git-gui/
 %{_pkgdocdir}/git-gui.txt
 %{_pkgdocdir}/git-citool.txt
-%{!?_without_docs: %{_mandir}/man1/git-gui.1*}
-%{!?_without_docs: %{_pkgdocdir}/git-gui.html}
-%{!?_without_docs: %{_mandir}/man1/git-citool.1*}
-%{!?_without_docs: %{_pkgdocdir}/git-citool.html}
+%{?with_docs:%{_mandir}/man1/git-gui.1*}
+%{?with_docs:%{_pkgdocdir}/git-gui.html}
+%{?with_docs:%{_mandir}/man1/git-citool.1*}
+%{?with_docs:%{_pkgdocdir}/git-citool.html}
 
 %files -n gitk
 %defattr(-,root,root)
 %{_pkgdocdir}/*gitk*.txt
 %{_bindir}/*gitk*
 %{_datadir}/gitk
-%{!?_without_docs: %{_mandir}/man1/*gitk*.1*}
-%{!?_without_docs: %{_pkgdocdir}/*gitk*.html }
+%{?with_docs:%{_mandir}/man1/*gitk*.1*}
+%{?with_docs:%{_pkgdocdir}/*gitk*.html}
 
 %files -n perl-Git -f perl-git-files
 %defattr(-,root,root)
 %exclude %{_mandir}/man3/*Git*SVN*.3pm*
-%{!?_without_docs: %{_mandir}/man3/*Git*.3pm*}
+%{?with_docs:%{_mandir}/man3/*Git*.3pm*}
 
 %files -n perl-Git-SVN -f perl-git-svn-files
 %defattr(-,root,root)
-%{!?_without_docs: %{_mandir}/man3/*Git*SVN*.3pm*}
+%{?with_docs:%{_mandir}/man3/*Git*SVN*.3pm*}
 
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %files -n emacs-git
@@ -770,14 +774,14 @@ rm -rf %{buildroot}
 %endif
 %{gitexecdir}/git-daemon
 %{_localstatedir}/lib/git
-%{!?_without_docs: %{_mandir}/man1/git-daemon*.1*}
-%{!?_without_docs: %{_pkgdocdir}/git-daemon*.html}
+%{?with_docs:%{_mandir}/man1/git-daemon*.1*}
+%{?with_docs:%{_pkgdocdir}/git-daemon*.html}
 
 %files -n gitweb
 %defattr(-,root,root)
 %{_pkgdocdir}/*.gitweb
 %{_pkgdocdir}/gitweb*.txt
-%{!?_without_docs: %{_pkgdocdir}/gitweb*.html}
+%{?with_docs:%{_pkgdocdir}/gitweb*.html}
 %config(noreplace)%{_sysconfdir}/gitweb.conf
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 %{_localstatedir}/www/git/
@@ -797,6 +801,7 @@ rm -rf %{buildroot}
 - Include verbose logs in build output for 'make test' failures
 - Use %%autosetup macro to unpack and patch source
 - Remove second make invocation for doc build/install
+- Fix builds using '--without docs'
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
