@@ -438,10 +438,7 @@ chmod +x %{__perl_requires}
 %endif
 
 %build
-make %{?_smp_mflags} all
-%if ! 0%{?_without_docs}
-make %{?_smp_mflags} doc
-%endif
+make %{?_smp_mflags} all %{!?_without_docs:doc}
 
 make -C contrib/emacs
 
@@ -466,10 +463,7 @@ sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
 
 %install
 rm -rf %{buildroot}
-make %{?_smp_mflags} INSTALLDIRS=vendor install
-%if ! 0%{?_without_docs}
-make %{?_smp_mflags} INSTALLDIRS=vendor install-doc
-%endif
+make %{?_smp_mflags} INSTALLDIRS=vendor install %{!?_without_docs:install-doc}
 
 %global elispdir %{_emacs_sitelispdir}/git
 make -C contrib/emacs install \
@@ -492,8 +486,7 @@ install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitexecdir}
 
-make -C contrib/subtree install
-make -C contrib/subtree install-doc
+make -C contrib/subtree install %{!?_without_docs:install-doc}
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
@@ -803,6 +796,7 @@ rm -rf %{buildroot}
 * Thu Nov 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-3
 - Include verbose logs in build output for 'make test' failures
 - Use %%autosetup macro to unpack and patch source
+- Remove second make invocation for doc build/install
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
