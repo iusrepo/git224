@@ -608,9 +608,9 @@ find %{buildroot}%{_pkgdocdir} -name "*.html" | xargs linkchecker
 %endif
 
 # Tests to skip on all releases and architectures
-# t9128-git-svn-cmd-branch - "branch tests" fails randomnly
-# t9167-git-svn-cmd-branch-subproject - "branch tests" fails randomnly
-GIT_SKIP_TESTS="t9128.3 t9167.3"
+# - tests in t9128, t9141, and t9167 which call 'git svn branch' fail
+#   intermittently with SIGSEGV in the subversion bindings
+GIT_SKIP_TESTS="t9128.[34] t9141.[34] t9167.3"
 
 %ifarch aarch64 %{arm} %{power64}
 # Skip tests which fail on aarch64, arm, and ppc
@@ -801,6 +801,7 @@ rm -rf %{buildroot}
 - Mark git-core-docs sub-package noarch
 - Avoid failures in svnserve tests when run in parallel
 - Run tests in parallel by default on Fedora
+- Skip 'git svn branch' tests which fail intermittently
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
