@@ -44,16 +44,11 @@
 %global test_links 0
 %endif
 
-# Allow tests to run in parallel.  Disabled by default due to unresolved
-# failures when building in koji.  Enabling it speeds up the test suite quite a
-# bit though.  The -O (--output-sync) option requires make > 4.0, which is not
-# available on EL <= 7.  Without it, running the tests in parallel causes the
-# output to be rather unweildy, so restrict parallel tests to Fedora.
-#
-# Pass "--with parallel_tests" or "--define 'parallel_tests 1'" to
-# rpmbuild/mock.
-%bcond_with parallel_tests
-%if %{with parallel_tests} && 0%{?fedora}
+# Run tests in parallel.  This speeds up the test suite quite a bit.  The
+# -O (--output-sync) option requires make > 4.0, which is not available on
+# EL <= 7.  Without it, running the tests in parallel causes the output to
+# be rather unweildy, so restrict parallel tests to Fedora.
+%if 0%{?fedora}
 %global make_test_opts -O %{?_smp_mflags}
 %endif
 
@@ -805,6 +800,7 @@ rm -rf %{buildroot}
 - Fix builds using '--without docs'
 - Mark git-core-docs sub-package noarch
 - Avoid failures in svnserve tests when run in parallel
+- Run tests in parallel by default on Fedora
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
