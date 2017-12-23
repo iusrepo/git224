@@ -622,13 +622,6 @@ GIT_SKIP_TESTS="t9128.[34] t9141.[34] t9167.3"
 GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.33 t5551.25"
 %endif
 
-%ifarch s390x
-# Skip grep tests which fail intermittently on s390x
-## - probably it is because of current troubles with binutils on s390x. Will
-##   try tests when troubles on s390x will be resolved
-GIT_SKIP_TESTS="$GIT_SKIP_TESTS t7008 t7810 t7811 t7812 t7813 t7814"
-%endif
-
 export GIT_SKIP_TESTS
 
 # Set LANG so various UTF-8 tests are run
@@ -802,6 +795,7 @@ rm -rf %{buildroot}
 - Avoid failures in svnserve tests when run in parallel
 - Run tests in parallel by default on Fedora
 - Skip 'git svn branch' tests which fail intermittently
+- Re-enable grep tests on s390x
 
 * Wed Nov 29 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-2
 - Fix debuginfo for gnome-keyring and libsecret credential helpers
