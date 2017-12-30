@@ -430,7 +430,7 @@ cat << \EOF > %{name}-req
 sed -e '/perl(packed-refs)/d'
 EOF
 
-%global __perl_requires %{_builddir}/%{name}-%{version}/%{name}-req
+%global __perl_requires %{_builddir}/%{name}-%{version}%{?rcrev}/%{name}-req
 chmod +x %{__perl_requires}
 %endif
 
@@ -786,6 +786,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sat Dec 30 2017 Todd Zullinger <tmz@pobox.com>
+- Fix perl requires filtering on EL-6
+
 * Thu Nov 30 2017 Todd Zullinger <tmz@pobox.com> - 2.15.1-3
 - Include verbose logs in build output for 'make test' failures
 - Use %%autosetup macro to unpack and patch source
