@@ -146,6 +146,7 @@ BuildRequires:  httpd
 %if 0%{?fedora}
 BuildRequires:  jgit
 %endif
+BuildRequires:  mod_dav_svn
 BuildRequires:  pcre
 BuildRequires:  perl(CGI)
 BuildRequires:  perl(CGI::Carp)
@@ -622,12 +623,26 @@ GIT_SKIP_TESTS="t9128.[34] t9141.[34] t9167.3"
 GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.33 t5551.25"
 %endif
 
+%ifarch %{power64}
+# Skip tests which fail on ppc
+#
+# t9115-git-svn-dcommit-funky-renames is disabled because it frequently fails.
+# The port it uses (9115) is already in use.  It is unclear if this is
+# due to an issue in the test suite or a conflict with some other process on
+# the build host.  It only appears to occur on ppc-arches.
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t9115"
+%endif
+
 export GIT_SKIP_TESTS
 
 # Set LANG so various UTF-8 tests are run
 export LANG=en_US.UTF-8
 
-# Run git svn tests which use svnserve
+# Explicitly enable tests which may be skipped opportunistically
+# (Check for variables set via test_tristate in the test suite)
+export GIT_SVN_TEST_HTTPD=true
+export GIT_TEST_GIT_DAEMON=true
+export GIT_TEST_HTTPD=true
 export GIT_TEST_SVNSERVE=true
 
 # Run the tests
@@ -786,6 +801,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Sun Jan 07 2018 Todd Zullinger <tmz@pobox.com>
+- Explicitly enable tests which may be skipped opportunistically
+
 * Sat Dec 30 2017 Todd Zullinger <tmz@pobox.com>
 - Fix perl requires filtering on EL-6
 
