@@ -690,7 +690,10 @@ rm -rf %{buildroot}
 
 %files core-doc -f man-doc-files-core
 %defattr(-,root,root)
+%if 0%{?rhel} && 0%{?rhel} <= 7
+# .py files are only bytecompiled on EL <= 7
 %exclude %{_pkgdocdir}/contrib/*/*.py[co]
+%endif
 %{_pkgdocdir}/contrib/hooks
 
 %files p4
@@ -801,6 +804,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jan 08 2018 Todd Zullinger <tmz@pobox.com>
+- Avoid excluding non-existent .py[co] files in %%doc
+
 * Sun Jan 07 2018 Todd Zullinger <tmz@pobox.com>
 - Explicitly enable tests which may be skipped opportunistically
 
