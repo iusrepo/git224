@@ -20,16 +20,6 @@
 %global use_systemd         0
 %endif
 
-# gnome-keyring is deprecated, however someone would like
-# to use it on older fedora instead of libsecret. So that's
-# why this ugly solution
-# TODO: we should maybe update conditions according to supported systems
-%if ( 0%{?fedora} && 0%{?fedora} < 26 ) || 0%{?rhel} == 7
-%global gnome_keyring       1
-%else
-%global gnome_keyring       0
-%endif
-
 # Settings for EL <= 7
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
@@ -179,6 +169,9 @@ Provides:       emacs-git = %{version}-%{release}
 Provides:       emacs-git-el = %{version}-%{release}
 %endif
 
+# Obsolete gnome-keyring credential helper (remove in Fedora 29)
+Obsoletes:      git-gnome-keyring < 2.11.1-4
+
 %description
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -193,9 +186,6 @@ Summary:        Meta-package to pull in all git tools
 Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
-%if %{gnome_keyring}
-Requires:       git-gnome-keyring = %{version}-%{release}
-%endif
 Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
@@ -361,17 +351,6 @@ Requires:       emacs-git = %{version}-%{release}
 %{summary}.
 %endif
 
-%if %{gnome_keyring}
-%package gnome-keyring
-Summary:        Git helper for accessing credentials via gnome-keyring
-BuildRequires:  libgnome-keyring-devel
-Requires:       git = %{version}-%{release}
-Requires:       gnome-keyring
-%description gnome-keyring
-%{summary}.
-%endif
-
-
 %prep
 # Verify GPG signatures
 gpghome="$(mktemp -qd)" # Ensure we don't use any existing gpg keyrings
@@ -440,9 +419,6 @@ make %{?_smp_mflags} all %{?with_docs:doc}
 
 make -C contrib/emacs
 
-%if %{gnome_keyring}
-make -C contrib/credential/gnome-keyring/
-%endif
 %if %{libsecret}
 make -C contrib/credential/libsecret/
 %endif
@@ -473,10 +449,6 @@ done
 install -Dpm 644 %{SOURCE10} \
     %{buildroot}%{_emacs_sitestartdir}/git-init.el
 
-%if %{gnome_keyring}
-install -pm 755 contrib/credential/gnome-keyring/git-credential-gnome-keyring \
-    %{buildroot}%{gitexecdir}
-%endif
 %if %{libsecret}
 install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
     %{buildroot}%{gitexecdir}
@@ -565,14 +537,13 @@ chmod a-x Documentation/technical/api-index.sh
 find contrib -type f | xargs chmod -x
 
 # Split core files
-not_core_re="git-(add--interactive|credential-(gnome-keyring|libsecret|netrc)|difftool|filter-branch|instaweb|request-pull|send-mail)|gitweb"
+not_core_re="git-(add--interactive|credential-(libsecret|netrc)|difftool|filter-branch|instaweb|request-pull|send-mail)|gitweb"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 touch man-doc-files-core
 %if %{with docs}
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
 %endif
-grep -E  "$not_core_re" bin-man-doc-files \
-    | grep -v "credential-gnome-keyring" > bin-man-doc-git-files
+grep -E  "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 
 ##### DOC
 # place doc files into %%{_pkgdocdir} and split them into expected packages
@@ -793,19 +764,13 @@ rm -rf %{buildroot}
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 %{_localstatedir}/www/git/
 
-%if %{gnome_keyring}
-%files gnome-keyring
-%defattr(-,root,root)
-%{gitexecdir}/git-credential-gnome-keyring
-%endif
-
-
 %files all
 # No files for you!
 
 %changelog
 * Mon Jan 08 2018 Todd Zullinger <tmz@pobox.com>
 - Avoid excluding non-existent .py[co] files in %%doc
+- Remove obsolete gnome-keyring credential helper
 
 * Sun Jan 07 2018 Todd Zullinger <tmz@pobox.com>
 - Explicitly enable tests which may be skipped opportunistically
