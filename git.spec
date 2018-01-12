@@ -3,11 +3,12 @@
 
 %global gitexecdir          %{_libexecdir}/git-core
 
-# Settings for F-19+ and EL-7+
+# Settings for Fedora and EL >= 7
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %global bashcomp_pkgconfig  1
 %global bashcompdir         %(pkg-config --variable=completionsdir bash-completion 2>/dev/null)
 %global bashcomproot        %(dirname %{bashcompdir} 2>/dev/null)
+%global emacs_filesystem    1
 %global libsecret           1
 %global use_new_rpm_filters 1
 %global use_systemd         1
@@ -15,9 +16,11 @@
 %global bashcomp_pkgconfig  0
 %global bashcompdir         %{_sysconfdir}/bash_completion.d
 %global bashcomproot        %{bashcompdir}
+%global emacs_filesystem    0
 %global libsecret           0
 %global use_new_rpm_filters 0
 %global use_systemd         0
+%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 %endif
 
 # Settings for EL <= 7
@@ -25,10 +28,8 @@
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 %endif
 
-# fallback for F17- && RHEL6-
-%{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
-
-%if 0%{?fedora} && 0%{?fedora} >= 25
+# Test links in HTML documentation on Fedora (linkchecker is not in EL)
+%if 0%{?fedora}
 %global test_links 1
 %else
 %global test_links 0
@@ -162,13 +163,8 @@ Requires:       perl(Term::ReadKey)
 %endif
 Requires:       perl-Git = %{version}-%{release}
 
-%if 0%{?fedora} || 0%{?rhel} >= 7
+%if %{emacs_filesystem}
 Requires:       emacs-filesystem >= %{_emacs_version}
-# These can be removed in Fedora 26
-Obsoletes:      emacs-git <= 2.4.5
-Obsoletes:      emacs-git-el <= 2.4.5
-Provides:       emacs-git = %{version}-%{release}
-Provides:       emacs-git-el = %{version}-%{release}
 %endif
 
 # Obsolete gnome-keyring credential helper (remove in Fedora 29)
@@ -198,7 +194,7 @@ Requires:       perl-Git = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif
-%if 0%{?rhel} && 0%{?rhel} <= 6
+%if ! %{emacs_filesystem}
 Requires:       emacs-git = %{version}-%{release}
 %endif
 %description all
@@ -334,7 +330,7 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %description -n perl-Git-SVN
 %{summary}.
 
-%if 0%{?rhel} && 0%{?rhel} <= 6
+%if ! %{emacs_filesystem}
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
 Group:          Applications/Editors
@@ -638,7 +634,7 @@ rm -rf %{buildroot}
 
 %files -f bin-man-doc-git-files
 %defattr(-,root,root)
-%if 0%{?fedora} || 0%{?rhel} >= 7
+%if %{emacs_filesystem}
 %{elispdir}
 %{_emacs_sitestartdir}/git-init.el
 %endif
@@ -730,7 +726,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{?with_docs:%{_mandir}/man3/*Git*SVN*.3pm*}
 
-%if 0%{?rhel} && 0%{?rhel} <= 6
+%if ! %{emacs_filesystem}
 %files -n emacs-git
 %defattr(-,root,root)
 %{_pkgdocdir}/contrib/emacs/README
@@ -770,6 +766,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Fri Jan 12 2018 Todd Zullinger <tmz@pobox.com>
+- Add %%{emacs_filesystem} to simplify emacs support
+
 * Thu Jan 11 2018 Todd Zullinger <tmz@pobox.com>
 - Update BuildRequires for tests
 
