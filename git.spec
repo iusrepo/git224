@@ -122,6 +122,7 @@ BuildRequires:  systemd
 %endif
 
 # Test suite requirements
+BuildRequires:  acl
 %if 0%{?fedora} && 0%{?fedora} >= 27
 # Needed by t5540-http-push-webdav.sh
 BuildRequires: apr-util-bdb
@@ -129,7 +130,7 @@ BuildRequires: apr-util-bdb
 BuildRequires:  cvs
 BuildRequires:  cvsps
 BuildRequires:  gnupg
-%if 0%{?fedora} || ( 0%{?rhel} && 0%{?rhel} == 7 && %{_arch} != ppc64 )
+%if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} == 7 && %{_arch} != ppc64 ))
 BuildRequires:  highlight
 %endif
 BuildRequires:  httpd
@@ -143,6 +144,7 @@ BuildRequires:  perl(CGI::Carp)
 BuildRequires:  perl(CGI::Util)
 BuildRequires:  perl(DBD::SQLite)
 BuildRequires:  perl(Digest::MD5)
+BuildRequires:  perl(HTTP::Date)
 BuildRequires:  perl(IO::Pty)
 BuildRequires:  perl(Mail::Address)
 BuildRequires:  perl(Memoize)
@@ -768,6 +770,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jan 11 2018 Todd Zullinger <tmz@pobox.com>
+- Update BuildRequires for tests
+
 * Mon Jan 08 2018 Todd Zullinger <tmz@pobox.com>
 - Avoid excluding non-existent .py[co] files in %%doc
 - Remove obsolete gnome-keyring credential helper
