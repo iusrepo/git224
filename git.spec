@@ -73,7 +73,7 @@ Source11:       git.xinetd.in
 Source12:       git.conf.httpd
 Source13:       git-gui.desktop
 Source14:       gitweb.conf.in
-Source15:       git@.service
+Source15:       git@.service.in
 Source16:       git.socket
 
 # Script to print test failure output (used in %%check)
@@ -487,8 +487,11 @@ rm -rf %{buildroot}%{_mandir}
 
 mkdir -p %{buildroot}%{_localstatedir}/lib/git
 %if %{use_systemd}
-mkdir -p %{buildroot}%{_unitdir}
-cp -a %{SOURCE15} %{SOURCE16} %{buildroot}%{_unitdir}
+install -Dp -m 0644 %{SOURCE16} %{buildroot}%{_unitdir}/git.socket
+perl -p \
+    -e "s|\@GITEXECDIR\@|%{gitexecdir}|g;" \
+    -e "s|\@BASE_PATH\@|%{_localstatedir}/lib/git|g;" \
+    %{SOURCE15} > %{buildroot}%{_unitdir}/git@.service
 %else
 mkdir -p %{buildroot}%{_sysconfdir}/xinetd.d
 perl -p \
@@ -768,6 +771,7 @@ rm -rf %{buildroot}
 %changelog
 * Fri Jan 12 2018 Todd Zullinger <tmz@pobox.com>
 - Add %%{emacs_filesystem} to simplify emacs support
+- Use .in template for git@.service to ensure paths are substituted
 
 * Thu Jan 11 2018 Todd Zullinger <tmz@pobox.com>
 - Update BuildRequires for tests
