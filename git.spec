@@ -47,8 +47,8 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.15.1
-Release:        3%{?rcrev}%{?dist}
+Version:        2.16.0
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -82,10 +82,6 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-
-# https://bugzilla.redhat.com/1510455 (CVE-2017-15298)
-# https://github.com/git/git/commit/a937b37e76
-Patch2:         0001-revision-quit-pruning-diff-more-quickly-when-possibl.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -643,6 +639,7 @@ rm -rf %{buildroot}
 %endif
 %{_datadir}/git-core/contrib/hooks/update-paranoid
 %{_datadir}/git-core/contrib/hooks/setgitperms.perl
+%{_datadir}/git-core/templates/hooks/fsmonitor-watchman.sample
 %{_datadir}/git-core/templates/hooks/pre-rebase.sample
 %{_datadir}/git-core/templates/hooks/prepare-commit-msg.sample
 
@@ -655,6 +652,7 @@ rm -rf %{buildroot}
 # exclude is best way here because of troubles with symlinks inside git-core/
 %exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
+%exclude %{_datadir}/git-core/templates/hooks/fsmonitor-watchman.sample
 %exclude %{_datadir}/git-core/templates/hooks/pre-rebase.sample
 %exclude %{_datadir}/git-core/templates/hooks/prepare-commit-msg.sample
 %{bashcomproot}
@@ -769,6 +767,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Thu Jan 18 2018 Todd Zullinger <tmz@pobox.com> - 2.16.0-1
+- Update to 2.16.0
+
 * Fri Jan 12 2018 Todd Zullinger <tmz@pobox.com>
 - Add %%{emacs_filesystem} to simplify emacs support
 - Use .in template for git@.service to ensure paths are substituted
