@@ -35,14 +35,6 @@
 %global test_links 0
 %endif
 
-# Run tests in parallel.  This speeds up the test suite quite a bit.  The
-# -O (--output-sync) option requires make > 4.0, which is not available on
-# EL <= 7.  Without it, running the tests in parallel causes the output to
-# be rather unweildy, so restrict parallel tests to Fedora.
-%if 0%{?fedora}
-%global make_test_opts -O %{?_smp_mflags}
-%endif
-
 # Define for release candidates
 #global rcrev   .rc0
 
@@ -124,6 +116,7 @@ BuildRequires:  acl
 # Needed by t5540-http-push-webdav.sh
 BuildRequires: apr-util-bdb
 %endif
+BuildRequires:  bash
 BuildRequires:  cvs
 BuildRequires:  cvsps
 BuildRequires:  gnupg
@@ -136,6 +129,7 @@ BuildRequires:  jgit
 %endif
 BuildRequires:  mod_dav_svn
 BuildRequires:  pcre
+BuildRequires:  perl(App::Prove)
 BuildRequires:  perl(CGI)
 BuildRequires:  perl(CGI::Carp)
 BuildRequires:  perl(CGI::Util)
@@ -387,6 +381,11 @@ PYTHON_PATH = %{__python2}
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 gitwebdir = %{_localstatedir}/www/git
+
+# Test options
+DEFAULT_TEST_TARGET = prove
+GIT_PROVE_OPTS = --verbose --normalize %{?_smp_mflags}
+GIT_TEST_OPTS = -x --verbose-log
 EOF
 
 # Filter bogus perl requires
@@ -613,9 +612,11 @@ export GIT_TEST_GIT_DAEMON=true
 export GIT_TEST_HTTPD=true
 export GIT_TEST_SVNSERVE=true
 
+# Use bash for the tests
+export TEST_SHELL_PATH=/bin/bash
+
 # Run the tests
-GIT_TEST_OPTS='--verbose-log' make %{?make_test_opts} test || \
-    ./print-failed-test-output
+make test || ./print-failed-test-output
 
 %clean
 rm -rf %{buildroot}
@@ -769,6 +770,7 @@ rm -rf %{buildroot}
 %changelog
 * Thu Jan 18 2018 Todd Zullinger <tmz@pobox.com> - 2.16.0-1
 - Update to 2.16.0
+- Use 'prove' as test harness, enable shell tracing
 
 * Fri Jan 12 2018 Todd Zullinger <tmz@pobox.com>
 - Add %%{emacs_filesystem} to simplify emacs support
