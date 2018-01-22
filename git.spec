@@ -39,7 +39,7 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.16.0
+Version:        2.16.1
 Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -781,6 +781,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jan 22 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-1
+- Update to 2.16.1
+
 * Thu Jan 18 2018 Todd Zullinger <tmz@pobox.com> - 2.16.0-1
 - Update to 2.16.0
 - Use 'prove' as test harness, enable shell tracing
