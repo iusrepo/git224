@@ -3,6 +3,13 @@
 
 %global gitexecdir          %{_libexecdir}/git-core
 
+# Settings for Fedora and EL > 7
+%if 0%{?fedora} || 0%{?rhel} > 7
+%global with_python3        1
+%else
+%global with_python3        0
+%endif
+
 # Settings for Fedora and EL >= 7
 %if 0%{?fedora} || 0%{?rhel} >= 7
 %global bashcomp_pkgconfig  1
@@ -141,6 +148,10 @@ BuildRequires:  perl(Mail::Address)
 BuildRequires:  perl(Memoize)
 BuildRequires:  perl(Test::More)
 BuildRequires:  perl(Time::HiRes)
+BuildRequires:  python2-devel
+%if 0%{?with_python3}
+BuildRequires:  python3-devel
+%endif
 BuildRequires:  subversion
 BuildRequires:  subversion-perl
 BuildRequires:  time
@@ -420,6 +431,9 @@ make -C contrib/credential/netrc/
 make -C contrib/subtree/
 
 # Fix shebang in a few places to silence rpmlint complaints
+#
+# The multimail hook is installed with git-core.  Use python3 to avoid an
+# unnecessary python2 dependency.
 sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
     contrib/fast-import/import-zips.py \
     contrib/hg-to-git/hg-to-git.py \
@@ -427,6 +441,12 @@ sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
     contrib/hooks/multimail/migrate-mailhook-config \
     contrib/hooks/multimail/post-receive.example \
     contrib/svn-fe/svnrdump_sim.py
+%if 0%{?with_python3}
+sed -i -e '1s|#!%{__python2}$|#!%{__python3}|' \
+    contrib/hooks/multimail/git_multimail.py \
+    contrib/hooks/multimail/migrate-mailhook-config \
+    contrib/hooks/multimail/post-receive.example
+%endif
 
 %install
 rm -rf %{buildroot}
@@ -651,6 +671,7 @@ rm -rf %{buildroot}
 %{elispdir}
 %{_emacs_sitestartdir}/git-init.el
 %endif
+%{_datadir}/git-core/contrib/hooks/multimail
 %{_datadir}/git-core/contrib/hooks/update-paranoid
 %{_datadir}/git-core/contrib/hooks/setgitperms.perl
 %{_datadir}/git-core/templates/hooks/fsmonitor-watchman.sample
@@ -664,6 +685,7 @@ rm -rf %{buildroot}
 %{!?_licensedir:%global license %doc}
 %license COPYING
 # exclude is best way here because of troubles with symlinks inside git-core/
+%exclude %{_datadir}/git-core/contrib/hooks/multimail
 %exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
 %exclude %{_datadir}/git-core/templates/hooks/fsmonitor-watchman.sample
@@ -783,6 +805,7 @@ rm -rf %{buildroot}
 %changelog
 * Mon Jan 22 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-1
 - Update to 2.16.1
+- Avoid python dependency in git-core (#1536471)
 
 * Thu Jan 18 2018 Todd Zullinger <tmz@pobox.com> - 2.16.0-1
 - Update to 2.16.0
