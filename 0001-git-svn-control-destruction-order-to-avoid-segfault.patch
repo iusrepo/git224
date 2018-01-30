@@ -1,0 +1,40 @@
+From 7f6f75e97acd25f8e95ce431e16d2e1c2093845d Mon Sep 17 00:00:00 2001
+From: Eric Wong <e@80x24.org>
+Date: Mon, 29 Jan 2018 23:11:07 +0000
+Subject: [PATCH] git-svn: control destruction order to avoid segfault
+
+It seems necessary to control destruction ordering to avoid a
+segfault with SVN 1.9.5 when using "git svn branch".  I've also
+reported the problem against libsvn-perl to Debian [Bug #888791],
+but releasing the SVN::Client instance can be beneficial anyways to
+save memory.
+
+ref: https://bugs.debian.org/888791
+Tested-by: Todd Zullinger <tmz@pobox.com>
+Reported-by: brian m. carlson <sandals@crustytoothpaste.net>
+Signed-off-by: Eric Wong <e@80x24.org>
+Signed-off-by: Junio C Hamano <gitster@pobox.com>
+Signed-off-by: Todd Zullinger <tmz@pobox.com>
+---
+ git-svn.perl | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/git-svn.perl b/git-svn.perl
+index aa242d4f4f..b012980246 100755
+--- a/git-svn.perl
++++ b/git-svn.perl
+@@ -1199,6 +1199,11 @@ sub cmd_branch {
+ 	$ctx->copy($src, $rev, $dst)
+ 		unless $_dry_run;
+ 
++	# Release resources held by ctx before creating another SVN::Ra
++	# so destruction is orderly.  This seems necessary with SVN 1.9.5
++	# to avoid segfaults.
++	$ctx = undef;
++
+ 	$gs->fetch_all;
+ }
+ 
+-- 
+2.16.1
+

@@ -47,7 +47,7 @@
 
 Name:           git
 Version:        2.16.1
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -81,6 +81,8 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+# https://public-inbox.org/git/20180129231653.GA22834@starla/
+Patch2:         0001-git-svn-control-destruction-order-to-avoid-segfault.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -596,9 +598,7 @@ find %{buildroot}%{_pkgdocdir} -name "*.html" | xargs linkchecker
 %endif
 
 # Tests to skip on all releases and architectures
-# - tests in t9128, t9141, and t9167 which call 'git svn branch' fail
-#   intermittently with SIGSEGV in the subversion bindings
-GIT_SKIP_TESTS="t9128.[34] t9141.[34] t9167.3"
+GIT_SKIP_TESTS=""
 
 %ifarch aarch64 %{arm} %{power64}
 # Skip tests which fail on aarch64, arm, and ppc
@@ -803,6 +803,10 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Mon Jan 29 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-2
+- git-svn: avoid segfaults in 'git svn branch', re-enable t9128, t9141, and
+  t9167
+
 * Mon Jan 22 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-1
 - Update to 2.16.1
 - Avoid python dependency in git-core (#1536471)
