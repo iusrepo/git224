@@ -50,7 +50,6 @@ Version:        2.16.1
 Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
-Group:          Development/Tools
 URL:            https://git-scm.com/
 Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.xz
 Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
@@ -83,8 +82,6 @@ Patch0:         git-1.8-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://public-inbox.org/git/20180129231653.GA22834@starla/
 Patch2:         0001-git-svn-control-destruction-order-to-avoid-segfault.patch
-
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -184,7 +181,6 @@ tools for integrating with other SCMs, install the git-all meta-package.
 
 %package all
 Summary:        Meta-package to pull in all git tools
-Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       git-cvs = %{version}-%{release}
@@ -209,7 +205,6 @@ This is a dummy package which brings in all subpackages.
 
 %package core
 Summary:        Core package of git with minimal functionality
-Group:          Development/Tools
 Requires:       less
 Requires:       openssh-clients
 Requires:       zlib >= 1.2
@@ -225,7 +220,6 @@ other SCMs, install the git-all meta-package.
 
 %package core-doc
 Summary:        Documentation files for git-core
-Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git-core = %{version}-%{release}
 %description core-doc
@@ -233,7 +227,6 @@ Documentation files for git-core package including man pages.
 
 %package daemon
 Summary:        Git protocol daemon
-Group:          Development/Tools
 Requires:       git = %{version}-%{release}
 %if %{use_systemd}
 Requires:       systemd
@@ -248,7 +241,6 @@ The git daemon for supporting git:// access to git repositories
 
 %package -n gitweb
 Summary:        Simple web interface to git repositories
-Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 %description -n gitweb
@@ -256,7 +248,6 @@ Requires:       git = %{version}-%{release}
 
 %package p4
 Summary:        Git tools for working with Perforce depots
-Group:          Development/Tools
 BuildArch:      noarch
 BuildRequires:  python2-devel
 Requires:       git = %{version}-%{release}
@@ -265,7 +256,6 @@ Requires:       git = %{version}-%{release}
 
 %package svn
 Summary:        Git tools for interacting with Subversion repositories
-Group:          Development/Tools
 Requires:       git = %{version}-%{release}, subversion
 Requires:       perl(Digest::MD5)
 %if ! %{defined perl_bootstrap}
@@ -276,7 +266,6 @@ Requires:       perl(Term::ReadKey)
 
 %package cvs
 Summary:        Git tools for importing CVS repositories
-Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, cvs
 Requires:       cvsps
@@ -287,7 +276,6 @@ Requires:       perl(Git)
 
 %package email
 Summary:        Git tools for sending patches via email
-Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
@@ -298,7 +286,6 @@ Requires:       perl(Git)
 
 %package gui
 Summary:        Graphical interface to Git
-Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, tk >= 8.4
 Requires:       gitk = %{version}-%{release}
@@ -307,7 +294,6 @@ Requires:       gitk = %{version}-%{release}
 
 %package -n gitk
 Summary:        Git repository browser
-Group:          Development/Tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, tk >= 8.4
 %description -n gitk
@@ -315,7 +301,6 @@ Requires:       git = %{version}-%{release}, tk >= 8.4
 
 %package -n perl-Git
 Summary:        Perl interface to Git
-Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
@@ -326,7 +311,6 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 
 %package -n perl-Git-SVN
 Summary:        Perl interface to Git::SVN
-Group:          Development/Libraries
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
@@ -336,7 +320,6 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %if ! %{emacs_filesystem}
 %package -n emacs-git
 Summary:        Git version control system support for Emacs
-Group:          Applications/Editors
 Requires:       git = %{version}-%{release}
 BuildArch:      noarch
 Requires:       emacs(bin) >= %{_emacs_version}
@@ -345,7 +328,6 @@ Requires:       emacs(bin) >= %{_emacs_version}
 
 %package -n emacs-git-el
 Summary:        Elisp source files for git version control system support for Emacs
-Group:          Applications/Editors
 BuildArch:      noarch
 Requires:       emacs-git = %{version}-%{release}
 %description -n emacs-git-el
@@ -451,7 +433,6 @@ sed -i -e '1s|#!%{__python2}$|#!%{__python3}|' \
 %endif
 
 %install
-rm -rf %{buildroot}
 make %{?_smp_mflags} INSTALLDIRS=vendor install %{?with_docs:install-doc}
 
 %global elispdir %{_emacs_sitelispdir}/git
@@ -651,9 +632,6 @@ export TEST_SHELL_PATH=/bin/bash
 # Run the tests
 make test || ./print-failed-test-output
 
-%clean
-rm -rf %{buildroot}
-
 %if %{use_systemd}
 %post daemon
 %systemd_post git@.service
@@ -806,6 +784,7 @@ rm -rf %{buildroot}
 * Mon Jan 29 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-2
 - git-svn: avoid segfaults in 'git svn branch', re-enable t9128, t9141, and
   t9167
+- Drop obsolete BuildRoot, Group, %%clean, and buildroot cleanup
 
 * Mon Jan 22 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-1
 - Update to 2.16.1
