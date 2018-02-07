@@ -47,7 +47,7 @@
 
 Name:           git
 Version:        2.16.1
-Release:        2%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}.1
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -781,6 +781,9 @@ make test || ./print-failed-test-output
 # No files for you!
 
 %changelog
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.16.1-2.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Mon Jan 29 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-2
 - git-svn: avoid segfaults in 'git svn branch', re-enable t9128, t9141, and
   t9167
