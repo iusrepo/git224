@@ -644,7 +644,6 @@ make test || ./print-failed-test-output
 %endif
 
 %files -f bin-man-doc-git-files
-%defattr(-,root,root)
 %if %{emacs_filesystem}
 %{elispdir}
 %{_emacs_sitestartdir}/git-init.el
@@ -660,7 +659,6 @@ make test || ./print-failed-test-output
 # No files for you!
 
 %files core -f bin-files-core
-%defattr(-,root,root)
 #NOTE: this is only use of the %%doc macro in this spec file and should not
 #      be used elsewhere
 %{!?_licensedir:%global license %doc}
@@ -676,7 +674,6 @@ make test || ./print-failed-test-output
 %{_datadir}/git-core/
 
 %files core-doc -f man-doc-files-core
-%defattr(-,root,root)
 %if 0%{?rhel} && 0%{?rhel} <= 7
 # .py files are only bytecompiled on EL <= 7
 %exclude %{_pkgdocdir}/contrib/*/*.py[co]
@@ -684,7 +681,6 @@ make test || ./print-failed-test-output
 %{_pkgdocdir}/contrib/hooks
 
 %files cvs
-%defattr(-,root,root)
 %{_pkgdocdir}/*git-cvs*.txt
 %{_bindir}/git-cvsserver
 %{gitexecdir}/*cvs*
@@ -692,7 +688,6 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*git-cvs*.html}
 
 %files daemon
-%defattr(-,root,root)
 %{_pkgdocdir}/git-daemon*.txt
 %if %{use_systemd}
 %{_unitdir}/git.socket
@@ -707,26 +702,22 @@ make test || ./print-failed-test-output
 
 %if ! %{emacs_filesystem}
 %files -n emacs-git
-%defattr(-,root,root)
 %{_pkgdocdir}/contrib/emacs/README
 %dir %{elispdir}
 %{elispdir}/*.elc
 %{_emacs_sitestartdir}/git-init.el
 
 %files -n emacs-git-el
-%defattr(-,root,root)
 %{elispdir}/*.el
 %endif
 
 %files email
-%defattr(-,root,root)
 %{_pkgdocdir}/*email*.txt
 %{gitexecdir}/*email*
 %{?with_docs:%{_mandir}/man1/*email*.1*}
 %{?with_docs:%{_pkgdocdir}/*email*.html}
 
 %files -n gitk
-%defattr(-,root,root)
 %{_pkgdocdir}/*gitk*.txt
 %{_bindir}/*gitk*
 %{_datadir}/gitk
@@ -734,7 +725,6 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*gitk*.html}
 
 %files -n gitweb
-%defattr(-,root,root)
 %{_pkgdocdir}/*.gitweb
 %{_pkgdocdir}/gitweb*.txt
 %{?with_docs:%{_pkgdocdir}/gitweb*.html}
@@ -743,7 +733,6 @@ make test || ./print-failed-test-output
 %{_localstatedir}/www/git/
 
 %files gui
-%defattr(-,root,root)
 %{gitexecdir}/git-gui*
 %{gitexecdir}/git-citool
 %{_datadir}/applications/*git-gui.desktop
@@ -756,7 +745,6 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-citool.html}
 
 %files p4
-%defattr(-,root,root)
 %{gitexecdir}/*p4*
 %{gitexecdir}/mergetools/p4merge
 %{_pkgdocdir}/*p4*.txt
@@ -764,16 +752,13 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*p4*.html}
 
 %files -n perl-Git -f perl-git-files
-%defattr(-,root,root)
 %exclude %{_mandir}/man3/*Git*SVN*.3pm*
 %{?with_docs:%{_mandir}/man3/*Git*.3pm*}
 
 %files -n perl-Git-SVN -f perl-git-svn-files
-%defattr(-,root,root)
 %{?with_docs:%{_mandir}/man3/*Git*SVN*.3pm*}
 
 %files svn
-%defattr(-,root,root)
 %{gitexecdir}/*svn*
 #NOTE: what about svn-fe
 %{_pkgdocdir}/*svn*.txt
@@ -783,6 +768,7 @@ make test || ./print-failed-test-output
 %changelog
 * Wed Feb 07 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-3
 - Order %%files and %%packages sections by name
+- Remove obsolete %%defattr
 
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.16.1-2.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
