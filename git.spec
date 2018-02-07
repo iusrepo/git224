@@ -550,8 +550,8 @@ grep -E  "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 not_core_doc_re="(git-(cvs|gui|citool|daemon))|p4|svn|email|gitk|gitweb"
 mkdir -p %{buildroot}%{_pkgdocdir}/
 cp -pr README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
-# Remove contrib/credential, it has nothing useful for documentation
-rm -rf %{buildroot}%{_pkgdocdir}/contrib/credential/
+# Remove contrib/{credential,svn-fe}, they have nothing useful for documentation
+rm -rf %{buildroot}%{_pkgdocdir}/contrib/{credential,svn-fe}/
 cp -p gitweb/INSTALL %{buildroot}%{_pkgdocdir}/INSTALL.gitweb
 cp -p gitweb/README %{buildroot}%{_pkgdocdir}/README.gitweb
 
@@ -760,7 +760,6 @@ make test || ./print-failed-test-output
 
 %files svn
 %{gitexecdir}/*svn*
-#NOTE: what about svn-fe
 %{_pkgdocdir}/*svn*.txt
 %{?with_docs:%{_mandir}/man1/*svn*.1*}
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
@@ -769,6 +768,7 @@ make test || ./print-failed-test-output
 * Wed Feb 07 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-3
 - Order %%files and %%packages sections by name
 - Remove obsolete %%defattr
+- Don't package contrib/svn-fe in %%doc
 
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.16.1-2.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
