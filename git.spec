@@ -47,7 +47,7 @@
 
 Name:           git
 Version:        2.16.1
-Release:        2%{?rcrev}%{?dist}.1
+Release:        3%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -186,8 +186,8 @@ Requires:       git = %{version}-%{release}
 Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
-Requires:       git-svn = %{version}-%{release}
 Requires:       git-p4 = %{version}-%{release}
+Requires:       git-svn = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
@@ -225,6 +225,16 @@ Requires:       git-core = %{version}-%{release}
 %description core-doc
 Documentation files for git-core package including man pages.
 
+%package cvs
+Summary:        Git tools for importing CVS repositories
+BuildArch:      noarch
+Requires:       git = %{version}-%{release}, cvs
+Requires:       cvsps
+Requires:       perl(DBD::SQLite)
+Requires:       perl(Git)
+%description cvs
+%{summary}.
+
 %package daemon
 Summary:        Git protocol daemon
 Requires:       git = %{version}-%{release}
@@ -239,41 +249,6 @@ Requires:       xinetd
 %description daemon
 The git daemon for supporting git:// access to git repositories
 
-%package -n gitweb
-Summary:        Simple web interface to git repositories
-BuildArch:      noarch
-Requires:       git = %{version}-%{release}
-%description -n gitweb
-%{summary}.
-
-%package p4
-Summary:        Git tools for working with Perforce depots
-BuildArch:      noarch
-BuildRequires:  python2-devel
-Requires:       git = %{version}-%{release}
-%description p4
-%{summary}.
-
-%package svn
-Summary:        Git tools for interacting with Subversion repositories
-Requires:       git = %{version}-%{release}, subversion
-Requires:       perl(Digest::MD5)
-%if ! %{defined perl_bootstrap}
-Requires:       perl(Term::ReadKey)
-%endif
-%description svn
-%{summary}.
-
-%package cvs
-Summary:        Git tools for importing CVS repositories
-BuildArch:      noarch
-Requires:       git = %{version}-%{release}, cvs
-Requires:       cvsps
-Requires:       perl(DBD::SQLite)
-Requires:       perl(Git)
-%description cvs
-%{summary}.
-
 %package email
 Summary:        Git tools for sending patches via email
 BuildArch:      noarch
@@ -284,6 +259,37 @@ Requires:       perl(Git)
 %description email
 %{summary}.
 
+%if ! %{emacs_filesystem}
+%package -n emacs-git
+Summary:        Git version control system support for Emacs
+Requires:       git = %{version}-%{release}
+BuildArch:      noarch
+Requires:       emacs(bin) >= %{_emacs_version}
+%description -n emacs-git
+%{summary}.
+
+%package -n emacs-git-el
+Summary:        Elisp source files for git version control system support for Emacs
+BuildArch:      noarch
+Requires:       emacs-git = %{version}-%{release}
+%description -n emacs-git-el
+%{summary}.
+%endif
+
+%package -n gitk
+Summary:        Git repository browser
+BuildArch:      noarch
+Requires:       git = %{version}-%{release}, tk >= 8.4
+%description -n gitk
+%{summary}.
+
+%package -n gitweb
+Summary:        Simple web interface to git repositories
+BuildArch:      noarch
+Requires:       git = %{version}-%{release}
+%description -n gitweb
+%{summary}.
+
 %package gui
 Summary:        Graphical interface to Git
 BuildArch:      noarch
@@ -292,11 +298,12 @@ Requires:       gitk = %{version}-%{release}
 %description gui
 %{summary}.
 
-%package -n gitk
-Summary:        Git repository browser
+%package p4
+Summary:        Git tools for working with Perforce depots
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}, tk >= 8.4
-%description -n gitk
+BuildRequires:  python2-devel
+Requires:       git = %{version}-%{release}
+%description p4
 %{summary}.
 
 %package -n perl-Git
@@ -317,22 +324,15 @@ Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $versi
 %description -n perl-Git-SVN
 %{summary}.
 
-%if ! %{emacs_filesystem}
-%package -n emacs-git
-Summary:        Git version control system support for Emacs
-Requires:       git = %{version}-%{release}
-BuildArch:      noarch
-Requires:       emacs(bin) >= %{_emacs_version}
-%description -n emacs-git
-%{summary}.
-
-%package -n emacs-git-el
-Summary:        Elisp source files for git version control system support for Emacs
-BuildArch:      noarch
-Requires:       emacs-git = %{version}-%{release}
-%description -n emacs-git-el
-%{summary}.
+%package svn
+Summary:        Git tools for interacting with Subversion repositories
+Requires:       git = %{version}-%{release}, subversion
+Requires:       perl(Digest::MD5)
+%if ! %{defined perl_bootstrap}
+Requires:       perl(Term::ReadKey)
 %endif
+%description svn
+%{summary}.
 
 %prep
 # Verify GPG signatures
@@ -656,6 +656,9 @@ make test || ./print-failed-test-output
 %{_datadir}/git-core/templates/hooks/pre-rebase.sample
 %{_datadir}/git-core/templates/hooks/prepare-commit-msg.sample
 
+%files all
+# No files for you!
+
 %files core -f bin-files-core
 %defattr(-,root,root)
 #NOTE: this is only use of the %%doc macro in this spec file and should not
@@ -680,22 +683,6 @@ make test || ./print-failed-test-output
 %endif
 %{_pkgdocdir}/contrib/hooks
 
-%files p4
-%defattr(-,root,root)
-%{gitexecdir}/*p4*
-%{gitexecdir}/mergetools/p4merge
-%{_pkgdocdir}/*p4*.txt
-%{?with_docs:%{_mandir}/man1/*p4*.1*}
-%{?with_docs:%{_pkgdocdir}/*p4*.html}
-
-%files svn
-%defattr(-,root,root)
-%{gitexecdir}/*svn*
-#NOTE: what about svn-fe
-%{_pkgdocdir}/*svn*.txt
-%{?with_docs:%{_mandir}/man1/*svn*.1*}
-%{?with_docs:%{_pkgdocdir}/*svn*.html}
-
 %files cvs
 %defattr(-,root,root)
 %{_pkgdocdir}/*git-cvs*.txt
@@ -703,56 +690,6 @@ make test || ./print-failed-test-output
 %{gitexecdir}/*cvs*
 %{?with_docs:%{_mandir}/man1/*cvs*.1*}
 %{?with_docs:%{_pkgdocdir}/*git-cvs*.html}
-
-%files email
-%defattr(-,root,root)
-%{_pkgdocdir}/*email*.txt
-%{gitexecdir}/*email*
-%{?with_docs:%{_mandir}/man1/*email*.1*}
-%{?with_docs:%{_pkgdocdir}/*email*.html}
-
-%files gui
-%defattr(-,root,root)
-%{gitexecdir}/git-gui*
-%{gitexecdir}/git-citool
-%{_datadir}/applications/*git-gui.desktop
-%{_datadir}/git-gui/
-%{_pkgdocdir}/git-gui.txt
-%{_pkgdocdir}/git-citool.txt
-%{?with_docs:%{_mandir}/man1/git-gui.1*}
-%{?with_docs:%{_pkgdocdir}/git-gui.html}
-%{?with_docs:%{_mandir}/man1/git-citool.1*}
-%{?with_docs:%{_pkgdocdir}/git-citool.html}
-
-%files -n gitk
-%defattr(-,root,root)
-%{_pkgdocdir}/*gitk*.txt
-%{_bindir}/*gitk*
-%{_datadir}/gitk
-%{?with_docs:%{_mandir}/man1/*gitk*.1*}
-%{?with_docs:%{_pkgdocdir}/*gitk*.html}
-
-%files -n perl-Git -f perl-git-files
-%defattr(-,root,root)
-%exclude %{_mandir}/man3/*Git*SVN*.3pm*
-%{?with_docs:%{_mandir}/man3/*Git*.3pm*}
-
-%files -n perl-Git-SVN -f perl-git-svn-files
-%defattr(-,root,root)
-%{?with_docs:%{_mandir}/man3/*Git*SVN*.3pm*}
-
-%if ! %{emacs_filesystem}
-%files -n emacs-git
-%defattr(-,root,root)
-%{_pkgdocdir}/contrib/emacs/README
-%dir %{elispdir}
-%{elispdir}/*.elc
-%{_emacs_sitestartdir}/git-init.el
-
-%files -n emacs-git-el
-%defattr(-,root,root)
-%{elispdir}/*.el
-%endif
 
 %files daemon
 %defattr(-,root,root)
@@ -768,6 +705,34 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_mandir}/man1/git-daemon*.1*}
 %{?with_docs:%{_pkgdocdir}/git-daemon*.html}
 
+%if ! %{emacs_filesystem}
+%files -n emacs-git
+%defattr(-,root,root)
+%{_pkgdocdir}/contrib/emacs/README
+%dir %{elispdir}
+%{elispdir}/*.elc
+%{_emacs_sitestartdir}/git-init.el
+
+%files -n emacs-git-el
+%defattr(-,root,root)
+%{elispdir}/*.el
+%endif
+
+%files email
+%defattr(-,root,root)
+%{_pkgdocdir}/*email*.txt
+%{gitexecdir}/*email*
+%{?with_docs:%{_mandir}/man1/*email*.1*}
+%{?with_docs:%{_pkgdocdir}/*email*.html}
+
+%files -n gitk
+%defattr(-,root,root)
+%{_pkgdocdir}/*gitk*.txt
+%{_bindir}/*gitk*
+%{_datadir}/gitk
+%{?with_docs:%{_mandir}/man1/*gitk*.1*}
+%{?with_docs:%{_pkgdocdir}/*gitk*.html}
+
 %files -n gitweb
 %defattr(-,root,root)
 %{_pkgdocdir}/*.gitweb
@@ -777,10 +742,48 @@ make test || ./print-failed-test-output
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
 %{_localstatedir}/www/git/
 
-%files all
-# No files for you!
+%files gui
+%defattr(-,root,root)
+%{gitexecdir}/git-gui*
+%{gitexecdir}/git-citool
+%{_datadir}/applications/*git-gui.desktop
+%{_datadir}/git-gui/
+%{_pkgdocdir}/git-gui.txt
+%{_pkgdocdir}/git-citool.txt
+%{?with_docs:%{_mandir}/man1/git-gui.1*}
+%{?with_docs:%{_pkgdocdir}/git-gui.html}
+%{?with_docs:%{_mandir}/man1/git-citool.1*}
+%{?with_docs:%{_pkgdocdir}/git-citool.html}
+
+%files p4
+%defattr(-,root,root)
+%{gitexecdir}/*p4*
+%{gitexecdir}/mergetools/p4merge
+%{_pkgdocdir}/*p4*.txt
+%{?with_docs:%{_mandir}/man1/*p4*.1*}
+%{?with_docs:%{_pkgdocdir}/*p4*.html}
+
+%files -n perl-Git -f perl-git-files
+%defattr(-,root,root)
+%exclude %{_mandir}/man3/*Git*SVN*.3pm*
+%{?with_docs:%{_mandir}/man3/*Git*.3pm*}
+
+%files -n perl-Git-SVN -f perl-git-svn-files
+%defattr(-,root,root)
+%{?with_docs:%{_mandir}/man3/*Git*SVN*.3pm*}
+
+%files svn
+%defattr(-,root,root)
+%{gitexecdir}/*svn*
+#NOTE: what about svn-fe
+%{_pkgdocdir}/*svn*.txt
+%{?with_docs:%{_mandir}/man1/*svn*.1*}
+%{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Wed Feb 07 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-3
+- Order %%files and %%packages sections by name
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.16.1-2.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
