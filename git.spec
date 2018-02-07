@@ -187,6 +187,7 @@ Requires:       git-cvs = %{version}-%{release}
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
 Requires:       git-p4 = %{version}-%{release}
+Requires:       git-subtree = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
@@ -323,6 +324,14 @@ Requires:       git = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 %description -n perl-Git-SVN
 %{summary}.
+
+%package subtree
+Summary:        Git tools to merge and split repositories
+Requires:       git-core = %{version}-%{release}
+%description subtree
+Git subtrees allow subprojects to be included within a subdirectory
+of the main project, optionally including the subproject's entire
+history.
 
 %package svn
 Summary:        Git tools for interacting with Subversion repositories
@@ -464,12 +473,14 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 
 # Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
+# Move git-subtree.txt to Documentation so it can be installed later in docdir
+mv contrib/subtree/git-subtree.txt Documentation/
 rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 
-exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|gitk|p4|svn"
+exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|git-subtree|gitk|p4|svn"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
@@ -547,7 +558,7 @@ grep -E  "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 ##### DOC
 # place doc files into %%{_pkgdocdir} and split them into expected packages
 # contrib
-not_core_doc_re="(git-(cvs|gui|citool|daemon))|p4|svn|email|gitk|gitweb"
+not_core_doc_re="(git-(cvs|gui|citool|daemon|subtree))|p4|svn|email|gitk|gitweb"
 mkdir -p %{buildroot}%{_pkgdocdir}/
 cp -pr README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
 # Remove contrib/{credential,svn-fe}, they have nothing useful for documentation
@@ -758,6 +769,12 @@ make test || ./print-failed-test-output
 %files -n perl-Git-SVN -f perl-git-svn-files
 %{?with_docs:%{_mandir}/man3/*Git*SVN*.3pm*}
 
+%files subtree
+%{gitexecdir}/git-subtree
+%{_pkgdocdir}/git-subtree.txt
+%{?with_docs:%{_mandir}/man1/git-subtree.1*}
+%{?with_docs:%{_pkgdocdir}/git-subtree.html}
+
 %files svn
 %{gitexecdir}/*svn*
 %{_pkgdocdir}/*svn*.txt
@@ -769,6 +786,7 @@ make test || ./print-failed-test-output
 - Order %%files and %%packages sections by name
 - Remove obsolete %%defattr
 - Don't package contrib/svn-fe in %%doc
+- Split git-subtree into a separate package
 
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.16.1-2.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild

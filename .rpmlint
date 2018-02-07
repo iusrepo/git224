@@ -2,6 +2,7 @@ from Config import *
 
 # the dictionary is a bit limited
 addFilter("git.* spelling-error %description .* subpackages")
+addFilter("git-subtree.* spelling-error %description .* (subdirectory|subproject|subtree)")
 
 # We're not misusing %{buildroot} here
 addFilter("git\.(spec|src):.* rpm-buildroot-usage %prep DESTDIR = %{buildroot}")
