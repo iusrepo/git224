@@ -93,28 +93,32 @@ BuildRequires:  linkchecker
 BuildRequires:  desktop-file-utils
 BuildRequires:  emacs
 BuildRequires:  expat-devel
+BuildRequires:  gawk
+BuildRequires:  gcc
 BuildRequires:  gettext
 BuildRequires:  gnupg2
 BuildRequires:  libcurl-devel
 %if %{libsecret}
 BuildRequires:  libsecret-devel
 %endif
+BuildRequires:  make
+BuildRequires:  openssl-devel
 BuildRequires:  pcre2-devel
+BuildRequires:  perl(Test)
 %if 0%{?fedora}
 BuildRequires:  perl-generators
 %endif
-BuildRequires:  perl(Test)
-BuildRequires:  openssl-devel
-BuildRequires:  zlib-devel >= 1.2
-BuildRequires:  tcl
-BuildRequires:  tk
 %if %{bashcomp_pkgconfig}
 BuildRequires:  pkgconfig(bash-completion)
 %endif
+BuildRequires:  sed
 %if %{use_systemd}
 # For macros
 BuildRequires:  systemd
 %endif
+BuildRequires:  tcl
+BuildRequires:  tk
+BuildRequires:  zlib-devel >= 1.2
 
 # Test suite requirements
 BuildRequires:  acl
@@ -784,6 +788,7 @@ make test || ./print-failed-test-output
 %changelog
 * Fri Feb 16 2018 Todd Zullinger <tmz@pobox.com> - 2.16.2-1
 - Update to 2.16.2
+- Add gawk, gcc, make, and sed BuildRequires
 
 * Wed Feb 07 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-3
 - Order %%files and %%packages sections by name
