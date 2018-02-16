@@ -46,8 +46,8 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.16.1
-Release:        3%{?rcrev}%{?dist}
+Version:        2.16.2
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -782,6 +782,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Fri Feb 16 2018 Todd Zullinger <tmz@pobox.com> - 2.16.2-1
+- Update to 2.16.2
+
 * Wed Feb 07 2018 Todd Zullinger <tmz@pobox.com> - 2.16.1-3
 - Order %%files and %%packages sections by name
 - Remove obsolete %%defattr
