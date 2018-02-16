@@ -49,11 +49,11 @@
 %endif
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 Name:           git
-Version:        2.16.2
-Release:        1%{?rcrev}%{?dist}
+Version:        2.17.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -86,8 +86,6 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# https://public-inbox.org/git/20180129231653.GA22834@starla/
-Patch2:         0001-git-svn-control-destruction-order-to-avoid-segfault.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -320,8 +318,8 @@ Requires:       git = %{version}-%{release}
 %package -n perl-Git
 Summary:        Perl interface to Git
 BuildArch:      noarch
+BuildRequires:  perl(Error)
 Requires:       git = %{version}-%{release}
-BuildRequires:  perl(Error), perl(ExtUtils::MakeMaker)
 Requires:       perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 %description -n perl-Git
@@ -392,9 +390,11 @@ GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
 NO_CROSS_DIRECTORY_HARDLINKS = 1
 NO_INSTALL_HARDLINKS = 1
+NO_PERL_CPAN_FALLBACKS = 1
 PYTHON_PATH = %{__python2}
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
+perllibdir = %{perl_vendorlib}
 gitwebdir = %{_localstatedir}/www/git
 
 # Test options
@@ -453,7 +453,7 @@ sed -i -e '1s|#!%{__python2}$|#!%{__python3}|' \
 %endif
 
 %install
-make %{?_smp_mflags} INSTALLDIRS=vendor install %{?with_docs:install-doc}
+make %{?_smp_mflags} install %{?with_docs:install-doc}
 
 # symlink %%{gitexecdir} copies of git, git-shell, and git-upload-pack
 for i in git git-shell git-upload-pack; do
@@ -483,10 +483,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
 sed "s|@PROJECTROOT@|%{_localstatedir}/lib/git|g" \
     %{SOURCE14} > %{buildroot}%{_sysconfdir}/gitweb.conf
-
-find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
-find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
-find %{buildroot} -type f -name perllocal.pod -exec rm -f {} ';'
 
 # Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
 # Move git-subtree.txt to Documentation so it can be installed later in docdir
@@ -779,11 +775,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*p4*.html}
 
 %files -n perl-Git -f perl-git-files
-%exclude %{_mandir}/man3/*Git*SVN*.3pm*
-%{?with_docs:%{_mandir}/man3/*Git*.3pm*}
+%{?with_docs:%{_mandir}/man3/Git.3pm*}
 
 %files -n perl-Git-SVN -f perl-git-svn-files
-%{?with_docs:%{_mandir}/man3/*Git*SVN*.3pm*}
 
 %files subtree
 %{gitexecdir}/git-subtree
@@ -798,6 +792,10 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.0.rc0
+- Update to 2.17.0-rc0
+- Adjust for simplified perl install
+
 * Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com>
 - Use symlinks instead of hardlinks for installed binaries
 
