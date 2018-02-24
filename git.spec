@@ -30,9 +30,15 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 %endif
 
-# Settings for EL <= 7
-%if 0%{?rhel} && 0%{?rhel} <= 7
-%{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
+# Hardening flags for EL-7
+%if 0%{?rhel} == 7
+%global _hardened_build     1
+%endif
+
+# Hardening flags for EL-6
+%if 0%{?rhel} == 6
+%global optflags            %{optflags} -fPIC -pie
+%global __global_ldflags    -Wl,-z,relro -Wl,-z,now
 %endif
 
 # Test links in HTML documentation on Fedora (linkchecker is not in EL)
@@ -786,6 +792,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Fri Feb 23 2018 Todd Zullinger <tmz@pobox.com>
+- Improve hardening flags for EL-6 & EL-7
+
 * Fri Feb 16 2018 Todd Zullinger <tmz@pobox.com> - 2.16.2-1
 - Update to 2.16.2
 - Add gawk, gcc, make, and sed BuildRequires
