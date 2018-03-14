@@ -37,6 +37,13 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 %endif
 
+# Disable cvs subpackage on EL > 7
+%if 0%{?rhel} > 7
+%global with_cvs            0
+%else
+%global with_cvs            1
+%endif
+
 # Hardening flags for EL-7
 %if 0%{?rhel} == 7
 %global _hardened_build     1
@@ -139,8 +146,10 @@ BuildRequires:  acl
 BuildRequires: apr-util-bdb
 %endif
 BuildRequires:  bash
+%if %{with_cvs}
 BuildRequires:  cvs
 BuildRequires:  cvsps
+%endif
 BuildRequires:  gnupg
 %if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} == 7 && %{_arch} != ppc64 ))
 BuildRequires:  highlight
@@ -199,7 +208,9 @@ tools for integrating with other SCMs, install the git-all meta-package.
 Summary:        Meta-package to pull in all git tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
+%if %{with_cvs}
 Requires:       git-cvs = %{version}-%{release}
+%endif
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
 Requires:       git-p4 = %{version}-%{release}
@@ -242,6 +253,7 @@ Requires:       git-core = %{version}-%{release}
 %description core-doc
 Documentation files for git-core package including man pages.
 
+%if %{with_cvs}
 %package cvs
 Summary:        Git tools for importing CVS repositories
 BuildArch:      noarch
@@ -251,6 +263,7 @@ Requires:       perl(DBD::SQLite)
 Requires:       perl(Git)
 %description cvs
 %{summary}.
+%endif
 
 %package daemon
 Summary:        Git protocol daemon
@@ -384,6 +397,11 @@ install -p -m 755 %{SOURCE99} print-failed-test-output
 # Remove git-archimport from command list
 sed -i '/^git-archimport/d' command-list.txt
 
+%if ! %{with_cvs}
+# Remove git-cvs* from command list
+sed -i '/^git-cvs/d' command-list.txt
+%endif
+
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
 cat << \EOF > config.mak
@@ -507,6 +525,11 @@ rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
+
+%if ! %{with_cvs}
+# Remove git-cvs* from %%{_bindir} and %%{gitexecdir}
+find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name 'git-cvs*' -exec rm -f {} ';'
+%endif
 
 exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|git-subtree|gitk|p4|svn"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f -o -type l | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
@@ -722,13 +745,19 @@ make test || ./print-failed-test-output
 %exclude %{_pkgdocdir}/contrib/*/*.py[co]
 %endif
 %{_pkgdocdir}/contrib/hooks
+%if ! %{with_cvs}
+%{?with_docs:%{_mandir}/man1/*cvs*.1*}
+%{?with_docs:%{_pkgdocdir}/git-cvs*}
+%endif
 
+%if %{with_cvs}
 %files cvs
 %{_pkgdocdir}/*git-cvs*.txt
 %{_bindir}/git-cvsserver
 %{gitexecdir}/*cvs*
 %{?with_docs:%{_mandir}/man1/*cvs*.1*}
 %{?with_docs:%{_pkgdocdir}/*git-cvs*.html}
+%endif
 
 %files daemon
 %{_pkgdocdir}/git-daemon*.txt
@@ -812,6 +841,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Tue Mar 27 2018 Joe Orton <jorton@redhat.com>
+- Disable CVS support on EL > 7
+
 * Tue Mar 27 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.1.rc1.2
 - Add missing perl(Mail::Address) requirement (#1561086)
 
