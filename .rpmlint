@@ -10,6 +10,9 @@ addFilter("git\.(spec|src):.* rpm-buildroot-usage %prep DESTDIR = %{buildroot}")
 # git-core-doc requires git-core, which provides the symlink target
 addFilter("git(-core-doc)?\..*: W: dangling-relative-symlink /usr/share/doc/git/contrib/hooks ../../../git-core/contrib/hooks")
 
+# git requires git-core, which provides the symlink target
+addFilter("git\..*: W: dangling-relative-symlink /usr/libexec/git-core/git-difftool git")
+
 # git-gui requires git, which provides the git binary
 addFilter("git-gui.noarch: W: desktopfile-without-binary /usr/share/applications/git-gui.desktop git")
 

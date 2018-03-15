@@ -391,6 +391,7 @@ INSTALL = install -p
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
 NO_CROSS_DIRECTORY_HARDLINKS = 1
+NO_INSTALL_HARDLINKS = 1
 PYTHON_PATH = %{__python2}
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
@@ -454,6 +455,11 @@ sed -i -e '1s|#!%{__python2}$|#!%{__python3}|' \
 %install
 make %{?_smp_mflags} INSTALLDIRS=vendor install %{?with_docs:install-doc}
 
+# symlink %%{gitexecdir} copies of git, git-shell, and git-upload-pack
+for i in git git-shell git-upload-pack; do
+    ln -sf ../../bin/$i %{buildroot}%{gitexecdir}/$i
+done
+
 %global elispdir %{_emacs_sitelispdir}/git
 make -C contrib/emacs install \
     emacsdir=%{buildroot}%{elispdir}
@@ -491,7 +497,7 @@ rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 
 exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|git-subtree|gitk|p4|svn"
-(find %{buildroot}{%{_bindir},%{_libexecdir}} -type f | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
+(find %{buildroot}{%{_bindir},%{_libexecdir}} -type f -o -type l | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
 (find %{buildroot}%{perl_vendorlib} -mindepth 1 -type d | sed -e 's@^%{buildroot}@%dir @') >> perl-git-files
@@ -792,6 +798,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com>
+- Use symlinks instead of hardlinks for installed binaries
+
 * Fri Feb 23 2018 Todd Zullinger <tmz@pobox.com>
 - Improve hardening flags for EL-6 & EL-7
 
