@@ -246,7 +246,7 @@ Requires:       perl(Git)
 
 %package daemon
 Summary:        Git protocol daemon
-Requires:       git = %{version}-%{release}
+Requires:       git-core = %{version}-%{release}
 %if %{use_systemd}
 Requires:       systemd
 Requires(post): systemd
@@ -795,6 +795,7 @@ make test || ./print-failed-test-output
 * Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.0.rc0
 - Update to 2.17.0-rc0
 - Adjust for simplified perl install
+- Require git-core rather than git for git-daemon
 
 * Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com>
 - Use symlinks instead of hardlinks for installed binaries
