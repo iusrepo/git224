@@ -439,6 +439,8 @@ make -C contrib/credential/libsecret/
 %endif
 make -C contrib/credential/netrc/
 
+make -C contrib/diff-highlight/
+
 make -C contrib/subtree/
 
 # Fix shebang in a few places to silence rpmlint complaints
@@ -490,6 +492,11 @@ mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE13} %{buildroot}%{_sysconfdir}/httpd/conf.d/%{gitweb_httpd_conf}
 sed "s|@PROJECTROOT@|%{_localstatedir}/lib/git|g" \
     %{SOURCE14} > %{buildroot}%{_sysconfdir}/gitweb.conf
+
+# install contrib/diff-highlight and clean up to avoid cruft in git-core-doc
+install -Dpm 0755 contrib/diff-highlight/diff-highlight \
+    %{buildroot}%{_datadir}/git-core/contrib/diff-highlight
+rm -rf contrib/diff-highlight/{Makefile,diff-highlight,*.perl,t}
 
 # Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
 # Move git-subtree.txt to Documentation so it can be installed later in docdir
@@ -678,6 +685,7 @@ make test || ./print-failed-test-output
 %{elispdir}
 %{_emacs_sitestartdir}/git-init.el
 %endif
+%{_datadir}/git-core/contrib/diff-highlight
 %{_datadir}/git-core/contrib/hooks/multimail
 %{_datadir}/git-core/contrib/hooks/update-paranoid
 %{_datadir}/git-core/contrib/hooks/setgitperms.perl
@@ -694,6 +702,7 @@ make test || ./print-failed-test-output
 %{!?_licensedir:%global license %doc}
 %license COPYING
 # exclude is best way here because of troubles with symlinks inside git-core/
+%exclude %{_datadir}/git-core/contrib/diff-highlight
 %exclude %{_datadir}/git-core/contrib/hooks/multimail
 %exclude %{_datadir}/git-core/contrib/hooks/update-paranoid
 %exclude %{_datadir}/git-core/contrib/hooks/setgitperms.perl
@@ -804,6 +813,7 @@ make test || ./print-failed-test-output
 - Adjust for simplified perl install
 - Require git-core rather than git for git-daemon
 - Rename gitweb httpd config file
+- Install contrib/diff-highlight (#1550251)
 
 * Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com>
 - Use symlinks instead of hardlinks for installed binaries
