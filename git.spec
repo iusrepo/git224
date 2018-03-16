@@ -3,6 +3,13 @@
 
 %global gitexecdir          %{_libexecdir}/git-core
 
+# Settings for Fedora >= 29 and EL > 7
+%if 0%{?fedora} >= 29 || 0%{?rhel} > 7
+%global gitweb_httpd_conf   gitweb.conf
+%else
+%global gitweb_httpd_conf   git.conf
+%endif
+
 # Settings for Fedora and EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
 %global with_python3        1
@@ -74,8 +81,8 @@ Source9:        gpgkey-junio.asc
 # Local sources begin at 10 to allow for additional future upstream sources
 Source10:       git-init.el
 Source11:       git.xinetd.in
-Source12:       git.conf.httpd
-Source13:       git-gui.desktop
+Source12:       git-gui.desktop
+Source13:       gitweb-httpd.conf
 Source14:       gitweb.conf.in
 Source15:       git@.service.in
 Source16:       git.socket
@@ -480,7 +487,7 @@ install -pm 755 contrib/credential/netrc/git-credential-netrc \
 make -C contrib/subtree install %{?with_docs:install-doc}
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
-install -pm 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/httpd/conf.d/git.conf
+install -pm 0644 %{SOURCE13} %{buildroot}%{_sysconfdir}/httpd/conf.d/%{gitweb_httpd_conf}
 sed "s|@PROJECTROOT@|%{_localstatedir}/lib/git|g" \
     %{SOURCE14} > %{buildroot}%{_sysconfdir}/gitweb.conf
 
@@ -544,7 +551,7 @@ install -pm 644 contrib/completion/git-prompt.sh \
     %{buildroot}%{_datadir}/git-core/contrib/completion/
 
 # install git-gui .desktop file
-desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE13}
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE12}
 
 # find translations
 %find_lang %{name} %{name}.lang
@@ -752,7 +759,7 @@ make test || ./print-failed-test-output
 %{_pkgdocdir}/gitweb*.txt
 %{?with_docs:%{_pkgdocdir}/gitweb*.html}
 %config(noreplace)%{_sysconfdir}/gitweb.conf
-%config(noreplace)%{_sysconfdir}/httpd/conf.d/git.conf
+%config(noreplace)%{_sysconfdir}/httpd/conf.d/%{gitweb_httpd_conf}
 %{_localstatedir}/www/git/
 
 %files gui
@@ -796,6 +803,7 @@ make test || ./print-failed-test-output
 - Update to 2.17.0-rc0
 - Adjust for simplified perl install
 - Require git-core rather than git for git-daemon
+- Rename gitweb httpd config file
 
 * Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com>
 - Use symlinks instead of hardlinks for installed binaries
