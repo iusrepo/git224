@@ -104,6 +104,7 @@ BuildRequires:  linkchecker
 BuildRequires:  desktop-file-utils
 BuildRequires:  emacs
 BuildRequires:  expat-devel
+BuildRequires:  findutils
 BuildRequires:  gawk
 BuildRequires:  gcc
 BuildRequires:  gettext
@@ -566,11 +567,11 @@ cat %{name}.lang >> bin-man-doc-files
 
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
-find %{buildroot} -name git-mergetool--lib | xargs chmod a-x
+chmod a-x %{buildroot}%{gitexecdir}/git-mergetool--lib
 # These files probably are not needed
 find . -regex '.*/\.\(git\(attributes\|ignore\)\|perlcriticrc\)' -delete
 chmod a-x Documentation/technical/api-index.sh
-find contrib -type f | xargs chmod -x
+find contrib -type f -print0 | xargs -r0 chmod -x
 
 # Split core files
 not_core_re="git-(add--interactive|credential-(libsecret|netrc)|difftool|filter-branch|instaweb|request-pull|send-mail)|gitweb"
@@ -612,7 +613,7 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
 
 %check
 %if %{with docs} && %{test_links}
-find %{buildroot}%{_pkgdocdir} -name "*.html" | xargs linkchecker
+find %{buildroot}%{_pkgdocdir} -name "*.html" -print0 | xargs -r0 linkchecker
 %endif
 
 # Tests to skip on all releases and architectures
@@ -808,6 +809,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Fri Mar 16 2018 Todd Zullinger <tmz@pobox.com>
+- Add findutils BuildRequires, improve 'find | xargs' calls
+
 * Thu Mar 15 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.0.rc0
 - Update to 2.17.0-rc0
 - Adjust for simplified perl install
