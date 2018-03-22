@@ -548,10 +548,9 @@ install -pm 644 contrib/completion/git-completion.tcsh \
 # Drop .py extension from git_multimail to avoid byte-compiling
 mv contrib/hooks/multimail/git_multimail{.py,}
 
-# Move contrib/hooks out of %%docdir and make them executable
+# Move contrib/hooks out of %%docdir
 mkdir -p %{buildroot}%{_datadir}/git-core/contrib
 mv contrib/hooks %{buildroot}%{_datadir}/git-core/contrib
-chmod +x %{buildroot}%{_datadir}/git-core/contrib/hooks/*
 pushd contrib > /dev/null
 ln -s ../../../git-core/contrib/hooks
 popd > /dev/null
@@ -814,6 +813,7 @@ make test || ./print-failed-test-output
 %changelog
 * Thu Mar 22 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.1.rc1.1
 - Drop .py extension from contrib/hooks/multimail/git_multimail.py
+- Remove unnecessary "chmod +x contrib/hooks/*"
 
 * Wed Mar 21 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.1.rc1
 - Update to 2.17.0-rc1
