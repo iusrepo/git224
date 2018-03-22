@@ -60,7 +60,7 @@
 
 Name:           git
 Version:        2.17.0
-Release:        0.1%{?rcrev}%{?dist}
+Release:        0.1%{?rcrev}%{?dist}.1
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -545,6 +545,9 @@ mkdir -p %{buildroot}%{_datadir}/git-core/contrib/completion
 install -pm 644 contrib/completion/git-completion.tcsh \
     %{buildroot}%{_datadir}/git-core/contrib/completion/
 
+# Drop .py extension from git_multimail to avoid byte-compiling
+mv contrib/hooks/multimail/git_multimail{.py,}
+
 # Move contrib/hooks out of %%docdir and make them executable
 mkdir -p %{buildroot}%{_datadir}/git-core/contrib
 mv contrib/hooks %{buildroot}%{_datadir}/git-core/contrib
@@ -809,6 +812,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Thu Mar 22 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.1.rc1.1
+- Drop .py extension from contrib/hooks/multimail/git_multimail.py
+
 * Wed Mar 21 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.1.rc1
 - Update to 2.17.0-rc1
 
