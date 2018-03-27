@@ -37,11 +37,12 @@
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 %endif
 
-# Disable cvs subpackage on EL > 7
+# Allow cvs subpackage to be toggled via --with/--without
+# Disable cvs subpackage by default on EL > 7
 %if 0%{?rhel} > 7
-%global with_cvs            0
+%bcond_with                 cvs
 %else
-%global with_cvs            1
+%bcond_without              cvs
 %endif
 
 # Hardening flags for EL-7
@@ -146,7 +147,7 @@ BuildRequires:  acl
 BuildRequires: apr-util-bdb
 %endif
 BuildRequires:  bash
-%if %{with_cvs}
+%if %{with cvs}
 BuildRequires:  cvs
 BuildRequires:  cvsps
 %endif
@@ -208,7 +209,7 @@ tools for integrating with other SCMs, install the git-all meta-package.
 Summary:        Meta-package to pull in all git tools
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
-%if %{with_cvs}
+%if %{with cvs}
 Requires:       git-cvs = %{version}-%{release}
 %endif
 Requires:       git-email = %{version}-%{release}
@@ -253,7 +254,7 @@ Requires:       git-core = %{version}-%{release}
 %description core-doc
 Documentation files for git-core package including man pages.
 
-%if %{with_cvs}
+%if %{with cvs}
 %package cvs
 Summary:        Git tools for importing CVS repositories
 BuildArch:      noarch
@@ -397,7 +398,7 @@ install -p -m 755 %{SOURCE99} print-failed-test-output
 # Remove git-archimport from command list
 sed -i '/^git-archimport/d' command-list.txt
 
-%if ! %{with_cvs}
+%if ! %{with cvs}
 # Remove git-cvs* from command list
 sed -i '/^git-cvs/d' command-list.txt
 %endif
@@ -526,7 +527,7 @@ rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 
-%if ! %{with_cvs}
+%if ! %{with cvs}
 # Remove git-cvs* from %%{_bindir} and %%{gitexecdir}
 find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name 'git-cvs*' -exec rm -f {} ';'
 %endif
@@ -745,12 +746,12 @@ make test || ./print-failed-test-output
 %exclude %{_pkgdocdir}/contrib/*/*.py[co]
 %endif
 %{_pkgdocdir}/contrib/hooks
-%if ! %{with_cvs}
+%if ! %{with cvs}
 %{?with_docs:%{_mandir}/man1/*cvs*.1*}
 %{?with_docs:%{_pkgdocdir}/git-cvs*}
 %endif
 
-%if %{with_cvs}
+%if %{with cvs}
 %files cvs
 %{_pkgdocdir}/*git-cvs*.txt
 %{_bindir}/git-cvsserver
@@ -841,6 +842,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Tue Mar 27 2018 Todd Zullinger <tmz@pobox.com>
+- Allow cvs subpackage to be toggled via --with/--without
+
 * Tue Mar 27 2018 Joe Orton <jorton@redhat.com>
 - Disable CVS support on EL > 7
 
