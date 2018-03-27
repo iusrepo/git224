@@ -60,7 +60,7 @@
 
 Name:           git
 Version:        2.17.0
-Release:        0.1%{?rcrev}%{?dist}.1
+Release:        0.1%{?rcrev}%{?dist}.2
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -271,6 +271,7 @@ Summary:        Git tools for sending patches via email
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
+Requires:       perl(Mail::Address)
 Requires:       perl(Net::SMTP::SSL)
 Requires:       perl(Git)
 %description email
@@ -811,6 +812,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Tue Mar 27 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.1.rc1.2
+- Add missing perl(Mail::Address) requirement (#1561086)
+
 * Thu Mar 22 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-0.1.rc1.1
 - Drop .py extension from contrib/hooks/multimail/git_multimail.py
 - Remove unnecessary "chmod +x contrib/hooks/*"
