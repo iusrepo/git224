@@ -466,7 +466,7 @@ make -C contrib/subtree/
 
 # Fix shebang in a few places to silence rpmlint complaints
 #
-# The multimail hook is installed with git-core.  Use python3 to avoid an
+# The multimail hook is installed with git.  Use python3 to avoid an
 # unnecessary python2 dependency.
 sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
     contrib/fast-import/import-zips.py \
