@@ -3,6 +3,13 @@
 
 %global gitexecdir          %{_libexecdir}/git-core
 
+# Settings for Fedora > 29 and EL > 7
+%if 0%{?fedora} > 29 || 0%{?rhel} > 7
+%bcond_with                 python2
+%else
+%bcond_without              python2
+%endif
+
 # Settings for Fedora >= 29 and EL > 7
 %if 0%{?fedora} >= 29 || 0%{?rhel} > 7
 %global gitweb_httpd_conf   gitweb.conf
@@ -46,7 +53,12 @@
 %endif
 
 # Allow p4 subpackage to be toggled via --with/--without
+# Disable by default if we lack python2 support
+%if ! %{with python2}
+%bcond_with                 p4
+%else
 %bcond_without              p4
+%endif
 
 # Hardening flags for EL-7
 %if 0%{?rhel} == 7
@@ -176,7 +188,9 @@ BuildRequires:  perl(Mail::Address)
 BuildRequires:  perl(Memoize)
 BuildRequires:  perl(Test::More)
 BuildRequires:  perl(Time::HiRes)
+%if %{with python2}
 BuildRequires:  python2-devel
+%endif
 %if %{with python3}
 BuildRequires:  python3-devel
 %endif
@@ -431,7 +445,11 @@ GNU_ROFF = 1
 NO_CROSS_DIRECTORY_HARDLINKS = 1
 NO_INSTALL_HARDLINKS = 1
 NO_PERL_CPAN_FALLBACKS = 1
+%if %{with python2}
 PYTHON_PATH = %{__python2}
+%else
+NO_PYTHON = 1
+%endif
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 perllibdir = %{perl_vendorlib}
@@ -480,15 +498,17 @@ make -C contrib/subtree/
 #
 # The multimail hook is installed with git.  Use python3 to avoid an
 # unnecessary python2 dependency.
-sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
+%if %{with python2}
+sed -i -e '1s@#! */usr/bin/env python$@#!%{__python2}@' \
     contrib/fast-import/import-zips.py \
     contrib/hg-to-git/hg-to-git.py \
     contrib/hooks/multimail/git_multimail.py \
     contrib/hooks/multimail/migrate-mailhook-config \
     contrib/hooks/multimail/post-receive.example \
     contrib/svn-fe/svnrdump_sim.py
+%endif
 %if %{with python3}
-sed -i -e '1s|#!%{__python2}$|#!%{__python3}|' \
+sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
     contrib/hooks/multimail/git_multimail.py \
     contrib/hooks/multimail/migrate-mailhook-config \
     contrib/hooks/multimail/post-receive.example
@@ -868,6 +888,7 @@ make test || ./print-failed-test-output
 * Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com>
 - Allow git-p4 subpackage to be toggled via --with/--without
 - Use %%bcond_(with|without) to enable/disable python3
+- Add support for disabling python2
 
 * Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-1
 - Update to 2.17.0
