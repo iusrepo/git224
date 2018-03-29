@@ -45,6 +45,9 @@
 %bcond_without              cvs
 %endif
 
+# Allow p4 subpackage to be toggled via --with/--without
+%bcond_without              p4
+
 # Hardening flags for EL-7
 %if 0%{?rhel} == 7
 %global _hardened_build     1
@@ -214,7 +217,9 @@ Requires:       git-cvs = %{version}-%{release}
 %endif
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
+%if %{with p4}
 Requires:       git-p4 = %{version}-%{release}
+%endif
 Requires:       git-subtree = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
@@ -330,6 +335,7 @@ Requires:       gitk = %{version}-%{release}
 %description gui
 %{summary}.
 
+%if %{with p4}
 %package p4
 Summary:        Git tools for working with Perforce depots
 BuildArch:      noarch
@@ -337,6 +343,7 @@ BuildRequires:  python2-devel
 Requires:       git = %{version}-%{release}
 %description p4
 %{summary}.
+%endif
 
 %package -n perl-Git
 Summary:        Perl interface to Git
@@ -401,6 +408,11 @@ sed -i '/^git-archimport/d' command-list.txt
 %if ! %{with cvs}
 # Remove git-cvs* from command list
 sed -i '/^git-cvs/d' command-list.txt
+%endif
+
+%if ! %{with p4}
+# Remove git-p4 from command list
+sed -i '/^git-p4/d' command-list.txt
 %endif
 
 # Use these same options for every invocation of 'make'.
@@ -530,6 +542,11 @@ find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} '
 %if ! %{with cvs}
 # Remove git-cvs* from %%{_bindir} and %%{gitexecdir}
 find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name 'git-cvs*' -exec rm -f {} ';'
+%endif
+
+%if ! %{with p4}
+# Remove *p4* from %%{_bindir} and %%{gitexecdir}
+find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name '*p4*' -exec rm -f {} ';'
 %endif
 
 exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|git-subtree|gitk|p4|svn"
@@ -750,6 +767,10 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_mandir}/man1/*cvs*.1*}
 %{?with_docs:%{_pkgdocdir}/git-cvs*}
 %endif
+%if ! %{with p4}
+%{?with_docs:%{_mandir}/man1/*p4*.1*}
+%{?with_docs:%{_pkgdocdir}/*p4*}
+%endif
 
 %if %{with cvs}
 %files cvs
@@ -817,12 +838,14 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_mandir}/man1/git-citool.1*}
 %{?with_docs:%{_pkgdocdir}/git-citool.html}
 
+%if %{with p4}
 %files p4
 %{gitexecdir}/*p4*
 %{gitexecdir}/mergetools/p4merge
 %{_pkgdocdir}/*p4*.txt
 %{?with_docs:%{_mandir}/man1/*p4*.1*}
 %{?with_docs:%{_pkgdocdir}/*p4*.html}
+%endif
 
 %files -n perl-Git -f perl-git-files
 %{?with_docs:%{_mandir}/man3/Git.3pm*}
@@ -842,6 +865,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/*svn*.html}
 
 %changelog
+* Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com>
+- Allow git-p4 subpackage to be toggled via --with/--without
+
 * Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-1
 - Update to 2.17.0
 
