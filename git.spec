@@ -12,9 +12,9 @@
 
 # Settings for Fedora and EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
-%global with_python3        1
+%bcond_without              python3
 %else
-%global with_python3        0
+%bcond_with                 python3
 %endif
 
 # Settings for Fedora and EL >= 7
@@ -177,7 +177,7 @@ BuildRequires:  perl(Memoize)
 BuildRequires:  perl(Test::More)
 BuildRequires:  perl(Time::HiRes)
 BuildRequires:  python2-devel
-%if 0%{?with_python3}
+%if %{with python3}
 BuildRequires:  python3-devel
 %endif
 BuildRequires:  subversion
@@ -487,7 +487,7 @@ sed -i -e '1s|#! */usr/bin/env python$|#!%{__python2}|' \
     contrib/hooks/multimail/migrate-mailhook-config \
     contrib/hooks/multimail/post-receive.example \
     contrib/svn-fe/svnrdump_sim.py
-%if 0%{?with_python3}
+%if %{with python3}
 sed -i -e '1s|#!%{__python2}$|#!%{__python3}|' \
     contrib/hooks/multimail/git_multimail.py \
     contrib/hooks/multimail/migrate-mailhook-config \
@@ -867,6 +867,7 @@ make test || ./print-failed-test-output
 %changelog
 * Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com>
 - Allow git-p4 subpackage to be toggled via --with/--without
+- Use %%bcond_(with|without) to enable/disable python3
 
 * Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-1
 - Update to 2.17.0
