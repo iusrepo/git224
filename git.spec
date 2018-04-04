@@ -894,6 +894,7 @@ make test || ./print-failed-test-output
 
 %changelog
 * Mon Apr 09 2018 Todd Zullinger <tmz@pobox.com>
+- daemon: use --log-destination=stderr with systemd
 - daemon: fix condition for redirecting stderr
 - git-svn: avoid uninitialized value warning
 
