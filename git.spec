@@ -569,7 +569,7 @@ find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name 'git-cvs*' -exec rm -f
 find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name '*p4*' -exec rm -f {} ';'
 %endif
 
-exclude_re="archimport|email|git-citool|git-cvs|git-daemon|git-gui|git-remote-bzr|git-remote-hg|git-subtree|gitk|p4|svn"
+exclude_re="archimport|email|git-(citool|cvs|daemon|gui|p4|subtree|(remote-test)?svn)|gitk|p4merge"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f -o -type l | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
@@ -879,10 +879,11 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-subtree.html}
 
 %files svn
-%{gitexecdir}/*svn*
-%{_pkgdocdir}/*svn*.txt
-%{?with_docs:%{_mandir}/man1/*svn*.1*}
-%{?with_docs:%{_pkgdocdir}/*svn*.html}
+%{gitexecdir}/git-remote-testsvn
+%{gitexecdir}/git-svn
+%{_pkgdocdir}/git-svn.txt
+%{?with_docs:%{_mandir}/man1/git-svn.1*}
+%{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
 * Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com>
