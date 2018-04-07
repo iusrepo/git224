@@ -139,6 +139,7 @@ BuildRequires:  libsecret-devel
 BuildRequires:  make
 BuildRequires:  openssl-devel
 BuildRequires:  pcre2-devel
+BuildRequires:  perl(Error)
 BuildRequires:  perl(Test)
 %if 0%{?fedora}
 BuildRequires:  perl-generators
@@ -200,7 +201,6 @@ BuildRequires:  time
 
 Requires:       git-core = %{version}-%{release}
 Requires:       git-core-doc = %{version}-%{release}
-Requires:       perl(Error)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif
@@ -304,7 +304,6 @@ Summary:        Git tools for sending patches via email
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
-Requires:       perl(Mail::Address)
 Requires:       perl(Net::SMTP::SSL)
 Requires:       perl(Git)
 %description email
@@ -362,9 +361,7 @@ Requires:       git = %{version}-%{release}
 %package -n perl-Git
 Summary:        Perl interface to Git
 BuildArch:      noarch
-BuildRequires:  perl(Error)
 Requires:       git = %{version}-%{release}
-Requires:       perl(Error)
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 %description -n perl-Git
 %{summary}.
@@ -479,6 +476,11 @@ EOF
 %global __perl_requires %{_builddir}/%{name}-%{version}%{?rcrev}/%{name}-req
 chmod +x %{__perl_requires}
 %endif
+
+# Remove Git::LoadCPAN to ensure we use only system perl modules.  This also
+# allows the dependencies to be automatically processed by rpm.
+rm -rf perl/Git/LoadCPAN{.pm,/}
+grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 
 %build
 make %{?_smp_mflags} all %{?with_docs:doc}
@@ -886,6 +888,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sat Apr 07 2018 Todd Zullinger <tmz@pobox.com>
+- Remove Git::LoadCPAN to ensure we use only system perl modules
+
 * Mon Apr 02 2018 Todd Zullinger <tmz@pobox.com>
 - Allow git-p4 subpackage to be toggled via --with/--without
 - Use %%bcond_(with|without) to enable/disable python3
