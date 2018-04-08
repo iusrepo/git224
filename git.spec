@@ -277,10 +277,10 @@ Documentation files for git-core package including man pages.
 %package cvs
 Summary:        Git tools for importing CVS repositories
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}, cvs
+Requires:       git = %{version}-%{release}
+Requires:       cvs
 Requires:       cvsps
 Requires:       perl(DBD::SQLite)
-Requires:       perl(Git)
 %description cvs
 %{summary}.
 %endif
@@ -302,10 +302,9 @@ The git daemon for supporting git:// access to git repositories
 %package email
 Summary:        Git tools for sending patches via email
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}, perl-Git = %{version}-%{release}
+Requires:       git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
 Requires:       perl(Net::SMTP::SSL)
-Requires:       perl(Git)
 %description email
 %{summary}.
 
@@ -329,7 +328,8 @@ Requires:       emacs-git = %{version}-%{release}
 %package -n gitk
 Summary:        Git repository browser
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}, tk >= 8.4
+Requires:       git = %{version}-%{release}
+Requires:       tk >= 8.4
 %description -n gitk
 %{summary}.
 
@@ -343,8 +343,8 @@ Requires:       git = %{version}-%{release}
 %package gui
 Summary:        Graphical interface to Git
 BuildArch:      noarch
-Requires:       git = %{version}-%{release}, tk >= 8.4
 Requires:       gitk = %{version}-%{release}
+Requires:       tk >= 8.4
 %description gui
 %{summary}.
 
@@ -384,11 +384,12 @@ history.
 
 %package svn
 Summary:        Git tools for interacting with Subversion repositories
-Requires:       git = %{version}-%{release}, subversion
+Requires:       git = %{version}-%{release}
 Requires:       perl(Digest::MD5)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
 %endif
+Requires:       subversion
 %description svn
 %{summary}.
 
@@ -888,6 +889,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sun Apr 08 2018 Todd Zullinger <tmz@pobox.com>
+- Clean up redundant and unneeded Requires
+
 * Sat Apr 07 2018 Todd Zullinger <tmz@pobox.com>
 - Remove Git::LoadCPAN to ensure we use only system perl modules
 
