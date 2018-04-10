@@ -20,8 +20,10 @@
 # Settings for Fedora and EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without              python3
+%global use_perl_generators 1
 %else
 %bcond_with                 python3
+%global use_perl_generators 0
 %endif
 
 # Settings for Fedora and EL >= 7
@@ -83,7 +85,7 @@
 
 Name:           git
 Version:        2.17.0
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -145,7 +147,7 @@ BuildRequires:  openssl-devel
 BuildRequires:  pcre2-devel
 BuildRequires:  perl(Error)
 BuildRequires:  perl(Test)
-%if 0%{?fedora}
+%if %{use_perl_generators}
 BuildRequires:  perl-generators
 %endif
 %if %{bashcomp_pkgconfig}
@@ -893,6 +895,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Apr 10 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-2
+- Require perl-generators on EL > 7
+
 * Mon Apr 09 2018 Todd Zullinger <tmz@pobox.com>
 - daemon: use --log-destination=stderr with systemd
 - daemon: fix condition for redirecting stderr
