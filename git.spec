@@ -116,6 +116,8 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+# https://github.com/gitster/git/commit/51db271.patch
+Patch2:         0001-git-svn-avoid-warning-on-undef-readline.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -889,6 +891,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Apr 09 2018 Todd Zullinger <tmz@pobox.com>
+- git-svn: avoid uninitialized value warning
+
 * Sun Apr 08 2018 Todd Zullinger <tmz@pobox.com>
 - Clean up redundant and unneeded Requires
 
