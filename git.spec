@@ -118,6 +118,8 @@ Patch0:         git-1.8-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://github.com/gitster/git/commit/51db271.patch
 Patch2:         0001-git-svn-avoid-warning-on-undef-readline.patch
+# https://github.com/gitster/git/commit/e67d906.patch
+Patch3:         0001-daemon.c-fix-condition-for-redirecting-stderr.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -892,6 +894,7 @@ make test || ./print-failed-test-output
 
 %changelog
 * Mon Apr 09 2018 Todd Zullinger <tmz@pobox.com>
+- daemon: fix condition for redirecting stderr
 - git-svn: avoid uninitialized value warning
 
 * Sun Apr 08 2018 Todd Zullinger <tmz@pobox.com>
