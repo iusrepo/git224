@@ -21,9 +21,11 @@
 %if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without              python3
 %global use_perl_generators 1
+%global use_perl_interpreter 1
 %else
 %bcond_with                 python3
 %global use_perl_generators 0
+%global use_perl_interpreter 0
 %endif
 
 # Settings for Fedora and EL >= 7
@@ -149,6 +151,11 @@ BuildRequires:  perl(Error)
 BuildRequires:  perl(Test)
 %if %{use_perl_generators}
 BuildRequires:  perl-generators
+%endif
+%if %{use_perl_interpreter}
+BuildRequires:  perl-interpreter
+%else
+BuildRequires:  perl
 %endif
 %if %{bashcomp_pkgconfig}
 BuildRequires:  pkgconfig(bash-completion)
@@ -895,6 +902,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Apr 13 2018 Pavel Cahyna <pcahyna@redhat.com>
+- Use BuildRequires: perl-interpreter per the packaging guidelines
+
 * Tue Apr 10 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-2
 - Require perl-generators on EL > 7
 
