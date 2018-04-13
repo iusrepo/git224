@@ -75,8 +75,8 @@
 %global __global_ldflags    -Wl,-z,relro -Wl,-z,now
 %endif
 
-# Test links in HTML documentation on Fedora (linkchecker is not in EL)
-%if 0%{?fedora}
+# Test links in HTML documentation on Fedora (linkchecker is not in EL <= 7)
+%if 0%{?fedora} || 0%{?rhel} > 7
 %global test_links 1
 %else
 %global test_links 0
@@ -181,7 +181,7 @@ BuildRequires:  cvs
 BuildRequires:  cvsps
 %endif
 BuildRequires:  gnupg
-%if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} == 7 && %{_arch} != ppc64 ))
+%if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} >= 7 && %{_arch} != ppc64 ))
 BuildRequires:  highlight
 %endif
 BuildRequires:  httpd
@@ -904,6 +904,7 @@ make test || ./print-failed-test-output
 %changelog
 * Fri Apr 13 2018 Pavel Cahyna <pcahyna@redhat.com>
 - Use BuildRequires: perl-interpreter per the packaging guidelines
+- Update conditions for future RHEL
 
 * Tue Apr 10 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-2
 - Require perl-generators on EL > 7
