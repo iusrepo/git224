@@ -20,10 +20,13 @@
 # Settings for Fedora and EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without              python3
+# linkchcker is not available on EL <= 7
+%bcond_without              linkcheck
 %global use_perl_generators 1
 %global use_perl_interpreter 1
 %else
 %bcond_with                 python3
+%bcond_with                 linkcheck
 %global use_perl_generators 0
 %global use_perl_interpreter 0
 %endif
@@ -75,13 +78,6 @@
 %global __global_ldflags    -Wl,-z,relro -Wl,-z,now
 %endif
 
-# Test links in HTML documentation on Fedora (linkchecker is not in EL <= 7)
-%if 0%{?fedora} || 0%{?rhel} > 7
-%global test_links 1
-%else
-%global test_links 0
-%endif
-
 # Define for release candidates
 #global rcrev   .rc0
 
@@ -128,7 +124,7 @@ Patch3:         0001-daemon.c-fix-condition-for-redirecting-stderr.patch
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
 BuildRequires:  xmlto
-%if %{test_links}
+%if %{with linkcheck}
 BuildRequires:  linkchecker
 %endif
 %endif
@@ -692,7 +688,8 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
 ##### #DOC
 
 %check
-%if %{with docs} && %{test_links}
+%if %{with docs} && %{with linkcheck}
+# Test links in HTML documentation
 find %{buildroot}%{_pkgdocdir} -name "*.html" -print0 | xargs -r0 linkchecker
 %endif
 
@@ -902,6 +899,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Apr 16 2018 Todd Zullinger <tmz@pobox.com>
+- Move linkcheck macro to existing fedora/rhel > 7 block
+
 * Fri Apr 13 2018 Pavel Cahyna <pcahyna@redhat.com>
 - Use BuildRequires: perl-interpreter per the packaging guidelines
 - Update conditions for future RHEL
