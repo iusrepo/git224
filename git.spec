@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.17.0
-Release:        2%{?rcrev}%{?dist}
+Release:        3%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -706,19 +706,6 @@ GIT_SKIP_TESTS=""
 GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.33 t5551.25"
 %endif
 
-%ifarch %{ix86}
-# Skip tests which fail on x86
-#
-# t5000-tar-tree fails on x86 in f28:
-#   ++ git archive --remote=. --format=tar.gz HEAD
-#   remote: fatal: Unknown archive format 'tar.gz'
-#   fatal: The remote end hung up unexpectedly
-# There must be something broken or changed in f28 to cause this
-%if 0%{?fedora} && 0%{?fedora} == 28
-GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5000"
-%endif
-%endif
-
 %ifarch %{power64}
 # Skip tests which fail on ppc
 #
@@ -899,8 +886,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
-* Mon Apr 16 2018 Todd Zullinger <tmz@pobox.com>
+* Mon Apr 16 2018 Todd Zullinger <tmz@pobox.com> 2.17.0-3
 - Move linkcheck macro to existing fedora/rhel > 7 block
+- Re-enable t5000-tar-tree.sh test on f28
 
 * Fri Apr 13 2018 Pavel Cahyna <pcahyna@redhat.com>
 - Use BuildRequires: perl-interpreter per the packaging guidelines
