@@ -886,7 +886,7 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
-* Mon Apr 16 2018 Todd Zullinger <tmz@pobox.com> 2.17.0-3
+* Mon Apr 16 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-3
 - Move linkcheck macro to existing fedora/rhel > 7 block
 - Re-enable t5000-tar-tree.sh test on f28
 
