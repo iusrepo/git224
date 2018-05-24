@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.17.0
-Release:        3%{?rcrev}%{?dist}
+Release:        4%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -120,6 +120,9 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 Patch2:         0001-git-svn-avoid-warning-on-undef-readline.patch
 # https://github.com/gitster/git/commit/e67d906.patch
 Patch3:         0001-daemon.c-fix-condition-for-redirecting-stderr.patch
+# https://bugzilla.redhat.com/1581678
+# https://public-inbox.org/git/20180524062733.5412-1-newren@gmail.com/
+Patch4:         0001-rev-parse-check-lookup-ed-commit-references-for-NULL.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -886,6 +889,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu May 24 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-4
+- Fix segfault in rev-parse with invalid input (#1581678)
+
 * Mon Apr 16 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-3
 - Move linkcheck macro to existing fedora/rhel > 7 block
 - Re-enable t5000-tar-tree.sh test on f28
