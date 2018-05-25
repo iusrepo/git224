@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+shopt -s failglob
 
 # Print output from failing tests
 dashes=$(printf "%80s" '' | tr ' ' '-')
