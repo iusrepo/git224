@@ -469,6 +469,7 @@ gitwebdir = %{_localstatedir}/www/git
 DEFAULT_TEST_TARGET = prove
 GIT_PROVE_OPTS = --verbose --normalize %{?_smp_mflags}
 GIT_TEST_OPTS = -x --verbose-log
+TEST_SHELL_PATH = /bin/bash
 EOF
 
 # Filter bogus perl requires
@@ -731,9 +732,6 @@ export GIT_TEST_GIT_DAEMON=true
 export GIT_TEST_HTTPD=true
 export GIT_TEST_SVNSERVE=true
 
-# Use bash for the tests
-export TEST_SHELL_PATH=/bin/bash
-
 # Run the tests
 make test || ./print-failed-test-output
 
@@ -891,6 +889,7 @@ make test || ./print-failed-test-output
 %changelog
 * Thu May 24 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-4
 - Fix segfault in rev-parse with invalid input (#1581678)
+- Move TEST_SHELL_PATH setting to config.mak
 
 * Mon Apr 16 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-3
 - Move linkcheck macro to existing fedora/rhel > 7 block
