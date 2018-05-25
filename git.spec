@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.17.1
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -123,6 +123,9 @@ Patch3:         0001-daemon.c-fix-condition-for-redirecting-stderr.patch
 # https://bugzilla.redhat.com/1581678
 # https://public-inbox.org/git/20180524062733.5412-1-newren@gmail.com/
 Patch4:         0001-rev-parse-check-lookup-ed-commit-references-for-NULL.patch
+# https://bugzilla.redhat.com/1582555
+# https://public-inbox.org/git/20180525231713.23047-1-lintonrjeremy@gmail.com/
+Patch5:         0001-packfile-Correct-zlib-buffer-handling.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -421,7 +424,19 @@ rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 
 # Ensure a blank line follows autosetup, el6 chokes otherwise
 # https://bugzilla.redhat.com/1310704
-%autosetup -p1 -n %{name}-%{version}%{?rcrev}
+#autosetup -p1 -n %{name}-%{version}%{?rcrev}
+
+# Setup/apply patches manually to limit the zlib patch to aarch64
+# until it is accepted upstream
+%setup -q -n %{name}-%{version}%{?rcrev}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%ifarch aarch64
+%patch5 -p1
+%endif
 
 # Install print-failed-test-output script
 install -p -m 755 %{SOURCE99} print-failed-test-output
@@ -887,6 +902,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue May 29 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-2
+- packfile: Correct zlib buffer handling (#1582555)
+
 * Tue May 29 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-1
 - Update to 2.17.1 (CVE-2018-11233, CVE-2018-11235)
 
