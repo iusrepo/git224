@@ -82,8 +82,8 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.17.0
-Release:        4%{?rcrev}%{?dist}
+Version:        2.17.1
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -887,6 +887,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue May 29 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-1
+- Update to 2.17.1 (CVE-2018-11233, CVE-2018-11235)
+
 * Thu May 24 2018 Todd Zullinger <tmz@pobox.com> - 2.17.0-4
 - Fix segfault in rev-parse with invalid input (#1581678)
 - Move TEST_SHELL_PATH setting to config.mak
