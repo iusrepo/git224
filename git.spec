@@ -79,11 +79,11 @@
 %endif
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 Name:           git
-Version:        2.17.1
-Release:        3%{?rcrev}%{?dist}
+Version:        2.18.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -102,7 +102,6 @@ Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{
 Source9:        gpgkey-junio.asc
 
 # Local sources begin at 10 to allow for additional future upstream sources
-Source10:       git-init.el
 Source11:       git.xinetd.in
 Source12:       git-gui.desktop
 Source13:       gitweb-httpd.conf
@@ -121,13 +120,9 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# https://github.com/gitster/git/commit/51db271.patch
-Patch2:         0001-git-svn-avoid-warning-on-undef-readline.patch
-# https://github.com/gitster/git/commit/e67d906.patch
-Patch3:         0001-daemon.c-fix-condition-for-redirecting-stderr.patch
 # https://bugzilla.redhat.com/1581678
 # https://public-inbox.org/git/20180524062733.5412-1-newren@gmail.com/
-Patch4:         0001-rev-parse-check-lookup-ed-commit-references-for-NULL.patch
+Patch2:         0001-rev-parse-check-lookup-ed-commit-references-for-NULL.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -331,14 +326,9 @@ Summary:        Git version control system support for Emacs
 Requires:       git = %{version}-%{release}
 BuildArch:      noarch
 Requires:       emacs(bin) >= %{_emacs_version}
+Obsoletes:      emacs-git-el < 2.18.0-0.0
+Provides:       emacs-git-el = %{version}-%{release}
 %description -n emacs-git
-%{summary}.
-
-%package -n emacs-git-el
-Summary:        Elisp source files for git version control system support for Emacs
-BuildArch:      noarch
-Requires:       emacs-git = %{version}-%{release}
-%description -n emacs-git-el
 %{summary}.
 %endif
 
@@ -456,7 +446,7 @@ V = 1
 CFLAGS = %{optflags}
 LDFLAGS = %{__global_ldflags}
 NEEDS_CRYPTO_WITH_SSL = 1
-USE_LIBPCRE2 = 1
+USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
@@ -507,8 +497,6 @@ grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 %build
 %make_build all %{?with_docs:doc}
 
-make -C contrib/emacs
-
 %if %{libsecret}
 %make_build -C contrib/credential/libsecret/
 %endif
@@ -547,14 +535,14 @@ for i in git git-shell git-upload-pack; do
 done
 
 %global elispdir %{_emacs_sitelispdir}/git
-make -C contrib/emacs install \
-    emacsdir=%{buildroot}%{elispdir}
-for elc in %{buildroot}%{elispdir}/*.elc ; do
-    install -pm 644 contrib/emacs/$(basename $elc .elc).el \
-    %{buildroot}%{elispdir}
+pushd contrib/emacs >/dev/null
+for el in *.el ; do
+    # Note: No byte-compiling is done.  These .el files are one-line stubs
+    # which only serve to point users to better alternatives.
+    install -Dpm 644 $el %{buildroot}%{elispdir}/$el
+    rm -f $el # clean up to avoid cruft in git-core-doc
 done
-install -Dpm 644 %{SOURCE10} \
-    %{buildroot}%{_emacs_sitestartdir}/git-init.el
+popd >/dev/null
 
 %if %{libsecret}
 install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
@@ -757,7 +745,6 @@ make test || ./print-failed-test-output
 %files -f bin-man-doc-git-files
 %if %{emacs_filesystem}
 %{elispdir}
-%{_emacs_sitestartdir}/git-init.el
 %endif
 %{_datadir}/git-core/contrib/diff-highlight
 %{_datadir}/git-core/contrib/hooks/multimail
@@ -826,12 +813,7 @@ make test || ./print-failed-test-output
 %if ! %{emacs_filesystem}
 %files -n emacs-git
 %{_pkgdocdir}/contrib/emacs/README
-%dir %{elispdir}
-%{elispdir}/*.elc
-%{_emacs_sitestartdir}/git-init.el
-
-%files -n emacs-git-el
-%{elispdir}/*.el
+%{elispdir}
 %endif
 
 %files email
@@ -895,6 +877,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.0.rc0
+- Update to 2.18.0-rc0
+
 * Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-3
 - Use %%apply_patch for aarch64 zlib patch, return to %%autosetup
 - Disable jgit tests on s390x, they're unreliable
