@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.17.1
-Release:        2%{?rcrev}%{?dist}
+Release:        3%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -110,6 +110,11 @@ Source14:       gitweb.conf.in
 Source15:       git@.service.in
 Source16:       git.socket
 
+# https://bugzilla.redhat.com/1582555
+# https://public-inbox.org/git/20180525231713.23047-1-lintonrjeremy@gmail.com/
+# This patch is applied manually on aarch64 only, until it is accepted # upstream
+Source20:       0001-packfile-Correct-zlib-buffer-handling.patch
+
 # Script to print test failure output (used in %%check)
 Source99:       print-failed-test-output
 
@@ -123,9 +128,6 @@ Patch3:         0001-daemon.c-fix-condition-for-redirecting-stderr.patch
 # https://bugzilla.redhat.com/1581678
 # https://public-inbox.org/git/20180524062733.5412-1-newren@gmail.com/
 Patch4:         0001-rev-parse-check-lookup-ed-commit-references-for-NULL.patch
-# https://bugzilla.redhat.com/1582555
-# https://public-inbox.org/git/20180525231713.23047-1-lintonrjeremy@gmail.com/
-Patch5:         0001-packfile-Correct-zlib-buffer-handling.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -424,18 +426,11 @@ rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 
 # Ensure a blank line follows autosetup, el6 chokes otherwise
 # https://bugzilla.redhat.com/1310704
-#autosetup -p1 -n %{name}-%{version}%{?rcrev}
+%autosetup -p1 -n %{name}-%{version}%{?rcrev}
 
-# Setup/apply patches manually to limit the zlib patch to aarch64
-# until it is accepted upstream
-%setup -q -n %{name}-%{version}%{?rcrev}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+# Apply aarch64 zlib patch (https://bugzilla.redhat.com/1582555)
 %ifarch aarch64
-%patch5 -p1
+%apply_patch %{SOURCE20}
 %endif
 
 # Install print-failed-test-output script
@@ -902,6 +897,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-3
+- Use %%apply_patch for aarch64 zlib patch, return to %%autosetup
+
 * Tue May 29 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-2
 - packfile: Correct zlib buffer handling (#1582555)
 
