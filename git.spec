@@ -448,10 +448,9 @@ LDFLAGS = %{__global_ldflags}
 NEEDS_CRYPTO_WITH_SSL = 1
 USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
+INSTALL_SYMLINKS = 1
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
-NO_CROSS_DIRECTORY_HARDLINKS = 1
-NO_INSTALL_HARDLINKS = 1
 NO_PERL_CPAN_FALLBACKS = 1
 %if %{with python2}
 PYTHON_PATH = %{__python2}
@@ -528,11 +527,6 @@ sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
 
 %install
 %make_install %{?with_docs:install-doc}
-
-# symlink %%{gitexecdir} copies of git, git-shell, and git-upload-pack
-for i in git git-shell git-upload-pack; do
-    ln -sf ../../bin/$i %{buildroot}%{gitexecdir}/$i
-done
 
 %global elispdir %{_emacs_sitelispdir}/git
 pushd contrib/emacs >/dev/null
@@ -879,6 +873,7 @@ make test || ./print-failed-test-output
 %changelog
 * Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.0.rc0
 - Update to 2.18.0-rc0
+- Use new INSTALL_SYMLINKS setting
 
 * Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-3
 - Use %%apply_patch for aarch64 zlib patch, return to %%autosetup
