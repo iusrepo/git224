@@ -458,8 +458,6 @@ LDFLAGS = %{__global_ldflags}
 NEEDS_CRYPTO_WITH_SSL = 1
 USE_LIBPCRE2 = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
-DESTDIR = %{buildroot}
-INSTALL = install -p
 GITWEB_PROJECTROOT = %{_localstatedir}/lib/git
 GNU_ROFF = 1
 NO_CROSS_DIRECTORY_HARDLINKS = 1
@@ -507,18 +505,18 @@ rm -rf perl/Git/LoadCPAN{.pm,/}
 grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 
 %build
-make %{?_smp_mflags} all %{?with_docs:doc}
+%make_build all %{?with_docs:doc}
 
 make -C contrib/emacs
 
 %if %{libsecret}
-make -C contrib/credential/libsecret/
+%make_build -C contrib/credential/libsecret/
 %endif
 make -C contrib/credential/netrc/
 
-make -C contrib/diff-highlight/
+%make_build -C contrib/diff-highlight/
 
-make -C contrib/subtree/
+%make_build -C contrib/subtree/
 
 # Fix shebang in a few places to silence rpmlint complaints
 #
@@ -541,7 +539,7 @@ sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
 %endif
 
 %install
-make %{?_smp_mflags} install %{?with_docs:install-doc}
+%make_install %{?with_docs:install-doc}
 
 # symlink %%{gitexecdir} copies of git, git-shell, and git-upload-pack
 for i in git git-shell git-upload-pack; do
@@ -565,7 +563,7 @@ install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitexecdir}
 
-make -C contrib/subtree install %{?with_docs:install-doc}
+%make_install -C contrib/subtree %{?with_docs:install-doc}
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE13} %{buildroot}%{_sysconfdir}/httpd/conf.d/%{gitweb_httpd_conf}
@@ -900,6 +898,7 @@ make test || ./print-failed-test-output
 * Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-3
 - Use %%apply_patch for aarch64 zlib patch, return to %%autosetup
 - Disable jgit tests on s390x, they're unreliable
+- Use %make_build and %make_install
 
 * Tue May 29 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-2
 - packfile: Correct zlib buffer handling (#1582555)
