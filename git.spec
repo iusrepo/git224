@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.18.0
-Release:        0.0%{?rcrev}%{?dist}
+Release:        0.0%{?rcrev}.1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -123,6 +123,9 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://bugzilla.redhat.com/1581678
 # https://public-inbox.org/git/20180524062733.5412-1-newren@gmail.com/
 Patch2:         0001-rev-parse-check-lookup-ed-commit-references-for-NULL.patch
+# https://github.com/gitster/git/commit/f2cb01d35
+# https://public-inbox.org/git/20180601174644.13055-1-phillip.wood@talktalk.net/
+Patch3:         0001-add-p-fix-counting-empty-context-lines-in-edited-pat.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -871,6 +874,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Jun 01 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.0.rc0.1
+- add -p: fix counting empty context lines in edited patches
+
 * Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.0.rc0
 - Update to 2.18.0-rc0
 - Use new INSTALL_SYMLINKS setting
