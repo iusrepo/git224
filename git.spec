@@ -79,11 +79,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc0
+%global rcrev   .rc1
 
 Name:           git
 Version:        2.18.0
-Release:        0.0%{?rcrev}.1%{?dist}
+Release:        0.1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -120,12 +120,9 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# https://bugzilla.redhat.com/1581678
-# https://public-inbox.org/git/20180524062733.5412-1-newren@gmail.com/
-Patch2:         0001-rev-parse-check-lookup-ed-commit-references-for-NULL.patch
 # https://github.com/gitster/git/commit/f2cb01d35
 # https://public-inbox.org/git/20180601174644.13055-1-phillip.wood@talktalk.net/
-Patch3:         0001-add-p-fix-counting-empty-context-lines-in-edited-pat.patch
+Patch2:         0001-add-p-fix-counting-empty-context-lines-in-edited-pat.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -874,6 +871,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Jun 04 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.1.rc1
+- Update to 2.18.0-rc1
+
 * Fri Jun 01 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.0.rc0.1
 - add -p: fix counting empty context lines in edited patches
 
