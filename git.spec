@@ -499,7 +499,6 @@ grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 %if %{libsecret}
 %make_build -C contrib/credential/libsecret/
 %endif
-make -C contrib/credential/netrc/
 
 %make_build -C contrib/diff-highlight/
 
@@ -873,6 +872,7 @@ make test || ./print-failed-test-output
 %changelog
 * Mon Jun 04 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.1.rc1
 - Update to 2.18.0-rc1
+- Drop flaky & out-of-place netrc credential helper tests
 
 * Fri Jun 01 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.0.rc0.1
 - add -p: fix counting empty context lines in edited patches
