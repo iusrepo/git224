@@ -496,6 +496,8 @@ grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 %build
 %make_build all %{?with_docs:doc}
 
+%make_build -C contrib/contacts/ all %{?with_docs:doc}
+
 %if %{libsecret}
 %make_build -C contrib/credential/libsecret/
 %endif
@@ -526,6 +528,8 @@ sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
 
 %install
 %make_install %{?with_docs:install-doc}
+
+%make_install -C contrib/contacts %{?with_docs:install-doc}
 
 %global elispdir %{_emacs_sitelispdir}/git
 pushd contrib/emacs >/dev/null
@@ -643,7 +647,7 @@ chmod a-x Documentation/technical/api-index.sh
 find contrib -type f -print0 | xargs -r0 chmod -x
 
 # Split core files
-not_core_re="git-(add--interactive|credential-(libsecret|netrc)|difftool|filter-branch|instaweb|request-pull|send-mail)|gitweb"
+not_core_re="git-(add--interactive|contacts|credential-(libsecret|netrc)|difftool|filter-branch|instaweb|request-pull|send-mail)|gitweb"
 grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 touch man-doc-files-core
 %if %{with docs}
@@ -657,8 +661,8 @@ grep -E  "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 not_core_doc_re="(git-(cvs|gui|citool|daemon|subtree))|p4|svn|email|gitk|gitweb"
 mkdir -p %{buildroot}%{_pkgdocdir}/
 cp -pr README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
-# Remove contrib/{credential,svn-fe}, they have nothing useful for documentation
-rm -rf %{buildroot}%{_pkgdocdir}/contrib/{credential,svn-fe}/
+# Remove contrib/ files/dirs which have nothing useful for documentation
+rm -rf %{buildroot}%{_pkgdocdir}/contrib/{contacts,credential,svn-fe}/
 cp -p gitweb/INSTALL %{buildroot}%{_pkgdocdir}/INSTALL.gitweb
 cp -p gitweb/README %{buildroot}%{_pkgdocdir}/README.gitweb
 
@@ -870,6 +874,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Jun 06 2018 Todd Zullinger <tmz@pobox.com>
+- Include git-contacts, SubmittingPatches suggests it to users
+
 * Mon Jun 04 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.1.rc1
 - Update to 2.18.0-rc1
 - Drop flaky & out-of-place netrc credential helper tests
