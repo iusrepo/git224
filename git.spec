@@ -504,7 +504,7 @@ grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 
 %make_build -C contrib/diff-highlight/
 
-%make_build -C contrib/subtree/
+%make_build -C contrib/subtree/ all %{?with_docs:doc}
 
 # Fix shebang in a few places to silence rpmlint complaints
 #
@@ -876,6 +876,7 @@ make test || ./print-failed-test-output
 %changelog
 * Wed Jun 06 2018 Todd Zullinger <tmz@pobox.com>
 - Include git-contacts, SubmittingPatches suggests it to users
+- Build git-subtree docs in %%build
 
 * Mon Jun 04 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.1.rc1
 - Update to 2.18.0-rc1
