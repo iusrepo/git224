@@ -892,7 +892,7 @@ make test || ./print-failed-test-output
 * Wed May 30 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-3
 - Use %%apply_patch for aarch64 zlib patch, return to %%autosetup
 - Disable jgit tests on s390x, they're unreliable
-- Use %make_build and %make_install
+- Use %%make_build and %%make_install
 
 * Tue May 29 2018 Todd Zullinger <tmz@pobox.com> - 2.17.1-2
 - packfile: Correct zlib buffer handling (#1582555)
