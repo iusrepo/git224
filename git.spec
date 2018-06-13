@@ -109,11 +109,6 @@ Source14:       gitweb.conf.in
 Source15:       git@.service.in
 Source16:       git.socket
 
-# https://bugzilla.redhat.com/1582555
-# https://public-inbox.org/git/20180525231713.23047-1-lintonrjeremy@gmail.com/
-# This patch is applied manually on aarch64 only, until it is accepted # upstream
-Source20:       0001-packfile-Correct-zlib-buffer-handling.patch
-
 # Script to print test failure output (used in %%check)
 Source99:       print-failed-test-output
 
@@ -123,6 +118,10 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://github.com/gitster/git/commit/f2cb01d35
 # https://public-inbox.org/git/20180601174644.13055-1-phillip.wood@talktalk.net/
 Patch2:         0001-add-p-fix-counting-empty-context-lines-in-edited-pat.patch
+# https://bugzilla.redhat.com/1582555
+# https://github.com/gitster/git/commit/b611396e97.patch
+# https://public-inbox.org/git/20180525231713.23047-1-lintonrjeremy@gmail.com/
+Patch3:         0001-packfile-correct-zlib-buffer-handling.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -417,11 +416,6 @@ rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
 # Ensure a blank line follows autosetup, el6 chokes otherwise
 # https://bugzilla.redhat.com/1310704
 %autosetup -p1 -n %{name}-%{version}%{?rcrev}
-
-# Apply aarch64 zlib patch (https://bugzilla.redhat.com/1582555)
-%ifarch aarch64
-%apply_patch %{SOURCE20}
-%endif
 
 # Install print-failed-test-output script
 install -p -m 755 %{SOURCE99} print-failed-test-output
@@ -876,6 +870,7 @@ make test || ./print-failed-test-output
 %changelog
 * Wed Jun 13 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-0.2.rc2
 - Update to 2.18.0-rc2
+- Apply upstream zlib buffer handling patch (#1582555)
 
 * Wed Jun 06 2018 Todd Zullinger <tmz@pobox.com>
 - Include git-contacts, SubmittingPatches suggests it to users

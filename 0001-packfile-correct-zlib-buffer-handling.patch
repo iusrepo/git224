@@ -1,0 +1,38 @@
+From b611396e97cba09c7e1cf900190cf1a9e922546e Mon Sep 17 00:00:00 2001
+From: Jeremy Linton <lintonrjeremy@gmail.com>
+Date: Wed, 13 Jun 2018 09:22:07 -0500
+Subject: [PATCH] packfile: correct zlib buffer handling
+
+The buffer being passed to zlib includes a NUL terminator that git
+needs to keep in place. unpack_compressed_entry() attempts to detect
+the case that the source buffer hasn't been fully consumed by
+checking to see if the destination buffer has been over consumed.
+
+This causes a problem, that more recent zlib patches have been
+poisoning the unconsumed portions of the buffer which overwrites
+the NUL byte, while correctly returning length and status.
+
+Let's place the NUL at the end of the buffer after inflate returns
+to assure that it doesn't result in problems for git even if its
+been overwritten by zlib.
+
+Signed-off-by: Jeremy Linton <lintonrjeremy@gmail.com>
+Signed-off-by: Junio C Hamano <gitster@pobox.com>
+---
+ packfile.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/packfile.c b/packfile.c
+index 4a5fe7ab18838..d55569921793e 100644
+--- a/packfile.c
++++ b/packfile.c
+@@ -1422,6 +1422,9 @@ static void *unpack_compressed_entry(struct packed_git *p,
+ 		return NULL;
+ 	}
+ 
++	/* versions of zlib can clobber unconsumed portion of outbuf */
++	buffer[size] = '\0';
++
+ 	return buffer;
+ }
+ 
