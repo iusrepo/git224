@@ -79,11 +79,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc2
+#global rcrev   .rc0
 
 Name:           git
 Version:        2.18.0
-Release:        0.3%{?rcrev}%{?dist}
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -118,10 +118,6 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # https://github.com/gitster/git/commit/f2cb01d35
 # https://public-inbox.org/git/20180601174644.13055-1-phillip.wood@talktalk.net/
 Patch2:         0001-add-p-fix-counting-empty-context-lines-in-edited-pat.patch
-# https://bugzilla.redhat.com/1582555
-# https://github.com/gitster/git/commit/b611396e97.patch
-# https://public-inbox.org/git/20180525231713.23047-1-lintonrjeremy@gmail.com/
-Patch3:         0001-packfile-correct-zlib-buffer-handling.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -868,6 +864,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Jun 20 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-1
+- Update to 2.18.0
+
 * Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 2.18.0-0.3.rc2
 - Rebuilt for Python 3.7
 
