@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.18.0
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -560,7 +560,7 @@ find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} '
 
 %if ! %{with cvs}
 # Remove git-cvs* from %%{_bindir} and %%{gitexecdir}
-find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name 'git-cvs*' -exec rm -f {} ';'
+find %{buildroot}{%{_bindir},%{gitexecdir}} \( -type f -o -type l \) -name 'git-cvs*' -exec rm -f {} ';'
 %endif
 
 %if ! %{with p4}
@@ -864,6 +864,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Jun 25 2018 Pavel Cahyna <pcahyna@redhat.com> - 2.18.0-2
+- Fix build --without cvs
+
 * Wed Jun 20 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-1
 - Update to 2.18.0
 
