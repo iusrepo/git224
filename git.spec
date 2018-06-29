@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.18.0
-Release:        2%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}.1
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -864,6 +864,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Jun 29 2018 Jitka Plesnikova <jplesnik@redhat.com> - 2.18.0-2.1
+- Perl 5.28 rebuild
+
 * Mon Jun 25 2018 Pavel Cahyna <pcahyna@redhat.com> - 2.18.0-2
 - Fix build --without cvs
 
