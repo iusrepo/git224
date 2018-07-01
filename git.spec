@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.18.0
-Release:        2%{?rcrev}%{?dist}.1
+Release:        2%{?rcrev}%{?dist}.2
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -864,6 +864,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sun Jul 01 2018 Jitka Plesnikova <jplesnik@redhat.com> - 2.18.0-2.2
+- Perl 5.28 re-rebuild of bootstrapped packages
+
 * Fri Jun 29 2018 Jitka Plesnikova <jplesnik@redhat.com> - 2.18.0-2.1
 - Perl 5.28 rebuild
 
