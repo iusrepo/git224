@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.18.0
-Release:        2%{?rcrev}%{?dist}.3
+Release:        2%{?rcrev}%{?dist}.4
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -864,6 +864,9 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.18.0-2.4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Tue Jul 03 2018 Petr Pisar <ppisar@redhat.com> - 2.18.0-2.3
 - Perl 5.28 rebuild
 
