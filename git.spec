@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.18.0
-Release:        2%{?rcrev}%{?dist}.4
+Release:        2%{?rcrev}%{?dist}.5
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -386,6 +386,7 @@ history.
 
 %package svn
 Summary:        Git tools for interacting with Subversion repositories
+BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       perl(Digest::MD5)
 %if ! %{defined perl_bootstrap}
@@ -568,7 +569,10 @@ find %{buildroot}{%{_bindir},%{gitexecdir}} \( -type f -o -type l \) -name 'git-
 find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name '*p4*' -exec rm -f {} ';'
 %endif
 
-exclude_re="archimport|email|git-(citool|cvs|daemon|gui|p4|subtree|(remote-test)?svn)|gitk|p4merge"
+# Remove unneeded git-remote-testsvn so git-svn can be noarch
+rm -f %{buildroot}%{gitexecdir}/git-remote-testsvn
+
+exclude_re="archimport|email|git-(citool|cvs|daemon|gui|p4|subtree|svn)|gitk|p4merge"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f -o -type l | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
@@ -857,13 +861,15 @@ make test || ./print-failed-test-output
 %{?with_docs:%{_pkgdocdir}/git-subtree.html}
 
 %files svn
-%{gitexecdir}/git-remote-testsvn
 %{gitexecdir}/git-svn
 %{_pkgdocdir}/git-svn.txt
 %{?with_docs:%{_mandir}/man1/git-svn.1*}
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Aug 20 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-2.5
+- Remove git-remote-testsvn, make git-svn noarch
+
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.18.0-2.4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
