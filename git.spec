@@ -538,6 +538,9 @@ install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
 %endif
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitexecdir}
+# temporarily move contrib/credential/netrc aside to prevent it from being
+# deleted in the docs preparation, so the tests can be run in %%check
+mv contrib/credential/netrc .
 
 %make_install -C contrib/subtree %{?with_docs:install-doc}
 
@@ -722,6 +725,12 @@ export GIT_TEST_SVNSERVE=true
 # Run the tests
 make test || ./print-failed-test-output
 
+# Run contrib/credential/netrc tests
+mkdir -p contrib/credential
+mv netrc contrib/credential/
+make -C contrib/credential/netrc/ test || \
+make -C contrib/credential/netrc/ testverbose
+
 %if %{use_systemd}
 %post daemon
 %systemd_post git@.service
@@ -869,6 +878,7 @@ make test || ./print-failed-test-output
 %changelog
 * Mon Aug 20 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-2.5
 - Remove git-remote-testsvn, make git-svn noarch
+- Restore fixed contrib/credential/netrc tests
 
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.18.0-2.4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
