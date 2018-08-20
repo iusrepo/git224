@@ -79,11 +79,11 @@
 %endif
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 Name:           git
-Version:        2.18.0
-Release:        2%{?rcrev}%{?dist}.5
+Version:        2.19.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -115,9 +115,6 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# https://github.com/gitster/git/commit/f2cb01d35
-# https://public-inbox.org/git/20180601174644.13055-1-phillip.wood@talktalk.net/
-Patch2:         0001-add-p-fix-counting-empty-context-lines-in-edited-pat.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -876,6 +873,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Aug 20 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.0
+- Update to 2.19.0.rc0
+
 * Mon Aug 20 2018 Todd Zullinger <tmz@pobox.com> - 2.18.0-2.5
 - Remove git-remote-testsvn, make git-svn noarch
 - Restore fixed contrib/credential/netrc tests
