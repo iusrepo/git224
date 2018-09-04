@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.19.0
-Release:        0.1%{?rcrev}%{?dist}
+Release:        0.2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -216,6 +216,12 @@ Requires:       emacs-filesystem >= %{_emacs_version}
 
 # Obsolete gnome-keyring credential helper (remove after Fedora 29)
 Obsoletes:      git-gnome-keyring < 2.11.1-4
+
+# Obsolete git-p4 if it's disabled
+%if %{without p4}
+Obsoletes:      git-p4 < %{?epoch:%{epoch}:}%{version}-%{release}
+Conflicts:      git-p4 < %{?epoch:%{epoch}:}%{version}-%{release}
+%endif
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -873,6 +879,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Sep 04 2018 Nils Philippsen <nils@redhat.com> - 2.19.0-0.2.rc1
+- obsolete git-p4 if it's disabled
+
 * Tue Aug 28 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.1.rc1
 - Update to 2.19.0.rc1
 
