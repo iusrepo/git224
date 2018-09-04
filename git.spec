@@ -214,7 +214,7 @@ Requires:       perl-Git = %{version}-%{release}
 Requires:       emacs-filesystem >= %{_emacs_version}
 %endif
 
-# Obsolete gnome-keyring credential helper (remove in Fedora 29)
+# Obsolete gnome-keyring credential helper (remove after Fedora 29)
 Obsoletes:      git-gnome-keyring < 2.11.1-4
 
 %description
