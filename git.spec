@@ -220,7 +220,9 @@ Obsoletes:      git-cvs < %{?epoch:%{epoch}:}%{version}-%{release}
 %endif
 
 # Obsolete gnome-keyring credential helper (remove after Fedora 29)
+%if 0%{?fedora} && 0%{?fedora} < 30
 Obsoletes:      git-gnome-keyring < 2.11.1-4
+%endif
 
 # Obsolete git-p4 if it's disabled
 %if %{without p4}
@@ -893,6 +895,7 @@ make -C contrib/credential/netrc/ testverbose
 - Obsolete git-cvs if it's disabled
 - Remove contrib/fast-import/import-zips.py, contrib/hg-to-git, and
   contrib/svn-fe which all require python2
+- Drop git-gnome-keyring obsolete for fedora > 30
 
 * Tue Sep 04 2018 Nils Philippsen <nils@redhat.com> - 2.19.0-0.2.rc1
 - obsolete git-p4 if it's disabled
