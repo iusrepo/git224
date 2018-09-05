@@ -214,6 +214,11 @@ Requires:       perl-Git = %{version}-%{release}
 Requires:       emacs-filesystem >= %{_emacs_version}
 %endif
 
+# Obsolete git-cvs if it's disabled
+%if %{without cvs}
+Obsoletes:      git-cvs < %{?epoch:%{epoch}:}%{version}-%{release}
+%endif
+
 # Obsolete gnome-keyring credential helper (remove after Fedora 29)
 Obsoletes:      git-gnome-keyring < 2.11.1-4
 
@@ -881,6 +886,7 @@ make -C contrib/credential/netrc/ testverbose
 * Tue Sep 04 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.3.rc2
 - Update to 2.19.0.rc2
 - Drop unnecessary Conflicts: when git-p4 is disabled
+- Obsolete git-cvs if it's disabled
 
 * Tue Sep 04 2018 Nils Philippsen <nils@redhat.com> - 2.19.0-0.2.rc1
 - obsolete git-p4 if it's disabled
