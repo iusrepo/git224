@@ -505,9 +505,6 @@ grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 %make_build -C contrib/subtree/ all %{?with_docs:doc}
 
 # Fix shebang in a few places to silence rpmlint complaints
-#
-# The multimail hook is installed with git.  Use python3 to avoid an
-# unnecessary python2 dependency.
 %if %{with python2}
 sed -i -e '1s@#! */usr/bin/env python$@#!%{__python2}@' \
     contrib/fast-import/import-zips.py \
@@ -516,7 +513,14 @@ sed -i -e '1s@#! */usr/bin/env python$@#!%{__python2}@' \
     contrib/hooks/multimail/migrate-mailhook-config \
     contrib/hooks/multimail/post-receive.example \
     contrib/svn-fe/svnrdump_sim.py
+%else
+# Remove contrib/fast-import/import-zips.py, contrib/hg-to-git, and
+# contrib/svn-fe which all require python2.
+rm -rf contrib/fast-import/import-zips.py contrib/hg-to-git contrib/svn-fe
 %endif
+
+# The multimail hook is installed with git.  Use python3 to avoid an
+# unnecessary python2 dependency, if possible.
 %if %{with python3}
 sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
     contrib/hooks/multimail/git_multimail.py \
@@ -887,6 +891,8 @@ make -C contrib/credential/netrc/ testverbose
 - Update to 2.19.0.rc2
 - Drop unnecessary Conflicts: when git-p4 is disabled
 - Obsolete git-cvs if it's disabled
+- Remove contrib/fast-import/import-zips.py, contrib/hg-to-git, and
+  contrib/svn-fe which all require python2
 
 * Tue Sep 04 2018 Nils Philippsen <nils@redhat.com> - 2.19.0-0.2.rc1
 - obsolete git-p4 if it's disabled
