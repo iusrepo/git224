@@ -19,4 +19,5 @@ addFilter("perl-Git-SVN.noarch: W: no-documentation")
 addFilter("git-core\..*: W: no-manual-page-for-binary")
 
 # nothing provides git-gnome-keyring, it's simply obsolete
-addFilter("git.* obsolete-not-provided git-gnome-keyring")
+# similarly ignore the warning when git-p4 is disabled
+addFilter("git.* obsolete-not-provided git-(gnome-keyring|p4)")
