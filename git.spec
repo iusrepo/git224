@@ -79,11 +79,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc1
+%global rcrev   .rc2
 
 Name:           git
 Version:        2.19.0
-Release:        0.2%{?rcrev}%{?dist}
+Release:        0.3%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -879,6 +879,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Sep 04 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.3.rc2
+- Update to 2.19.0.rc2
+
 * Tue Sep 04 2018 Nils Philippsen <nils@redhat.com> - 2.19.0-0.2.rc1
 - obsolete git-p4 if it's disabled
 
