@@ -588,13 +588,15 @@ rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 
 %if ! %{with cvs}
-# Remove git-cvs* from %%{_bindir} and %%{gitexecdir}
-find %{buildroot}{%{_bindir},%{gitexecdir}} \( -type f -o -type l \) -name 'git-cvs*' -exec rm -f {} ';'
+# Remove git-cvs* and gitcvs*
+find %{buildroot} Documentation \( -type f -o -type l \) \
+    \( -name 'git-cvs*' -o -name 'gitcvs*' \) -exec rm -f {} ';'
 %endif
 
 %if ! %{with p4}
-# Remove *p4* from %%{_bindir} and %%{gitexecdir}
-find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name '*p4*' -exec rm -f {} ';'
+# Remove git-p4* and mergetools/p4merge
+find %{buildroot} Documentation -type f -name 'git-p4*' -exec rm -f {} ';'
+rm -f %{buildroot}%{gitexecdir}/mergetools/p4merge
 %endif
 
 # Remove unneeded git-remote-testsvn so git-svn can be noarch
@@ -804,14 +806,6 @@ make -C contrib/credential/netrc/ testverbose
 %exclude %{_pkgdocdir}/contrib/*/*.py[co]
 %endif
 %{_pkgdocdir}/contrib/hooks
-%if ! %{with cvs}
-%{?with_docs:%{_mandir}/man1/*cvs*.1*}
-%{?with_docs:%{_pkgdocdir}/git-cvs*}
-%endif
-%if ! %{with p4}
-%{?with_docs:%{_mandir}/man1/*p4*.1*}
-%{?with_docs:%{_pkgdocdir}/*p4*}
-%endif
 
 %if %{with cvs}
 %files cvs
@@ -910,6 +904,7 @@ make -C contrib/credential/netrc/ testverbose
 %changelog
 * Thu Sep 06 2018 Sebastian Kisela <skisela@redhat.com> - 2.19.0-0.4.rc2
 - Move instaweb to a separate subpackage
+- Fix builds without docs and without cvs and/or p4
 
 * Tue Sep 04 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.3.rc2
 - Update to 2.19.0.rc2
