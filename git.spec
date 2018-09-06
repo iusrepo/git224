@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.19.0
-Release:        0.3%{?rcrev}%{?dist}
+Release:        0.4%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -252,6 +252,7 @@ Requires:       git-p4 = %{version}-%{release}
 %endif
 Requires:       git-subtree = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
+Requires:       git-instaweb = %{version}-%{release}
 Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
@@ -358,6 +359,17 @@ Requires:       gitk = %{version}-%{release}
 Requires:       tk >= 8.4
 %description gui
 %{summary}.
+
+%package instaweb
+Summary:        Repository browser in gitweb
+BuildArch:      noarch
+Requires:       git = %{version}-%{release}
+Requires:       gitweb = %{version}-%{release}
+Requires:       lighttpd
+
+%description instaweb
+A simple script to set up gitweb and a web server for browsing the local
+repository.
 
 %if %{with p4}
 %package p4
@@ -588,7 +600,7 @@ find %{buildroot}{%{_bindir},%{gitexecdir}} -type f -name '*p4*' -exec rm -f {} 
 # Remove unneeded git-remote-testsvn so git-svn can be noarch
 rm -f %{buildroot}%{gitexecdir}/git-remote-testsvn
 
-exclude_re="archimport|email|git-(citool|cvs|daemon|gui|p4|subtree|svn)|gitk|p4merge"
+exclude_re="archimport|email|git-(citool|cvs|daemon|gui|instaweb|p4|subtree|svn)|gitk|p4merge"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f -o -type l | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
@@ -668,7 +680,7 @@ grep -E  "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 ##### DOC
 # place doc files into %%{_pkgdocdir} and split them into expected packages
 # contrib
-not_core_doc_re="(git-(cvs|gui|citool|daemon|subtree))|p4|svn|email|gitk|gitweb"
+not_core_doc_re="(git-(cvs|gui|citool|daemon|instaweb|subtree))|p4|svn|email|gitk|gitweb"
 mkdir -p %{buildroot}%{_pkgdocdir}/
 cp -pr README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
 # Remove contrib/ files/dirs which have nothing useful for documentation
@@ -862,6 +874,13 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_mandir}/man1/git-citool.1*}
 %{?with_docs:%{_pkgdocdir}/git-citool.html}
 
+%files instaweb
+%defattr(-,root,root)
+%{gitexecdir}/git-instaweb
+%{_pkgdocdir}/git-instaweb.txt
+%{?with_docs:%{_mandir}/man1/git-instaweb.1*}
+%{?with_docs:%{_pkgdocdir}/git-instaweb.html}
+
 %if %{with p4}
 %files p4
 %{gitexecdir}/*p4*
@@ -889,6 +908,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Sep 06 2018 Sebastian Kisela <skisela@redhat.com> - 2.19.0-0.4.rc2
+- Move instaweb to a separate subpackage
+
 * Tue Sep 04 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.3.rc2
 - Update to 2.19.0.rc2
 - Drop unnecessary Conflicts: when git-p4 is disabled
