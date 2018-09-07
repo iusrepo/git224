@@ -1,0 +1,38 @@
+From 0f1a223660db65668b3dcac52228cd2d442d6f53 Mon Sep 17 00:00:00 2001
+From: Todd Zullinger <tmz@pobox.com>
+To: Junio C Hamano <gitster@pobox.com>
+Cc: Jeff King <peff@peff.net>, SZEDER Gábor <szeder.dev@gmail.com>
+Date: Fri, 7 Sep 2018 17:26:26 -0400
+Subject: [PATCH] t5551-http-fetch-smart.sh: sort cookies before comparing
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With curl-7.61.1 cookies are sorted by creation-time¹.  Sort the output
+used in the 'cookies stored in http.cookiefile when http.savecookies
+set' test before comparing it to the expected cookies.
+
+¹ https://github.com/curl/curl/commit/e2ef8d6fa ("cookies: support
+  creation-time attribute for cookies", 2018-08-28)
+
+Signed-off-by: Todd Zullinger <tmz@pobox.com>
+---
+ t/t5551-http-fetch-smart.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/t/t5551-http-fetch-smart.sh b/t/t5551-http-fetch-smart.sh
+index 771f36f9ff..538656bfef 100755
+--- a/t/t5551-http-fetch-smart.sh
++++ b/t/t5551-http-fetch-smart.sh
+@@ -215,7 +215,7 @@ test_expect_success 'cookies stored in http.cookiefile when http.savecookies set
+ 	git config http.cookiefile cookies.txt &&
+ 	git config http.savecookies true &&
+ 	git ls-remote $HTTPD_URL/smart_cookies/repo.git master &&
+-	tail -3 cookies.txt >cookies_tail.txt &&
++	tail -3 cookies.txt | sort >cookies_tail.txt &&
+ 	test_cmp expect_cookies.txt cookies_tail.txt
+ '
+ 
+-- 
+2.19.0.rc2
+

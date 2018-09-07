@@ -83,7 +83,7 @@
 
 Name:           git
 Version:        2.19.0
-Release:        0.4%{?rcrev}%{?dist}
+Release:        0.5%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -115,6 +115,9 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+# curl-7.61.1 changes cookie sort order
+# https://public-inbox.org/git/20180907232205.31328-1-tmz@pobox.com/
+Patch2:         0001-t5551-http-fetch-smart.sh-sort-cookies-before-compar.patch
 
 %if %{with docs}
 BuildRequires:  asciidoc >= 8.4.1
@@ -902,6 +905,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Sep 07 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.5.rc2
+- Fix smart-http test due to changes in cookie sort order in curl-7.61.1
+
 * Thu Sep 06 2018 Sebastian Kisela <skisela@redhat.com> - 2.19.0-0.4.rc2
 - Move instaweb to a separate subpackage
 - Fix builds without docs and without cvs and/or p4
