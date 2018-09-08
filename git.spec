@@ -220,7 +220,6 @@ Obsoletes:      git-gnome-keyring < 2.11.1-4
 # Obsolete git-p4 if it's disabled
 %if %{without p4}
 Obsoletes:      git-p4 < %{?epoch:%{epoch}:}%{version}-%{release}
-Conflicts:      git-p4 < %{?epoch:%{epoch}:}%{version}-%{release}
 %endif
 
 %description
@@ -881,6 +880,7 @@ make -C contrib/credential/netrc/ testverbose
 %changelog
 * Tue Sep 04 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.3.rc2
 - Update to 2.19.0.rc2
+- Drop unnecessary Conflicts: when git-p4 is disabled
 
 * Tue Sep 04 2018 Nils Philippsen <nils@redhat.com> - 2.19.0-0.2.rc1
 - obsolete git-p4 if it's disabled
