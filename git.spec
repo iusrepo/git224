@@ -1,6 +1,9 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 %bcond_without docs
 
+# Pass --without tests to rpmbuild if you don't want to run the tests
+%bcond_without tests
+
 %global gitexecdir          %{_libexecdir}/git-core
 
 # Settings for Fedora > 29 and EL > 7
@@ -712,6 +715,11 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
 ##### #DOC
 
 %check
+%if %{without tests}
+echo "*** Skipping tests"
+exit 0
+%endif
+
 %if %{with docs} && %{with linkcheck}
 # Test links in HTML documentation
 find %{buildroot}%{_pkgdocdir} -name "*.html" -print0 | xargs -r0 linkchecker
@@ -907,6 +915,7 @@ make -C contrib/credential/netrc/ testverbose
 %changelog
 * Fri Sep 07 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-0.5.rc2
 - Fix smart-http test due to changes in cookie sort order in curl-7.61.1
+- Add --without tests option to skip tests
 
 * Thu Sep 06 2018 Sebastian Kisela <skisela@redhat.com> - 2.19.0-0.4.rc2
 - Move instaweb to a separate subpackage
