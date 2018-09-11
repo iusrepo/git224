@@ -21,3 +21,6 @@ addFilter("git-core\..*: W: no-manual-page-for-binary")
 # nothing provides git-gnome-keyring, it's simply obsolete
 # similarly ignore the warning when git-cvs and git-p4 are disabled
 addFilter("git.* obsolete-not-provided git-(cvs|gnome-keyring|p4)")
+
+# we BR emacs which requires emacs-common and provides %{_emacs_version}
+addFilter("git.(spec|src): .* Possible unexpanded macro in: Requires:.*emacs-filesystem >= %{_emacs_version}")
