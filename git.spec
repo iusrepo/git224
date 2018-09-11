@@ -87,8 +87,8 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.19.1
-Release:        2%{?rcrev}%{?dist}
+Version:        2.19.2
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -120,10 +120,6 @@ Source99:       print-failed-test-output
 Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# curl-7.61.1 changes cookie sort order
-# https://public-inbox.org/git/20180907232205.31328-1-tmz@pobox.com/
-# https://github.com/git/git/commit/f5b2c9c98e.patch
-Patch2:         0001-t5551-http-fetch-smart.sh-sort-cookies-before-compar.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -919,6 +915,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Nov 21 2018 Todd Zullinger <tmz@pobox.com> - 2.19.2-1
+- Update to 2.19.2
+
 * Tue Oct 23 2018 Todd Zullinger <tmz@pobox.com>
 - Skip test BuildRequires when --without tests is used
 - Simplify gpg verification of Source0
