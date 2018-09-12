@@ -120,6 +120,7 @@ Patch0:         git-1.8-gitweb-home-link.patch
 Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 # curl-7.61.1 changes cookie sort order
 # https://public-inbox.org/git/20180907232205.31328-1-tmz@pobox.com/
+# https://github.com/git/git/commit/f5b2c9c98e.patch
 Patch2:         0001-t5551-http-fetch-smart.sh-sort-cookies-before-compar.patch
 
 %if %{with docs}
