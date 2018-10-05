@@ -85,7 +85,7 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.19.0
+Version:        2.19.1
 Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -914,6 +914,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Oct 05 2018 Todd Zullinger <tmz@pobox.com> - 2.19.1-1
+- Update to 2.19.1 (CVE-2018-17456)
+
 * Mon Sep 10 2018 Todd Zullinger <tmz@pobox.com> - 2.19.0-1
 - Update to 2.19.0
 
