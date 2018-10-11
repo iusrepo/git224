@@ -124,6 +124,8 @@ Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 Patch2:         0001-t5551-http-fetch-smart.sh-sort-cookies-before-compar.patch
 
 %if %{with docs}
+# pod2man is needed to build Git.3pm
+BuildRequires:  %{_bindir}/pod2man
 BuildRequires:  asciidoc >= 8.4.1
 BuildRequires:  xmlto
 %if %{with linkcheck}
@@ -167,6 +169,7 @@ BuildRequires:  tcl
 BuildRequires:  tk
 BuildRequires:  zlib-devel >= 1.2
 
+%if %{with tests}
 # Test suite requirements
 BuildRequires:  acl
 %if 0%{?fedora} >= 27 || 0%{?rhel} > 7
@@ -209,6 +212,7 @@ BuildRequires:  python3-devel
 BuildRequires:  subversion
 BuildRequires:  subversion-perl
 BuildRequires:  time
+%endif # with tests
 
 Requires:       git-core = %{version}-%{release}
 Requires:       git-core-doc = %{version}-%{release}
@@ -914,6 +918,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Oct 23 2018 Todd Zullinger <tmz@pobox.com>
+- Skip test BuildRequires when --without tests is used
+
 * Mon Oct 22 2018 Pavel Cahyna <pcahyna@redhat.com> - 2.19.1-2
 - Update condition for the t5540-http-push-webdav test for future RHEL
 
