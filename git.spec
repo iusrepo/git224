@@ -221,7 +221,7 @@ Requires:       perl(Term::ReadKey)
 %endif # ! defined perl_bootstrap
 Requires:       perl-Git = %{version}-%{release}
 
-%if %{emacs_filesystem}
+%if %{emacs_filesystem} && %{defined _emacs_version}
 Requires:       emacs-filesystem >= %{_emacs_version}
 %endif # emacs_filesystem
 
