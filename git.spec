@@ -431,16 +431,12 @@ Requires:       subversion
 %prep
 # Verify GPG signatures
 gpghome="$(mktemp -qd)" # Ensure we don't use any existing gpg keyrings
-key="%{SOURCE9}"
-src="%{SOURCE0}"
-# Ignore noisy output from GnuPG 2.0, used on EL <= 7
-# https://bugs.gnupg.org/gnupg/issue1555
-gpg2 --dearmor --quiet --batch --yes $key >/dev/null
-# Upstream signs the uncompressed tarballs
-tar=${src/%.xz/}
-xz -dc $src > $tar
-gpgv2 --homedir "$gpghome" --quiet --keyring $key.gpg $tar.sign $tar
-rm -rf "$tar" "$gpghome" # Cleanup tar files and tmp gpg home dir
+# Convert the ascii-armored key to binary
+# (use --yes to ensure an existing dearmored key is overwritten)
+gpg2 --homedir "$gpghome" --dearmor --quiet --yes %{SOURCE9}
+xz -dc %{SOURCE0} | # Upstream signs the uncompressed tarballs
+    gpgv2 --homedir "$gpghome" --quiet --keyring %{SOURCE9}.gpg %{SOURCE1} -
+rm -rf "$gpghome" # Cleanup tmp gpg home dir
 
 # Ensure a blank line follows autosetup, el6 chokes otherwise
 # https://bugzilla.redhat.com/1310704
@@ -920,6 +916,7 @@ make -C contrib/credential/netrc/ testverbose
 %changelog
 * Tue Oct 23 2018 Todd Zullinger <tmz@pobox.com>
 - Skip test BuildRequires when --without tests is used
+- Simplify gpg verification of Source0
 
 * Mon Oct 22 2018 Pavel Cahyna <pcahyna@redhat.com> - 2.19.1-2
 - Update condition for the t5540-http-push-webdav test for future RHEL
