@@ -64,7 +64,7 @@
 
 # Allow p4 subpackage to be toggled via --with/--without
 # Disable by default if we lack python2 support
-%if ! %{with python2}
+%if %{without python2}
 %bcond_with                 p4
 %else
 %bcond_without              p4
@@ -448,12 +448,12 @@ install -p -m 755 %{SOURCE99} print-failed-test-output
 # Remove git-archimport from command list
 sed -i '/^git-archimport/d' command-list.txt
 
-%if ! %{with cvs}
+%if %{without cvs}
 # Remove git-cvs* from command list
 sed -i '/^git-cvs/d' command-list.txt
 %endif
 
-%if ! %{with p4}
+%if %{without p4}
 # Remove git-p4 from command list
 sed -i '/^git-p4/d' command-list.txt
 %endif
@@ -594,13 +594,13 @@ rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
 
-%if ! %{with cvs}
+%if %{without cvs}
 # Remove git-cvs* and gitcvs*
 find %{buildroot} Documentation \( -type f -o -type l \) \
     \( -name 'git-cvs*' -o -name 'gitcvs*' \) -exec rm -f {} ';'
 %endif
 
-%if ! %{with p4}
+%if %{without p4}
 # Remove git-p4* and mergetools/p4merge
 find %{buildroot} Documentation -type f -name 'git-p4*' -exec rm -f {} ';'
 rm -f %{buildroot}%{gitexecdir}/mergetools/p4merge
@@ -917,6 +917,7 @@ make -C contrib/credential/netrc/ testverbose
 * Tue Oct 23 2018 Todd Zullinger <tmz@pobox.com>
 - Skip test BuildRequires when --without tests is used
 - Simplify gpg verification of Source0
+- Use %%{without ...} macro consistently
 
 * Mon Oct 22 2018 Pavel Cahyna <pcahyna@redhat.com> - 2.19.1-2
 - Update condition for the t5540-http-push-webdav test for future RHEL
