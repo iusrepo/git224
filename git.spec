@@ -86,7 +86,7 @@
 
 Name:           git
 Version:        2.19.1
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -169,7 +169,7 @@ BuildRequires:  zlib-devel >= 1.2
 
 # Test suite requirements
 BuildRequires:  acl
-%if 0%{?fedora} && 0%{?fedora} >= 27
+%if 0%{?fedora} >= 27 || 0%{?rhel} > 7
 # Needed by t5540-http-push-webdav.sh
 BuildRequires: apr-util-bdb
 %endif
@@ -914,6 +914,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Oct 22 2018 Pavel Cahyna <pcahyna@redhat.com> - 2.19.1-2
+- Update condition for the t5540-http-push-webdav test for future RHEL
+
 * Fri Oct 05 2018 Todd Zullinger <tmz@pobox.com> - 2.19.1-1
 - Update to 2.19.1 (CVE-2018-17456)
 
