@@ -25,11 +25,13 @@
 %bcond_without              python3
 # linkchcker is not available on EL <= 7
 %bcond_without              linkcheck
+%global use_glibc_langpack_en 1
 %global use_perl_generators 1
 %global use_perl_interpreter 1
 %else
 %bcond_with                 python3
 %bcond_with                 linkcheck
+%global use_glibc_langpack_en 0
 %global use_perl_generators 0
 %global use_perl_interpreter 0
 %endif
@@ -181,6 +183,9 @@ BuildRequires:  bash
 BuildRequires:  cvs
 BuildRequires:  cvsps
 %endif # with cvs
+%if %{use_glibc_langpack_en}
+BuildRequires:  glibc-langpack-en
+%endif # use_glibc_langpack_en
 BuildRequires:  gnupg
 %if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} >= 7 && %{_arch} != ppc64 ))
 BuildRequires:  highlight
@@ -919,6 +924,7 @@ make -C contrib/credential/netrc/ testverbose
 - Simplify gpg verification of Source0
 - Use %%{without ...} macro consistently
 - Add comments to %%endif statements
+- Add glibc-langpack-en BuildRequires for en_US.UTF-8 locale
 
 * Mon Oct 22 2018 Pavel Cahyna <pcahyna@redhat.com> - 2.19.1-2
 - Update condition for the t5540-http-push-webdav test for future RHEL
