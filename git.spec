@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc2
+#global rcrev   .rc0
 
 Name:           git
 Version:        2.20.0
-Release:        0.2%{?rcrev}%{?dist}
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -915,6 +915,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sun Dec 09 2018 Todd Zullinger <tmz@pobox.com> - 2.20.0-1
+- Update to 2.20.0
+
 * Sat Dec 01 2018 Todd Zullinger <tmz@pobox.com> - 2.20.0-0.2.rc2
 - Update to 2.20.0.rc2
 
