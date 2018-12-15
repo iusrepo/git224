@@ -87,7 +87,7 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.20.0
+Version:        2.20.1
 Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -915,6 +915,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sat Dec 15 2018 Todd Zullinger <tmz@pobox.com> - 2.20.1-1
+- Update to 2.20.1
+
 * Sun Dec 09 2018 Todd Zullinger <tmz@pobox.com> - 2.20.0-1
 - Update to 2.20.0
 
