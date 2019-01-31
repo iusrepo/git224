@@ -88,7 +88,7 @@
 
 Name:           git
 Version:        2.20.1
-Release:        1%{?rcrev}%{?dist}.1
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -191,7 +191,6 @@ BuildRequires:  httpd
 BuildRequires:  jgit
 %endif # fedora (except s390x)
 BuildRequires:  mod_dav_svn
-BuildRequires:  pcre
 BuildRequires:  perl(App::Prove)
 BuildRequires:  perl(CGI)
 BuildRequires:  perl(CGI::Carp)
@@ -915,6 +914,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Jan 31 2019 Todd Zullinger <tmz@pobox.com> - 2.20.1-2
+- Remove extraneous pcre BuildRequires
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
