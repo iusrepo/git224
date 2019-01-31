@@ -25,13 +25,13 @@
 %bcond_without              python3
 # linkchcker is not available on EL <= 7
 %bcond_without              linkcheck
-%global use_glibc_langpack_en 1
+%global use_glibc_langpacks 1
 %global use_perl_generators 1
 %global use_perl_interpreter 1
 %else
 %bcond_with                 python3
 %bcond_with                 linkcheck
-%global use_glibc_langpack_en 0
+%global use_glibc_langpacks 0
 %global use_perl_generators 0
 %global use_perl_interpreter 0
 %endif
@@ -179,9 +179,13 @@ BuildRequires:  bash
 BuildRequires:  cvs
 BuildRequires:  cvsps
 %endif # with cvs
-%if %{use_glibc_langpack_en}
+%if %{use_glibc_langpacks}
+# glibc-all-langpacks and glibc-langpack-is are needed for GETTEXT_LOCALE and
+# GETTEXT_ISO_LOCALE test prereq's, glibc-langpack-en ensures en_US.UTF-8.
+BuildRequires:  glibc-all-langpacks
 BuildRequires:  glibc-langpack-en
-%endif # use_glibc_langpack_en
+BuildRequires:  glibc-langpack-is
+%endif # use_glibc_langpacks
 BuildRequires:  gnupg
 %if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} >= 7 && %{_arch} != ppc64 ))
 BuildRequires:  highlight
@@ -916,6 +920,7 @@ make -C contrib/credential/netrc/ testverbose
 %changelog
 * Thu Jan 31 2019 Todd Zullinger <tmz@pobox.com> - 2.20.1-2
 - Remove extraneous pcre BuildRequires
+- Add additional BuildRequires for i18n locales used in tests
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
