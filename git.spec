@@ -88,7 +88,7 @@
 
 Name:           git
 Version:        2.20.1
-Release:        1%{?rcrev}%{?dist}
+Release:        1%{?rcrev}%{?dist}.1
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -915,6 +915,9 @@ make -C contrib/credential/netrc/ testverbose
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Sat Dec 15 2018 Todd Zullinger <tmz@pobox.com> - 2.20.1-1
 - Update to 2.20.1
 
