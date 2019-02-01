@@ -117,9 +117,8 @@ Source16:       git.socket
 # Script to print test failure output (used in %%check)
 Source99:       print-failed-test-output
 
-Patch0:         git-1.8-gitweb-home-link.patch
 # https://bugzilla.redhat.com/490602
-Patch1:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -515,6 +514,10 @@ chmod +x %{__perl_requires}
 # allows the dependencies to be automatically processed by rpm.
 rm -rf perl/Git/LoadCPAN{.pm,/}
 grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
+
+# Update gitweb default home link string
+sed -i 's@"++GITWEB_HOME_LINK_STR++"@$ENV{"SERVER_NAME"} ? "git://" . $ENV{"SERVER_NAME"} : "projects"@' \
+    gitweb/gitweb.perl
 
 %build
 %make_build all %{?with_docs:doc}
@@ -921,6 +924,7 @@ make -C contrib/credential/netrc/ testverbose
 * Thu Jan 31 2019 Todd Zullinger <tmz@pobox.com> - 2.20.1-2
 - Remove extraneous pcre BuildRequires
 - Add additional BuildRequires for i18n locales used in tests
+- Replace gitweb home-link with inline sed
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
