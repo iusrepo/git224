@@ -778,6 +778,14 @@ export GIT_TEST_GIT_DAEMON=true
 export GIT_TEST_HTTPD=true
 export GIT_TEST_SVNSERVE=true
 
+# Create tmpdir for test output and update GIT_TEST_OPTS
+# Also update GIT-BUILD-OPTIONS to keep make from any needless rebuilding
+testdir=$(mktemp -d -p /tmp git-t.XXXX)
+sed -i "s@^GIT_TEST_OPTS = .*@& --root=$testdir@" config.mak
+touch -r GIT-BUILD-OPTIONS ts
+sed -i "s@\(GIT_TEST_OPTS='.*\)'@\1 --root=$testdir'@" GIT-BUILD-OPTIONS
+touch -r ts GIT-BUILD-OPTIONS
+
 # Run the tests
 make test || ./print-failed-test-output
 
@@ -786,6 +794,9 @@ mkdir -p contrib/credential
 mv netrc contrib/credential/
 make -C contrib/credential/netrc/ test || \
 make -C contrib/credential/netrc/ testverbose
+
+# Clean up test dir
+rmdir --ignore-fail-on-non-empty "$testdir"
 
 %if %{use_systemd}
 %post daemon
@@ -936,6 +947,7 @@ make -C contrib/credential/netrc/ testverbose
 - Add additional BuildRequires for i18n locales used in tests
 - Replace gitweb home-link with inline sed
 - Add gnupg2-smime and perl JSON BuildRequires for tests
+- Work around gpg-agent issues in the test suite
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
