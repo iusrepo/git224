@@ -1,0 +1,21 @@
+filesystem does not corrupt utf-8
+GIT_SKIP_TESTS
+missing AUTOIDENT
+missing CASE_INSENSITIVE_FS
+missing CLONE_2GB
+missing DONTHAVEIT
+missing EXPENSIVE
+missing !?LAZY_(TRUE|FALSE)
+missing MINGW
+missing NATIVE_CRLF
+missing !PCRE
+missing !PTHREADS
+missing RFC1991
+missing TAR_NEEDS_PAX_FALLBACK
+skipping case insensitive tests
+skipping git p4 tests
+skipping remote-svn tests, python not available
+skipping svn-info test
+skipping Windows-(only path|specific) tests
+Test requiring writable / skipped
+used to test external credential helpers
