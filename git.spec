@@ -191,7 +191,9 @@ BuildRequires:  glibc-all-langpacks
 BuildRequires:  glibc-langpack-en
 BuildRequires:  glibc-langpack-is
 %endif # use_glibc_langpacks
+%if 0%{?fedora} && 0%{?fedora} < 30
 BuildRequires:  gnupg
+%endif # fedora < 30
 %if 0%{?fedora} || 0%{?rhel} > 8
 BuildRequires:  gnupg2-smime
 %endif # fedora or el > 8
@@ -951,6 +953,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 - Replace gitweb home-link with inline sed
 - Add gnupg2-smime and perl JSON BuildRequires for tests
 - Work around gpg-agent issues in the test suite
+- Drop gnupg BuildRequires on fedora >= 30
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
