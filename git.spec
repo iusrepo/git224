@@ -501,6 +501,9 @@ GIT_TEST_OPTS = -x --verbose-log
 TEST_SHELL_PATH = /bin/bash
 EOF
 
+# Print config.mak to aid confirmation/verification of settings
+cat config.mak
+
 # Filter bogus perl requires
 # packed-refs comes from a comment in contrib/hooks/update-paranoid
 %if %{use_new_rpm_filters}
