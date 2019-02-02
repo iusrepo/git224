@@ -1,0 +1,39 @@
+From 32ca60bbf5bb3020bbf24036bc61003711ace611 Mon Sep 17 00:00:00 2001
+From: Todd Zullinger <tmz@pobox.com>
+Date: Fri, 1 Feb 2019 19:36:41 -0500
+Subject: [PATCH 1/2] t/lib-gpg: quote path to ${GNUPGHOME}/trustlist.txt
+
+When gpgsm is installed, lib-gpg.sh attempts to update trustlist.txt to
+relax the checking of some root certificate requirements.  The path to
+"${GNUPGHOME}" contains spaces which cause an "ambiguous redirect"
+warning when bash is used to run the tests:
+
+  $ bash t7030-verify-tag.sh
+  /git/t/lib-gpg.sh: line 66: ${GNUPGHOME}/trustlist.txt: ambiguous redirect
+  ok 1 - create signed tags
+  ok 2 # skip create signed tags x509  (missing GPGSM)
+  ...
+
+No warning is issued when using bash called as /bin/sh, dash, or mksh.
+
+Quote the path to ensure the redirect works as intended and sets the
+GPGSM prereq.  While we're here, drop the space after ">>".
+
+Signed-off-by: Todd Zullinger <tmz@pobox.com>
+---
+ t/lib-gpg.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/t/lib-gpg.sh b/t/lib-gpg.sh
+index f1277bef4f..207009793b 100755
+--- a/t/lib-gpg.sh
++++ b/t/lib-gpg.sh
+@@ -63,7 +63,7 @@ then
+ 		cut -d" " -f4 |
+ 		tr -d '\n' >"${GNUPGHOME}/trustlist.txt" &&
+ 
+-		echo " S relax" >> ${GNUPGHOME}/trustlist.txt &&
++		echo " S relax" >>"${GNUPGHOME}/trustlist.txt" &&
+ 		(gpgconf --kill gpg-agent >/dev/null 2>&1 || : ) &&
+ 		echo hello | gpgsm --homedir "${GNUPGHOME}" >/dev/null \
+ 			-u committer@example.com -o /dev/null --sign - 2>&1 &&

@@ -1,0 +1,40 @@
+From 09436d6a5b6db6ab8e80ab449b3b841883b27d19 Mon Sep 17 00:00:00 2001
+From: Todd Zullinger <tmz@pobox.com>
+Date: Sat, 2 Feb 2019 02:31:52 -0500
+Subject: [PATCH 2/2] t/lib-gpg: drop redundant killing of gpg-agent
+
+In 53fc999306 ("gpg-interface t: extend the existing GPG tests with
+GPGSM", 2018-07-20), the gpgconf call which kills gpg-agent was copied
+from the existing gpg setup code.
+
+The reason for killing gpg-agent is given in 29ff1f8f74 ("t: lib-gpg:
+flush gpg agent on startup", 2017-07-20):
+
+  When running gpg-relevant tests, a gpg-daemon is spawned for each
+  GNUPGHOME used. This daemon may stay running after the test and cache
+  file descriptors for the trash directories, even after the trash
+  directory is removed. This leads to ENOENT errors when attempting to
+  create files if tests are run multiple times.
+
+  Add a cleanup script to force flushing the gpg-agent for that GNUPGHOME
+  (if any) before setting up the GPG relevant-environment.
+
+Killing gpg-agent once per test is sufficient.
+
+Signed-off-by: Todd Zullinger <tmz@pobox.com>
+---
+ t/lib-gpg.sh | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/t/lib-gpg.sh b/t/lib-gpg.sh
+index 207009793b..8d28652b72 100755
+--- a/t/lib-gpg.sh
++++ b/t/lib-gpg.sh
+@@ -64,7 +64,6 @@ then
+ 		tr -d '\n' >"${GNUPGHOME}/trustlist.txt" &&
+ 
+ 		echo " S relax" >>"${GNUPGHOME}/trustlist.txt" &&
+-		(gpgconf --kill gpg-agent >/dev/null 2>&1 || : ) &&
+ 		echo hello | gpgsm --homedir "${GNUPGHOME}" >/dev/null \
+ 			-u committer@example.com -o /dev/null --sign - 2>&1 &&
+ 		test_set_prereq GPGSM

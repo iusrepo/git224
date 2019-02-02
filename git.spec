@@ -119,6 +119,12 @@ Source99:       print-failed-test-output
 
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+# Fix "ambiguous redirect" in t/lib-gpg.sh; it causes gpgsm tests to be skipped
+# https://public-inbox.org/git/20190208031746.22683-2-tmz@pobox.com/
+Patch2:         0001-t-lib-gpg-quote-path-to-GNUPGHOME-trustlist.txt.patch
+# t/lib-gpg: drop redundant killing of gpg-agent
+# https://public-inbox.org/git/20190208031746.22683-3-tmz@pobox.com/
+Patch3:         0002-t-lib-gpg-drop-redundant-killing-of-gpg-agent.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -186,6 +192,9 @@ BuildRequires:  glibc-langpack-en
 BuildRequires:  glibc-langpack-is
 %endif # use_glibc_langpacks
 BuildRequires:  gnupg
+%if 0%{?fedora} || 0%{?rhel} > 8
+BuildRequires:  gnupg2-smime
+%endif # fedora or el > 8
 %if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} >= 7 && %{_arch} != ppc64 ))
 BuildRequires:  highlight
 %endif # fedora, el-6, or el7-ppc64
@@ -202,6 +211,7 @@ BuildRequires:  perl(DBD::SQLite)
 BuildRequires:  perl(Digest::MD5)
 BuildRequires:  perl(HTTP::Date)
 BuildRequires:  perl(IO::Pty)
+BuildRequires:  perl(JSON)
 BuildRequires:  perl(Mail::Address)
 BuildRequires:  perl(Memoize)
 BuildRequires:  perl(Test::More)
@@ -925,6 +935,7 @@ make -C contrib/credential/netrc/ testverbose
 - Remove extraneous pcre BuildRequires
 - Add additional BuildRequires for i18n locales used in tests
 - Replace gitweb home-link with inline sed
+- Add gnupg2-smime and perl JSON BuildRequires for tests
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
