@@ -534,10 +534,14 @@ grep -rlZ '^use Git::LoadCPAN::' | xargs -r0 sed -i 's/Git::LoadCPAN:://g'
 sed -i 's@"++GITWEB_HOME_LINK_STR++"@$ENV{"SERVER_NAME"} ? "git://" . $ENV{"SERVER_NAME"} : "projects"@' \
     gitweb/gitweb.perl
 
+# Move contrib/{contacts,subtree} docs to Documentation so they build with the
+# proper asciidoc/docbook/xmlto options
+mv contrib/{contacts,subtree}/git-*.txt Documentation/
+
 %build
 %make_build all %{?with_docs:doc}
 
-%make_build -C contrib/contacts/ all %{?with_docs:doc}
+%make_build -C contrib/contacts/ all
 
 %if %{libsecret}
 %make_build -C contrib/credential/libsecret/
@@ -545,7 +549,7 @@ sed -i 's@"++GITWEB_HOME_LINK_STR++"@$ENV{"SERVER_NAME"} ? "git://" . $ENV{"SERV
 
 %make_build -C contrib/diff-highlight/
 
-%make_build -C contrib/subtree/ all %{?with_docs:doc}
+%make_build -C contrib/subtree/ all
 
 # Fix shebang in a few places to silence rpmlint complaints
 %if %{with python2}
@@ -574,7 +578,7 @@ sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
 %install
 %make_install %{?with_docs:install-doc}
 
-%make_install -C contrib/contacts %{?with_docs:install-doc}
+%make_install -C contrib/contacts
 
 %global elispdir %{_emacs_sitelispdir}/git
 pushd contrib/emacs >/dev/null
@@ -596,7 +600,7 @@ install -pm 755 contrib/credential/netrc/git-credential-netrc \
 # deleted in the docs preparation, so the tests can be run in %%check
 mv contrib/credential/netrc .
 
-%make_install -C contrib/subtree %{?with_docs:install-doc}
+%make_install -C contrib/subtree
 
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d
 install -pm 0644 %{SOURCE13} %{buildroot}%{_sysconfdir}/httpd/conf.d/%{gitweb_httpd_conf}
@@ -609,9 +613,7 @@ install -Dpm 0755 contrib/diff-highlight/diff-highlight \
 rm -rf contrib/diff-highlight/{Makefile,diff-highlight,*.perl,t}
 
 # Clean up contrib/subtree to avoid cruft in the git-core-doc docdir
-# Move git-subtree.txt to Documentation so it can be installed later in docdir
-mv contrib/subtree/git-subtree.txt Documentation/
-rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree{,.{1,html,sh,txt,xml}},t}
+rm -rf contrib/subtree/{INSTALL,Makefile,git-subtree*,t}
 
 # git-archimport is not supported
 find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} ';'
@@ -954,6 +956,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 - Add gnupg2-smime and perl JSON BuildRequires for tests
 - Work around gpg-agent issues in the test suite
 - Drop gnupg BuildRequires on fedora >= 30
+- Fix formatting of contrib/{contacts,subtree} docs
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
