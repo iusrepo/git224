@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 Name:           git
-Version:        2.20.1
-Release:        2%{?rcrev}%{?dist}
+Version:        2.21.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -948,6 +948,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Feb 07 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-0.0.rc0
+- Update to 2.21.0.rc0
+
 * Thu Jan 31 2019 Todd Zullinger <tmz@pobox.com> - 2.20.1-2
 - Remove extraneous pcre BuildRequires
 - Add additional BuildRequires for i18n locales used in tests
