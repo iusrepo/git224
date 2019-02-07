@@ -79,8 +79,8 @@
 
 # Hardening flags for EL-6
 %if 0%{?rhel} == 6
-%global optflags            %{optflags} -fPIC -pie
-%global __global_ldflags    -Wl,-z,relro -Wl,-z,now
+%global build_cflags        %{build_cflags} -fPIC -pie
+%global build_ldflags       -Wl,-z,relro -Wl,-z,now
 %endif
 
 # Define for release candidates
@@ -477,8 +477,8 @@ sed -i '/^git-p4/d' command-list.txt
 # Otherwise it will rebuild in %%install due to flags changes.
 cat << \EOF > config.mak
 V = 1
-CFLAGS = %{optflags}
-LDFLAGS = %{__global_ldflags}
+CFLAGS = %{build_cflags}
+LDFLAGS = %{build_ldflags}
 NEEDS_CRYPTO_WITH_SSL = 1
 USE_LIBPCRE = 1
 ETC_GITCONFIG = %{_sysconfdir}/gitconfig
@@ -957,6 +957,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 - Work around gpg-agent issues in the test suite
 - Drop gnupg BuildRequires on fedora >= 30
 - Fix formatting of contrib/{contacts,subtree} docs
+- Use %%{build_cflags} and %%{build_ldflags}
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
