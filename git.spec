@@ -500,7 +500,6 @@ gitwebdir = %{_localstatedir}/www/git
 DEFAULT_TEST_TARGET = prove
 GIT_PROVE_OPTS = --verbose --normalize %{?_smp_mflags}
 GIT_TEST_OPTS = -x --verbose-log
-TEST_SHELL_PATH = /bin/bash
 EOF
 
 # Print config.mak to aid confirmation/verification of settings
@@ -958,6 +957,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 - Drop gnupg BuildRequires on fedora >= 30
 - Fix formatting of contrib/{contacts,subtree} docs
 - Use %%{build_cflags} and %%{build_ldflags}
+- Drop unneeded TEST_SHELL_PATH make variable
 
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.20.1-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
