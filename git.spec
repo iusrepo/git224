@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc0
+%global rcrev   .rc1
 
 Name:           git
 Version:        2.21.0
-Release:        0.0%{?rcrev}%{?dist}
+Release:        0.1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -119,12 +119,6 @@ Source99:       print-failed-test-output
 
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-# Fix "ambiguous redirect" in t/lib-gpg.sh; it causes gpgsm tests to be skipped
-# https://public-inbox.org/git/20190208031746.22683-2-tmz@pobox.com/
-Patch2:         0001-t-lib-gpg-quote-path-to-GNUPGHOME-trustlist.txt.patch
-# t/lib-gpg: drop redundant killing of gpg-agent
-# https://public-inbox.org/git/20190208031746.22683-3-tmz@pobox.com/
-Patch3:         0002-t-lib-gpg-drop-redundant-killing-of-gpg-agent.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -948,6 +942,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Feb 13 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-0.1.rc1
+- Update to 2.21.0.rc1
+
 * Thu Feb 07 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-0.0.rc0
 - Update to 2.21.0.rc0
 - Remove %%changelog entries prior to 2017
