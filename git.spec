@@ -532,6 +532,10 @@ sed -i 's@"++GITWEB_HOME_LINK_STR++"@$ENV{"SERVER_NAME"} ? "git://" . $ENV{"SERV
 mv contrib/{contacts,subtree}/git-*.txt Documentation/
 
 %build
+# Improve build reproducibility
+export TZ=UTC
+export SOURCE_DATE_EPOCH=$(date -r version +%%s 2>/dev/null)
+
 %make_build all %{?with_docs:doc}
 
 %make_build -C contrib/contacts/ all
@@ -942,6 +946,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Feb 15 2019 Todd Zullinger <tmz@pobox.com>
+- Set SOURCE_DATE_EPOCH and TZ to improve build reproducibility
+
 * Wed Feb 13 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-0.1.rc1
 - Update to 2.21.0.rc1
 
