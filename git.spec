@@ -686,6 +686,13 @@ install -pm 644 contrib/completion/git-prompt.sh \
 # install git-gui .desktop file
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE12}
 
+# symlink git-citool to git-gui if they are identical
+pushd %{buildroot}%{gitexecdir} >/dev/null
+if cmp -s git-gui git-citool 2>/dev/null; then
+    ln -svf git-gui git-citool
+fi
+popd >/dev/null
+
 # find translations
 %find_lang %{name} %{name}.lang
 cat %{name}.lang >> bin-man-doc-files
@@ -951,6 +958,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Sun Feb 24 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-1
 - Update to 2.21.0
 - Move gitweb manpages to gitweb package
+- Link git-citool to git-gui if they are identical
 
 * Tue Feb 19 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-0.2.rc2
 - Update to 2.21.0.rc2
