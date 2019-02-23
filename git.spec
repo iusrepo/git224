@@ -630,7 +630,7 @@ rm -f %{buildroot}%{gitexecdir}/mergetools/p4merge
 # Remove unneeded git-remote-testsvn so git-svn can be noarch
 rm -f %{buildroot}%{gitexecdir}/git-remote-testsvn
 
-exclude_re="archimport|email|git-(citool|cvs|daemon|gui|instaweb|p4|subtree|svn)|gitk|p4merge"
+exclude_re="archimport|email|git-(citool|cvs|daemon|gui|instaweb|p4|subtree|svn)|gitk|gitweb|p4merge"
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -type f -o -type l | grep -vE "$exclude_re" | sed -e s@^%{buildroot}@@) > bin-man-doc-files
 (find %{buildroot}{%{_bindir},%{_libexecdir}} -mindepth 1 -type d | grep -vE "$exclude_re" | sed -e 's@^%{buildroot}@%dir @') >> bin-man-doc-files
 (find %{buildroot}%{perl_vendorlib} -type f | sed -e s@^%{buildroot}@@) > perl-git-files
@@ -895,6 +895,8 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %files -n gitweb
 %{_pkgdocdir}/*.gitweb
 %{_pkgdocdir}/gitweb*.txt
+%{?with_docs:%{_mandir}/man1/gitweb.1*}
+%{?with_docs:%{_mandir}/man5/gitweb.conf.5*}
 %{?with_docs:%{_pkgdocdir}/gitweb*.html}
 %config(noreplace)%{_sysconfdir}/gitweb.conf
 %config(noreplace)%{_sysconfdir}/httpd/conf.d/%{gitweb_httpd_conf}
@@ -948,6 +950,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Sun Feb 24 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-1
 - Update to 2.21.0
+- Move gitweb manpages to gitweb package
 
 * Tue Feb 19 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-0.2.rc2
 - Update to 2.21.0.rc2
