@@ -492,7 +492,7 @@ gitwebdir = %{_localstatedir}/www/git
 
 # Test options
 DEFAULT_TEST_TARGET = prove
-GIT_PROVE_OPTS = --verbose --normalize %{?_smp_mflags}
+GIT_PROVE_OPTS = --verbose --normalize %{?_smp_mflags} --formatter=TAP::Formatter::File
 GIT_TEST_OPTS = -x --verbose-log
 EOF
 
@@ -957,6 +957,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Mon May 13 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.0.rc0
 - Update to 2.22.0-rc0
+- Ensure a consistent format for test output
 
 * Sun Feb 24 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-1
 - Update to 2.21.0
