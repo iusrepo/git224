@@ -212,6 +212,7 @@ BuildRequires:  perl(Digest::MD5)
 BuildRequires:  perl(HTTP::Date)
 BuildRequires:  perl(IO::Pty)
 BuildRequires:  perl(JSON)
+BuildRequires:  perl(JSON::PP)
 BuildRequires:  perl(Mail::Address)
 BuildRequires:  perl(Memoize)
 BuildRequires:  perl(Test::More)
@@ -963,6 +964,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 - Update to 2.22.0-rc0
 - Ensure a consistent format for test output
 - Improve JGIT test prereq (jgit on Fedora >= 30 is broken)
+- Add perl(JSON::PP) BuildRequires for trace2 tests
 
 * Sun Feb 24 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-1
 - Update to 2.21.0
