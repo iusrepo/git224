@@ -1,0 +1,40 @@
+From aeb950b03f0ef22bdfee09b505349521e68b7e54 Mon Sep 17 00:00:00 2001
+From: Todd Zullinger <tmz@pobox.com>
+Date: Tue, 14 May 2019 01:47:25 +0000
+Subject: [PATCH] test-lib: try harder to ensure a working jgit
+
+The JGIT prereq uses 'type jgit' to determine whether jgit is present.
+While this should be sufficient, if the jgit found is broken we'll waste
+time running tests which fail due to no fault of our own.
+
+Use 'jgit --version' instead, to catch some badly broken jgit
+installations.
+
+Signed-off-by: Todd Zullinger <tmz@pobox.com>
+---
+I ran into such a broken jgit on Fedora >= 30¹.  This is clearly a
+problem in the Fedora jgit package which will hopefully be resolved
+soon.  But it may be good to avoid wasting time debugging tests which
+fail due to such a broken tool which is outside of our control.
+
+¹ https://bugzilla.redhat.com/1709624
+
+ t/test-lib.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/t/test-lib.sh b/t/test-lib.sh
+index 908ddb9c46..599fd70e14 100644
+--- a/t/test-lib.sh
++++ b/t/test-lib.sh
+@@ -1522,7 +1522,7 @@ test_lazy_prereq NOT_ROOT '
+ '
+ 
+ test_lazy_prereq JGIT '
+-	type jgit
++	jgit --version
+ '
+ 
+ # SANITY is about "can you correctly predict what the filesystem would
+-- 
+2.20.1
+

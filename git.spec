@@ -120,6 +120,10 @@ Source99:       print-failed-test-output
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 
+# https://bugzilla.redhat.com/1709624
+# https://public-inbox.org/git/20190514020520.GI3654@pobox.com/
+Patch1:         0001-test-lib-try-harder-to-ensure-a-working-jgit.patch
+
 %if %{with docs}
 # pod2man is needed to build Git.3pm
 BuildRequires:  %{_bindir}/pod2man
@@ -195,9 +199,9 @@ BuildRequires:  gnupg2-smime
 BuildRequires:  highlight
 %endif # fedora, el-6, or el7-ppc64
 BuildRequires:  httpd
-%if 0%{?fedora} && %{_arch} != s390x
+%if 0%{?fedora} && ! ( %{_arch} == i386 || %{_arch} == s390x )
 BuildRequires:  jgit
-%endif # fedora (except s390x)
+%endif # fedora (except i386 and s390x)
 BuildRequires:  mod_dav_svn
 BuildRequires:  perl(App::Prove)
 BuildRequires:  perl(CGI)
@@ -958,6 +962,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Mon May 13 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.0.rc0
 - Update to 2.22.0-rc0
 - Ensure a consistent format for test output
+- Improve JGIT test prereq (jgit on Fedora >= 30 is broken)
 
 * Sun Feb 24 2019 Todd Zullinger <tmz@pobox.com> - 2.21.0-1
 - Update to 2.21.0

@@ -5,6 +5,7 @@ missing CASE_INSENSITIVE_FS
 missing CLONE_2GB
 missing DONTHAVEIT
 missing EXPENSIVE
+missing JGIT
 missing !?LAZY_(TRUE|FALSE)
 missing MINGW
 missing NATIVE_CRLF
