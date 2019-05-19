@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc0
+%global rcrev   .rc1
 
 Name:           git
 Version:        2.22.0
-Release:        0.0%{?rcrev}%{?dist}
+Release:        0.1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -119,10 +119,6 @@ Source99:       print-failed-test-output
 
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-
-# https://bugzilla.redhat.com/1709624
-# https://public-inbox.org/git/20190514020520.GI3654@pobox.com/
-Patch1:         0001-test-lib-try-harder-to-ensure-a-working-jgit.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
