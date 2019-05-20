@@ -956,6 +956,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sun May 19 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.1.rc1
+- Update to 2.22.0-rc1
+
 * Mon May 13 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.0.rc0
 - Update to 2.22.0-rc0
 - Ensure a consistent format for test output
