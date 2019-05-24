@@ -1,0 +1,183 @@
+From 23f586f2524569218de43c10cd41c3d271198a9e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nguy=E1=BB=85n=20Th=C3=A1i=20Ng=E1=BB=8Dc=20Duy?=
+ <pclouds@gmail.com>
+Date: Fri, 24 May 2019 16:24:41 +0700
+Subject: [PATCH 2/3] diff-parseopt: restore -U (no argument) behavior
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Before d473e2e0e8 (diff.c: convert -U|--unified, 2019-01-27), -U and
+--unified are implemented with a custom parser opt_arg() in diff.c. I
+didn't check this code carefully and not realize that it's the
+equivalent of PARSE_OPT_NONEG | PARSE_OPT_OPTARG.
+
+In other words, if -U is specified without any argument, the option
+should be accepted, and the default value should be used. Without
+PARSE_OPT_OPTARG, parse_options() will reject this case and cause a
+regression.
+
+Reported-by: Bryan Turner <bturner@atlassian.com>
+Signed-off-by: Nguyễn Thái Ngọc Duy <pclouds@gmail.com>
+---
+ diff.c                              | 10 +++++----
+ t/t4013-diff-various.sh             |  2 ++
+ t/t4013/diff.diff_-U1_initial..side | 29 ++++++++++++++++++++++++++
+ t/t4013/diff.diff_-U2_initial..side | 31 ++++++++++++++++++++++++++++
+ t/t4013/diff.diff_-U_initial..side  | 32 +++++++++++++++++++++++++++++
+ 5 files changed, 100 insertions(+), 4 deletions(-)
+ create mode 100644 t/t4013/diff.diff_-U1_initial..side
+ create mode 100644 t/t4013/diff.diff_-U2_initial..side
+ create mode 100644 t/t4013/diff.diff_-U_initial..side
+
+diff --git a/diff.c b/diff.c
+index 4d3cf83a27..80ddc11671 100644
+--- a/diff.c
++++ b/diff.c
+@@ -5211,9 +5211,11 @@ static int diff_opt_unified(const struct option *opt,
+ 
+ 	BUG_ON_OPT_NEG(unset);
+ 
+-	options->context = strtol(arg, &s, 10);
+-	if (*s)
+-		return error(_("%s expects a numerical value"), "--unified");
++	if (arg) {
++		options->context = strtol(arg, &s, 10);
++		if (*s)
++			return error(_("%s expects a numerical value"), "--unified");
++	}
+ 	enable_patch_output(&options->output_format);
+ 
+ 	return 0;
+@@ -5272,7 +5274,7 @@ static void prep_parse_options(struct diff_options *options)
+ 			  DIFF_FORMAT_PATCH, DIFF_FORMAT_NO_OUTPUT),
+ 		OPT_CALLBACK_F('U', "unified", options, N_("<n>"),
+ 			       N_("generate diffs with <n> lines context"),
+-			       PARSE_OPT_NONEG, diff_opt_unified),
++			       PARSE_OPT_NONEG | PARSE_OPT_OPTARG, diff_opt_unified),
+ 		OPT_BOOL('W', "function-context", &options->flags.funccontext,
+ 			 N_("generate diffs with <n> lines context")),
+ 		OPT_BIT_F(0, "raw", &options->output_format,
+diff --git a/t/t4013-diff-various.sh b/t/t4013-diff-various.sh
+index 9f8f0e84ad..a9054d2db1 100755
+--- a/t/t4013-diff-various.sh
++++ b/t/t4013-diff-various.sh
+@@ -338,6 +338,8 @@ format-patch --inline --stdout initial..master^^
+ format-patch --stdout --cover-letter -n initial..master^
+ 
+ diff --abbrev initial..side
++diff -U initial..side
++diff -U1 initial..side
+ diff -r initial..side
+ diff --stat initial..side
+ diff -r --stat initial..side
+diff --git a/t/t4013/diff.diff_-U1_initial..side b/t/t4013/diff.diff_-U1_initial..side
+new file mode 100644
+index 0000000000..b69f8f048a
+--- /dev/null
++++ b/t/t4013/diff.diff_-U1_initial..side
+@@ -0,0 +1,29 @@
++$ git diff -U1 initial..side
++diff --git a/dir/sub b/dir/sub
++index 35d242b..7289e35 100644
++--- a/dir/sub
+++++ b/dir/sub
++@@ -2 +2,3 @@ A
++ B
+++1
+++2
++diff --git a/file0 b/file0
++index 01e79c3..f4615da 100644
++--- a/file0
+++++ b/file0
++@@ -3 +3,4 @@
++ 3
+++A
+++B
+++C
++diff --git a/file3 b/file3
++new file mode 100644
++index 0000000..7289e35
++--- /dev/null
+++++ b/file3
++@@ -0,0 +1,4 @@
+++A
+++B
+++1
+++2
++$
+diff --git a/t/t4013/diff.diff_-U2_initial..side b/t/t4013/diff.diff_-U2_initial..side
+new file mode 100644
+index 0000000000..8ffe04f203
+--- /dev/null
++++ b/t/t4013/diff.diff_-U2_initial..side
+@@ -0,0 +1,31 @@
++$ git diff -U2 initial..side
++diff --git a/dir/sub b/dir/sub
++index 35d242b..7289e35 100644
++--- a/dir/sub
+++++ b/dir/sub
++@@ -1,2 +1,4 @@
++ A
++ B
+++1
+++2
++diff --git a/file0 b/file0
++index 01e79c3..f4615da 100644
++--- a/file0
+++++ b/file0
++@@ -2,2 +2,5 @@
++ 2
++ 3
+++A
+++B
+++C
++diff --git a/file3 b/file3
++new file mode 100644
++index 0000000..7289e35
++--- /dev/null
+++++ b/file3
++@@ -0,0 +1,4 @@
+++A
+++B
+++1
+++2
++$
+diff --git a/t/t4013/diff.diff_-U_initial..side b/t/t4013/diff.diff_-U_initial..side
+new file mode 100644
+index 0000000000..c66c0dd5c6
+--- /dev/null
++++ b/t/t4013/diff.diff_-U_initial..side
+@@ -0,0 +1,32 @@
++$ git diff -U initial..side
++diff --git a/dir/sub b/dir/sub
++index 35d242b..7289e35 100644
++--- a/dir/sub
+++++ b/dir/sub
++@@ -1,2 +1,4 @@
++ A
++ B
+++1
+++2
++diff --git a/file0 b/file0
++index 01e79c3..f4615da 100644
++--- a/file0
+++++ b/file0
++@@ -1,3 +1,6 @@
++ 1
++ 2
++ 3
+++A
+++B
+++C
++diff --git a/file3 b/file3
++new file mode 100644
++index 0000000..7289e35
++--- /dev/null
+++++ b/file3
++@@ -0,0 +1,4 @@
+++A
+++B
+++1
+++2
++$

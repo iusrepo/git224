@@ -1,0 +1,63 @@
+From 9709e02ba78d2408269fc81bd27691714ed26e26 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nguy=E1=BB=85n=20Th=C3=A1i=20Ng=E1=BB=8Dc=20Duy?=
+ <pclouds@gmail.com>
+Date: Fri, 24 May 2019 16:24:42 +0700
+Subject: [PATCH 3/3] parse-options: check empty value in OPT_INTEGER and
+ OPT_ABBREV
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When parsing the argument for OPT_INTEGER and OPT_ABBREV, we check if we
+can parse the entire argument to a number with "if (*s)". There is one
+missing check: if "arg" is empty to begin with, we fail to notice.
+
+This could happen with long option by writing like
+
+  git diff --inter-hunk-context= blah blah
+
+Before 16ed6c97cc (diff-parseopt: convert --inter-hunk-context,
+2019-03-24), --inter-hunk-context is handled by a custom parser
+opt_arg() and does detect this correctly.
+
+This restores the bahvior for --inter-hunk-context and make sure all
+other integer options are handled the same (sane) way. For OPT_ABBREV
+this is new behavior. But it makes it consistent with the rest.
+
+PS. OPT_MAGNITUDE has similar code but git_parse_ulong() does detect
+empty "arg". So it's good to go.
+
+Signed-off-by: Nguyễn Thái Ngọc Duy <pclouds@gmail.com>
+---
+ parse-options-cb.c | 3 +++
+ parse-options.c    | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/parse-options-cb.c b/parse-options-cb.c
+index 4b95d04a37..a3de795c58 100644
+--- a/parse-options-cb.c
++++ b/parse-options-cb.c
+@@ -16,6 +16,9 @@ int parse_opt_abbrev_cb(const struct option *opt, const char *arg, int unset)
+ 	if (!arg) {
+ 		v = unset ? 0 : DEFAULT_ABBREV;
+ 	} else {
++		if (!*arg)
++			return error(_("option `%s' expects a numerical value"),
++				     opt->long_name);
+ 		v = strtol(arg, (char **)&arg, 10);
+ 		if (*arg)
+ 			return error(_("option `%s' expects a numerical value"),
+diff --git a/parse-options.c b/parse-options.c
+index 987e27cb91..87b26a1d92 100644
+--- a/parse-options.c
++++ b/parse-options.c
+@@ -195,6 +195,9 @@ static enum parse_opt_result get_value(struct parse_opt_ctx_t *p,
+ 		}
+ 		if (get_arg(p, opt, flags, &arg))
+ 			return -1;
++		if (!*arg)
++			return error(_("%s expects a numerical value"),
++				     optname(opt, flags));
+ 		*(int *)opt->value = strtol(arg, (char **)&s, 10);
+ 		if (*s)
+ 			return error(_("%s expects a numerical value"),
