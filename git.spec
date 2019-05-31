@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc1
+%global rcrev   .rc2
 
 Name:           git
 Version:        2.22.0
-Release:        0.2%{?rcrev}%{?dist}
+Release:        0.3%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -119,11 +119,6 @@ Source99:       print-failed-test-output
 
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-
-# https://public-inbox.org/git/20190524092442.701-1-pclouds@gmail.com/T/
-Patch1:         0001-diff-parseopt-correct-variable-types-that-are-used-b.patch
-Patch2:         0002-diff-parseopt-restore-U-no-argument-behavior.patch
-Patch3:         0003-parse-options-check-empty-value-in-OPT_INTEGER-and-O.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -961,6 +956,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu May 30 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.3.rc2
+- Update to 2.22.0-rc1
+
 * Fri May 24 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.2.rc1
 - Apply upstream fixes for diff-parseopt issues on s390x
 
