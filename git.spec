@@ -88,7 +88,7 @@
 
 Name:           git
 Version:        2.22.0
-Release:        0.3%{?rcrev}%{?dist}
+Release:        0.4%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -956,6 +956,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sat Jun 01 2019 Jitka Plesnikova <jplesnik@redhat.com> - 2.22.0-0.4.rc2
+- Perl 5.30 rebuild
+
 * Thu May 30 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.3.rc2
 - Update to 2.22.0-rc1
 
