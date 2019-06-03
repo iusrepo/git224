@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc2
+%global rcrev   .rc3
 
 Name:           git
 Version:        2.22.0
-Release:        0.5%{?rcrev}%{?dist}
+Release:        0.6%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
