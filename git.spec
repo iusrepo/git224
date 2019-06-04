@@ -959,6 +959,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Tue Jun 04 2019 Jitka Plesnikova <jplesnik@redhat.com> - 2.22.0-0.7.rc3
 - Perl 5.30 re-rebuild updated packages
 
+* Mon Jun 03 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-0.6.rc3
+- Update to 2.22.0-rc3
+
 * Sun Jun 02 2019 Jitka Plesnikova <jplesnik@redhat.com> - 2.22.0-0.5.rc2
 - Perl 5.30 re-rebuild of bootstrapped packages
 
