@@ -88,7 +88,7 @@
 
 Name:           git
 Version:        2.22.0
-Release:        1%{?rcrev}%{?dist}.1
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -119,6 +119,11 @@ Source99:       print-failed-test-output
 
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
+
+# Don't cache completion results if --git-completion-helper fails
+# https://public-inbox.org/git/20190612085606.12144-1-pclouds@gmail.com/
+# https://github.com/gitster/git/commit/69702523a.patch
+Patch1:         0001-completion-do-not-cache-if-git-completion-helper-fai.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -956,6 +961,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Jul 25 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-2
+- completion: do not cache if --git-completion-helper fails
+
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.22.0-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
