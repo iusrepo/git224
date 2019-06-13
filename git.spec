@@ -132,8 +132,10 @@ BuildRequires:  asciidoc >= 8.4.1
 BuildRequires:  xmlto
 %if %{with linkcheck}
 BuildRequires:  linkchecker
-%endif # with linkcheck
-%endif # with docs
+%endif
+# endif with linkcheck
+%endif
+# endif with docs
 BuildRequires:  desktop-file-utils
 BuildRequires:  emacs
 BuildRequires:  expat-devel
@@ -145,7 +147,8 @@ BuildRequires:  gnupg2
 BuildRequires:  libcurl-devel
 %if %{libsecret}
 BuildRequires:  libsecret-devel
-%endif # libsecret
+%endif
+# endif libsecret
 BuildRequires:  make
 BuildRequires:  openssl-devel
 BuildRequires:  pcre2-devel
@@ -153,20 +156,24 @@ BuildRequires:  perl(Error)
 BuildRequires:  perl(Test)
 %if %{use_perl_generators}
 BuildRequires:  perl-generators
-%endif # use_perl_generators
+%endif
+# endif use_perl_generators
 %if %{use_perl_interpreter}
 BuildRequires:  perl-interpreter
 %else
 BuildRequires:  perl
-%endif # use_perl_interpreter
+%endif
+# endif use_perl_interpreter
 %if %{bashcomp_pkgconfig}
 BuildRequires:  pkgconfig(bash-completion)
-%endif # bashcomp_pkgconfig
+%endif
+# endif bashcomp_pkgconfig
 BuildRequires:  sed
 %if %{use_systemd}
 # For macros
 BuildRequires:  systemd
-%endif # use_systemd
+%endif
+# endif use_systemd
 BuildRequires:  tcl
 BuildRequires:  tk
 BuildRequires:  zlib-devel >= 1.2
@@ -177,32 +184,39 @@ BuildRequires:  acl
 %if 0%{?fedora} >= 27 || 0%{?rhel} > 7
 # Needed by t5540-http-push-webdav.sh
 BuildRequires: apr-util-bdb
-%endif # fedora >= 27
+%endif
+# endif fedora >= 27
 BuildRequires:  bash
 %if %{with cvs}
 BuildRequires:  cvs
 BuildRequires:  cvsps
-%endif # with cvs
+%endif
+# endif with cvs
 %if %{use_glibc_langpacks}
 # glibc-all-langpacks and glibc-langpack-is are needed for GETTEXT_LOCALE and
 # GETTEXT_ISO_LOCALE test prereq's, glibc-langpack-en ensures en_US.UTF-8.
 BuildRequires:  glibc-all-langpacks
 BuildRequires:  glibc-langpack-en
 BuildRequires:  glibc-langpack-is
-%endif # use_glibc_langpacks
+%endif
+# endif use_glibc_langpacks
 %if 0%{?fedora} && 0%{?fedora} < 30
 BuildRequires:  gnupg
-%endif # fedora < 30
+%endif
+# endif fedora < 30
 %if 0%{?fedora} || 0%{?rhel} > 8
 BuildRequires:  gnupg2-smime
-%endif # fedora or el > 8
+%endif
+# endif fedora or el > 8
 %if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} >= 7 && %{_arch} != ppc64 ))
 BuildRequires:  highlight
-%endif # fedora, el-6, or el7-ppc64
+%endif
+# endif fedora, el-6, or el7-ppc64
 BuildRequires:  httpd
 %if 0%{?fedora} && ! ( %{_arch} == i386 || %{_arch} == s390x )
 BuildRequires:  jgit
-%endif # fedora (except i386 and s390x)
+%endif
+# endif fedora (except i386 and s390x)
 BuildRequires:  mod_dav_svn
 BuildRequires:  perl(App::Prove)
 BuildRequires:  perl(CGI)
@@ -220,40 +234,48 @@ BuildRequires:  perl(Test::More)
 BuildRequires:  perl(Time::HiRes)
 %if %{with python2}
 BuildRequires:  python2-devel
-%endif # with python2
+%endif
+# endif with python2
 %if %{with python3}
 BuildRequires:  python3-devel
-%endif # with python3
+%endif
+# endif with python3
 BuildRequires:  subversion
 BuildRequires:  subversion-perl
 BuildRequires:  time
-%endif # with tests
+%endif
+# endif with tests
 
 Requires:       git-core = %{version}-%{release}
 Requires:       git-core-doc = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
-%endif # ! defined perl_bootstrap
+%endif
+# endif ! defined perl_bootstrap
 Requires:       perl-Git = %{version}-%{release}
 
 %if %{emacs_filesystem} && %{defined _emacs_version}
 Requires:       emacs-filesystem >= %{_emacs_version}
-%endif # emacs_filesystem
+%endif
+# endif emacs_filesystem
 
 # Obsolete git-cvs if it's disabled
 %if %{without cvs}
 Obsoletes:      git-cvs < %{?epoch:%{epoch}:}%{version}-%{release}
-%endif # without cvs
+%endif
+# endif without cvs
 
 # Obsolete gnome-keyring credential helper (remove after Fedora 29)
 %if 0%{?fedora} && 0%{?fedora} < 30
 Obsoletes:      git-gnome-keyring < 2.11.1-4
-%endif # fedora < 30
+%endif
+# endif fedora < 30
 
 # Obsolete git-p4 if it's disabled
 %if %{without p4}
 Obsoletes:      git-p4 < %{?epoch:%{epoch}:}%{version}-%{release}
-%endif # without p4
+%endif
+# endif without p4
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -270,12 +292,14 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 %if %{with cvs}
 Requires:       git-cvs = %{version}-%{release}
-%endif # with cvs
+%endif
+# endif with cvs
 Requires:       git-email = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
 %if %{with p4}
 Requires:       git-p4 = %{version}-%{release}
-%endif # with p4
+%endif
+# endif with p4
 Requires:       git-subtree = %{version}-%{release}
 Requires:       git-svn = %{version}-%{release}
 Requires:       git-instaweb = %{version}-%{release}
@@ -283,10 +307,12 @@ Requires:       gitk = %{version}-%{release}
 Requires:       perl-Git = %{version}-%{release}
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
-%endif # ! defined perl_bootstrap
+%endif
+# endif ! defined perl_bootstrap
 %if ! %{emacs_filesystem}
 Requires:       emacs-git = %{version}-%{release}
-%endif # ! emacs_filesystem
+%endif
+# endif ! emacs_filesystem
 %description all
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -326,7 +352,8 @@ Requires:       cvsps
 Requires:       perl(DBD::SQLite)
 %description cvs
 %{summary}.
-%endif # with cvs
+%endif
+# endif with cvs
 
 %package daemon
 Summary:        Git protocol daemon
@@ -338,7 +365,8 @@ Requires(preun):  systemd
 Requires(postun): systemd
 %else
 Requires:       xinetd
-%endif # use_systemd
+%endif
+# endif use_systemd
 %description daemon
 The git daemon for supporting git:// access to git repositories
 
@@ -361,7 +389,8 @@ Obsoletes:      emacs-git-el < 2.18.0-0.0
 Provides:       emacs-git-el = %{version}-%{release}
 %description -n emacs-git
 %{summary}.
-%endif # ! emacs_filesystem
+%endif
+# endif ! emacs_filesystem
 
 %package -n gitk
 Summary:        Git repository browser
@@ -405,7 +434,8 @@ BuildRequires:  python2-devel
 Requires:       git = %{version}-%{release}
 %description p4
 %{summary}.
-%endif # with p4
+%endif
+# endif with p4
 
 %package -n perl-Git
 Summary:        Perl interface to Git
@@ -438,7 +468,8 @@ Requires:       git = %{version}-%{release}
 Requires:       perl(Digest::MD5)
 %if ! %{defined perl_bootstrap}
 Requires:       perl(Term::ReadKey)
-%endif # ! defined perl_bootstrap
+%endif
+# endif ! defined perl_bootstrap
 Requires:       subversion
 %description svn
 %{summary}.
@@ -466,12 +497,14 @@ sed -i '/^git-archimport/d' command-list.txt
 %if %{without cvs}
 # Remove git-cvs* from command list
 sed -i '/^git-cvs/d' command-list.txt
-%endif # without cvs
+%endif
+# endif without cvs
 
 %if %{without p4}
 # Remove git-p4 from command list
 sed -i '/^git-p4/d' command-list.txt
-%endif # without p4
+%endif
+# endif without p4
 
 # Use these same options for every invocation of 'make'.
 # Otherwise it will rebuild in %%install due to flags changes.
@@ -490,7 +523,8 @@ NO_PERL_CPAN_FALLBACKS = 1
 PYTHON_PATH = %{__python2}
 %else
 NO_PYTHON = 1
-%endif # with python2
+%endif
+# endif with python2
 htmldir = %{?_pkgdocdir}%{!?_pkgdocdir:%{_docdir}/%{name}-%{version}}
 prefix = %{_prefix}
 perllibdir = %{perl_vendorlib}
@@ -512,7 +546,8 @@ cat config.mak
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}perl\\(packed-refs\\)
 %if ! %{defined perl_bootstrap}
 %global __requires_exclude %{?__requires_exclude:%__requires_exclude|}perl\\(Term::ReadKey\\)
-%endif # ! defined perl_bootstrap
+%endif
+# endif ! defined perl_bootstrap
 %else
 cat << \EOF > %{name}-req
 #!/bin/sh
@@ -522,7 +557,8 @@ EOF
 
 %global __perl_requires %{_builddir}/%{name}-%{version}%{?rcrev}/%{name}-req
 chmod +x %{__perl_requires}
-%endif # use_new_rpm_filters
+%endif
+# endif use_new_rpm_filters
 
 # Remove Git::LoadCPAN to ensure we use only system perl modules.  This also
 # allows the dependencies to be automatically processed by rpm.
@@ -548,7 +584,8 @@ export SOURCE_DATE_EPOCH=$(date -r version +%%s 2>/dev/null)
 
 %if %{libsecret}
 %make_build -C contrib/credential/libsecret/
-%endif # libsecret
+%endif
+# endif libsecret
 
 %make_build -C contrib/diff-highlight/
 
@@ -567,7 +604,8 @@ sed -i -e '1s@#! */usr/bin/env python$@#!%{__python2}@' \
 # Remove contrib/fast-import/import-zips.py, contrib/hg-to-git, and
 # contrib/svn-fe which all require python2.
 rm -rf contrib/fast-import/import-zips.py contrib/hg-to-git contrib/svn-fe
-%endif # with python2
+%endif
+# endif with python2
 
 # The multimail hook is installed with git.  Use python3 to avoid an
 # unnecessary python2 dependency, if possible.
@@ -576,7 +614,8 @@ sed -i -e '1s@#!\( */usr/bin/env python\|%{__python2}\)$@#!%{__python3}@' \
     contrib/hooks/multimail/git_multimail.py \
     contrib/hooks/multimail/migrate-mailhook-config \
     contrib/hooks/multimail/post-receive.example
-%endif # with python3
+%endif
+# endif with python3
 
 %install
 %make_install %{?with_docs:install-doc}
@@ -596,7 +635,8 @@ popd >/dev/null
 %if %{libsecret}
 install -pm 755 contrib/credential/libsecret/git-credential-libsecret \
     %{buildroot}%{gitexecdir}
-%endif # libsecret
+%endif
+# endif libsecret
 install -pm 755 contrib/credential/netrc/git-credential-netrc \
     %{buildroot}%{gitexecdir}
 # temporarily move contrib/credential/netrc aside to prevent it from being
@@ -625,13 +665,15 @@ find %{buildroot} Documentation -type f -name 'git-archimport*' -exec rm -f {} '
 # Remove git-cvs* and gitcvs*
 find %{buildroot} Documentation \( -type f -o -type l \) \
     \( -name 'git-cvs*' -o -name 'gitcvs*' \) -exec rm -f {} ';'
-%endif # without cvs
+%endif
+# endif without cvs
 
 %if %{without p4}
 # Remove git-p4* and mergetools/p4merge
 find %{buildroot} Documentation -type f -name 'git-p4*' -exec rm -f {} ';'
 rm -f %{buildroot}%{gitexecdir}/mergetools/p4merge
-%endif # without p4
+%endif
+# endif without p4
 
 # Remove unneeded git-remote-testsvn so git-svn can be noarch
 rm -f %{buildroot}%{gitexecdir}/git-remote-testsvn
@@ -648,7 +690,8 @@ sed -i "/Git\/SVN/ d" perl-git-files
 (find %{buildroot}%{_mandir} -type f | grep -vE "$exclude_re|Git" | sed -e s@^%{buildroot}@@ -e 's/$/*/' ) >> bin-man-doc-files
 %else
 rm -rf %{buildroot}%{_mandir}
-%endif # with docs
+%endif
+# endif with docs
 
 mkdir -p %{buildroot}%{_localstatedir}/lib/git
 %if %{use_systemd}
@@ -663,7 +706,8 @@ perl -p \
     -e "s|\@GITEXECDIR\@|%{gitexecdir}|g;" \
     -e "s|\@BASE_PATH\@|%{_localstatedir}/lib/git|g;" \
     %{SOURCE11} > %{buildroot}%{_sysconfdir}/xinetd.d/git
-%endif # use_systemd
+%endif
+# endif use_systemd
 
 # Setup bash completion
 install -Dpm 644 contrib/completion/git-completion.bash %{buildroot}%{bashcompdir}/git
@@ -717,7 +761,8 @@ grep -vE "$not_core_re|%{_mandir}" bin-man-doc-files > bin-files-core
 touch man-doc-files-core
 %if %{with docs}
 grep -vE "$not_core_re" bin-man-doc-files | grep "%{_mandir}" > man-doc-files-core
-%endif # with docs
+%endif
+# endif with docs
 grep -E  "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 
 ##### DOC
@@ -736,7 +781,8 @@ cp -pr Documentation/*.html Documentation/docbook-xsl.css %{buildroot}%{_pkgdocd
 cp -pr Documentation/{howto,technical} %{buildroot}%{_pkgdocdir}/
 find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
     |grep -o "%{_pkgdocdir}.*$" >> man-doc-files-core
-%endif # with docs
+%endif
+# endif with docs
 
 {
     find %{buildroot}%{_pkgdocdir} -type f -maxdepth 1 \
@@ -753,12 +799,14 @@ find %{buildroot}%{_pkgdocdir}/{howto,technical} -type f \
 %if %{without tests}
 echo "*** Skipping tests"
 exit 0
-%endif # without tests
+%endif
+# endif without tests
 
 %if %{with docs} && %{with linkcheck}
 # Test links in HTML documentation
 find %{buildroot}%{_pkgdocdir} -name "*.html" -print0 | xargs -r0 linkchecker
-%endif # with docs && with linkcheck
+%endif
+# endif with docs && with linkcheck
 
 # Tests to skip on all releases and architectures
 GIT_SKIP_TESTS=""
@@ -771,7 +819,8 @@ GIT_SKIP_TESTS=""
 # t5541.33 'push 2000 tags over http'
 # t5551.25 'clone the 2,000 tag repo to check OS command line overflow'
 GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.33 t5551.25"
-%endif # aarch64 %%{arm} %%{power64}
+%endif
+# endif aarch64 %%{arm} %%{power64}
 
 %ifarch %{power64}
 # Skip tests which fail on ppc
@@ -781,7 +830,8 @@ GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.33 t5551.25"
 # due to an issue in the test suite or a conflict with some other process on
 # the build host.  It only appears to occur on ppc-arches.
 GIT_SKIP_TESTS="$GIT_SKIP_TESTS t9115"
-%endif # %%{power64}
+%endif
+# endif %%{power64}
 
 export GIT_SKIP_TESTS
 
@@ -824,12 +874,14 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 
 %postun daemon
 %systemd_postun_with_restart git@.service
-%endif # use_systemd
+%endif
+# endif use_systemd
 
 %files -f bin-man-doc-git-files
 %if %{emacs_filesystem}
 %{elispdir}
-%endif # emacs_filesystem
+%endif
+# endif emacs_filesystem
 %{_datadir}/git-core/contrib/diff-highlight
 %{_datadir}/git-core/contrib/hooks/multimail
 %{_datadir}/git-core/contrib/hooks/update-paranoid
@@ -861,7 +913,8 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %if 0%{?rhel} && 0%{?rhel} <= 7
 # .py files are only bytecompiled on EL <= 7
 %exclude %{_pkgdocdir}/contrib/*/*.py[co]
-%endif # rhel <= 7
+%endif
+# endif rhel <= 7
 %{_pkgdocdir}/contrib/hooks
 
 %if %{with cvs}
@@ -871,7 +924,8 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{gitexecdir}/*cvs*
 %{?with_docs:%{_mandir}/man1/*cvs*.1*}
 %{?with_docs:%{_pkgdocdir}/*git-cvs*.html}
-%endif # with cvs
+%endif
+# endif with cvs
 
 %files daemon
 %{_pkgdocdir}/git-daemon*.txt
@@ -880,7 +934,8 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{_unitdir}/git@.service
 %else
 %config(noreplace)%{_sysconfdir}/xinetd.d/git
-%endif # use_systemd
+%endif
+# endif use_systemd
 %{gitexecdir}/git-daemon
 %{_localstatedir}/lib/git
 %{?with_docs:%{_mandir}/man1/git-daemon*.1*}
@@ -890,7 +945,8 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %files -n emacs-git
 %{_pkgdocdir}/contrib/emacs/README
 %{elispdir}
-%endif # ! emacs_filesystem
+%endif
+# endif ! emacs_filesystem
 
 %files email
 %{_pkgdocdir}/*email*.txt
@@ -941,7 +997,8 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{_pkgdocdir}/*p4*.txt
 %{?with_docs:%{_mandir}/man1/*p4*.1*}
 %{?with_docs:%{_pkgdocdir}/*p4*.html}
-%endif # with p4
+%endif
+# endif with p4
 
 %files -n perl-Git -f perl-git-files
 %{?with_docs:%{_mandir}/man3/Git.3pm*}
@@ -963,6 +1020,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Thu Jul 25 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-2
 - completion: do not cache if --git-completion-helper fails
+- avoid trailing comments in spec file
 
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.22.0-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
