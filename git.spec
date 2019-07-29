@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-#global rcrev   .rc0
+%global rcrev   .rc0
 
 Name:           git
-Version:        2.22.0
-Release:        2%{?rcrev}%{?dist}
+Version:        2.23.0
+Release:        0.0%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -120,10 +120,10 @@ Source99:       print-failed-test-output
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 
-# Don't cache completion results if --git-completion-helper fails
-# https://public-inbox.org/git/20190612085606.12144-1-pclouds@gmail.com/
-# https://github.com/gitster/git/commit/69702523a.patch
-Patch1:         0001-completion-do-not-cache-if-git-completion-helper-fai.patch
+# Fix t0016-oidmap test failure on s390x
+# https://github.com/gitster/git/commit/e1e7a77141.patch
+# https://public-inbox.org/git/20190731012336.GA13880@sigill.intra.peff.net/
+Patch1:         0001-t-sort-output-of-hashmap-iteration.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -816,9 +816,9 @@ GIT_SKIP_TESTS=""
 #
 # The following 2 tests use run_with_limited_cmdline, which calls ulimit -s 128
 # to limit the maximum stack size.
-# t5541.33 'push 2000 tags over http'
+# t5541.34 'push 2000 tags over http'
 # t5551.25 'clone the 2,000 tag repo to check OS command line overflow'
-GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.33 t5551.25"
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.34 t5551.25"
 %endif
 # endif aarch64 %%{arm} %%{power64}
 
@@ -1018,6 +1018,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Jul 29 2019 Todd Zullinger <tmz@pobox.com> - 2.23.0-0.0.rc0
+- Update to 2.23.0-rc0
+
 * Thu Jul 25 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-2
 - completion: do not cache if --git-completion-helper fails
 - avoid trailing comments in spec file
