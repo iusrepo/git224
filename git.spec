@@ -213,7 +213,7 @@ BuildRequires:  highlight
 %endif
 # endif fedora, el-6, or el7-ppc64
 BuildRequires:  httpd
-%if 0%{?fedora} && ! ( %{_arch} == i386 || %{_arch} == s390x )
+%if 0%{?fedora} && ! ( 0%{?fedora} > 30 || %{_arch} == i386 || %{_arch} == s390x )
 BuildRequires:  jgit
 %endif
 # endif fedora (except i386 and s390x)
@@ -1021,6 +1021,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Thu Jul 25 2019 Todd Zullinger <tmz@pobox.com> - 2.22.0-2
 - completion: do not cache if --git-completion-helper fails
 - avoid trailing comments in spec file
+- drop jgit on Fedora > 30
 
 * Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.22.0-1.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
