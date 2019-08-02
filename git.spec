@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc0
+%global rcrev   .rc1
 
 Name:           git
 Version:        2.23.0
-Release:        0.0%{?rcrev}%{?dist}
+Release:        0.1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -119,11 +119,6 @@ Source99:       print-failed-test-output
 
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-
-# Fix t0016-oidmap test failure on s390x
-# https://github.com/gitster/git/commit/e1e7a77141.patch
-# https://public-inbox.org/git/20190731012336.GA13880@sigill.intra.peff.net/
-Patch1:         0001-t-sort-output-of-hashmap-iteration.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -1018,6 +1013,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Aug 02 2019 Todd Zullinger <tmz@pobox.com> - 2.23.0-0.1.rc1
+- Update to 2.23.0-rc1
+
 * Mon Jul 29 2019 Todd Zullinger <tmz@pobox.com> - 2.23.0-0.0.rc0
 - Update to 2.23.0-rc0
 
