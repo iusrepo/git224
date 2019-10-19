@@ -120,6 +120,9 @@ Source99:       print-failed-test-output
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
 
+# https://public-inbox.org/git/20191019233706.GM29845@szeder.dev/
+Patch1:         0001-test-progress-fix-test-failures-on-big-endian-system.patch
+
 %if %{with docs}
 # pod2man is needed to build Git.3pm
 BuildRequires:  %{_bindir}/pod2man
@@ -1015,6 +1018,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Sat Oct 19 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.0.rc0
 - update to 2.24.0-rc0
+- fix t0500-progress-display on big-endian arches
 
 * Fri Aug 16 2019 Todd Zullinger <tmz@pobox.com> - 2.23.0-1
 - Update to 2.23.0
