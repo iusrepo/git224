@@ -84,11 +84,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc0
+%global rcrev   .rc1
 
 Name:           git
 Version:        2.24.0
-Release:        0.0%{?rcrev}%{?dist}
+Release:        0.1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -119,9 +119,6 @@ Source99:       print-failed-test-output
 
 # https://bugzilla.redhat.com/490602
 Patch0:         git-cvsimport-Ignore-cvsps-2.2b1-Branches-output.patch
-
-# https://public-inbox.org/git/20191019233706.GM29845@szeder.dev/
-Patch1:         0001-test-progress-fix-test-failures-on-big-endian-system.patch
 
 %if %{with docs}
 # pod2man is needed to build Git.3pm
@@ -814,9 +811,9 @@ GIT_SKIP_TESTS=""
 #
 # The following 2 tests use run_with_limited_cmdline, which calls ulimit -s 128
 # to limit the maximum stack size.
-# t5541.34 'push 2000 tags over http'
+# t5541.35 'push 2000 tags over http'
 # t5551.25 'clone the 2,000 tag repo to check OS command line overflow'
-GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.34 t5551.25"
+GIT_SKIP_TESTS="$GIT_SKIP_TESTS t5541.35 t5551.25"
 %endif
 # endif aarch64 %%{arm} %%{power64}
 
@@ -1016,6 +1013,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Oct 24 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.1.rc1
+- update to 2.24.0-rc1
+
 * Sat Oct 19 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.0.rc0
 - update to 2.24.0-rc0
 - fix t0500-progress-display on big-endian arches
