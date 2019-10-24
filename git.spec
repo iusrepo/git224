@@ -391,6 +391,7 @@ Provides:       emacs-git-el = %{version}-%{release}
 Summary:        Git repository browser
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
+Requires:       git-gui = %{version}-%{release}
 Requires:       tk >= 8.4
 %description -n gitk
 %{summary}.
@@ -1026,6 +1027,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Thu Oct 24 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.1.rc1
 - update to 2.24.0-rc1
 - skip failing test in t7812-grep-icase-non-ascii on s390x
+- gitk: add Requires: git-gui (#1765113)
 
 * Sat Oct 19 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.0.rc0
 - update to 2.24.0-rc0
