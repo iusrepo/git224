@@ -6,6 +6,14 @@
 
 %global gitexecdir          %{_libexecdir}/git-core
 
+# Settings for Fedora
+%if 0%{?fedora}
+# linkchecker is not available on EL
+%bcond_without              linkcheck
+%else
+%bcond_with                 linkcheck
+%endif
+
 # Settings for Fedora > 29 and EL > 7
 %if 0%{?fedora} > 29 || 0%{?rhel} > 7
 %bcond_with                 python2
@@ -23,14 +31,11 @@
 # Settings for Fedora and EL > 7
 %if 0%{?fedora} || 0%{?rhel} > 7
 %bcond_without              python3
-# linkchcker is not available on EL <= 7
-%bcond_without              linkcheck
 %global use_glibc_langpacks 1
 %global use_perl_generators 1
 %global use_perl_interpreter 1
 %else
 %bcond_with                 python3
-%bcond_with                 linkcheck
 %global use_glibc_langpacks 0
 %global use_perl_generators 0
 %global use_perl_interpreter 0
@@ -88,7 +93,7 @@
 
 Name:           git
 Version:        2.24.0
-Release:        0.1%{?rcrev}%{?dist}
+Release:        0.1%{?rcrev}%{?dist}.1
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1024,6 +1029,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Sun Oct 27 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.1.rc1.1
+- disable linkchecker on all EL releases
+
 * Thu Oct 24 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.1.rc1
 - update to 2.24.0-rc1
 - skip failing test in t7812-grep-icase-non-ascii on s390x
