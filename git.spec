@@ -89,11 +89,11 @@
 %endif
 
 # Define for release candidates
-%global rcrev   .rc2
+#global rcrev   .rc0
 
 Name:           git
 Version:        2.24.0
-Release:        0.2%{?rcrev}%{?dist}
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -771,7 +771,7 @@ grep -E  "$not_core_re" bin-man-doc-files > bin-man-doc-git-files
 # contrib
 not_core_doc_re="(git-(cvs|gui|citool|daemon|instaweb|subtree))|p4|svn|email|gitk|gitweb"
 mkdir -p %{buildroot}%{_pkgdocdir}/
-cp -pr README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
+cp -pr CODE_OF_CONDUCT.md README.md Documentation/*.txt Documentation/RelNotes contrib %{buildroot}%{_pkgdocdir}/
 # Remove contrib/ files/dirs which have nothing useful for documentation
 rm -rf %{buildroot}%{_pkgdocdir}/contrib/{contacts,credential,svn-fe}/
 cp -p gitweb/INSTALL %{buildroot}%{_pkgdocdir}/INSTALL.gitweb
@@ -1029,6 +1029,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Nov 04 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-1
+- update to 2.24.0
+
 * Thu Oct 31 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-0.2.rc2
 - update to 2.24.0-rc2
 
