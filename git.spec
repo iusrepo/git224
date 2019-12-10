@@ -92,8 +92,8 @@
 #global rcrev   .rc0
 
 Name:           git
-Version:        2.24.0
-Release:        2%{?rcrev}%{?dist}
+Version:        2.24.1
+Release:        1%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1029,6 +1029,10 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Tue Dec 10 2019 Todd Zullinger <tmz@pobox.com> - 2.24.1-1
+- update to 2.24.1 (CVE-2019-1348, CVE-2019-1349, CVE-2019-1350, CVE-2019-1351,
+  CVE-2019-1352, CVE-2019-1353, CVE-2019-1354, and CVE-2019-1387)
+
 * Wed Dec 04 2019 Todd Zullinger <tmz@pobox.com> - 2.24.0-2
 - restore jgit BR for use in tests
 
