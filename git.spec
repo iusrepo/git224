@@ -93,7 +93,7 @@
 
 Name:           git
 Version:        2.24.1
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -878,13 +878,13 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 
 %if %{use_systemd}
 %post daemon
-%systemd_post git@.service
+%systemd_post git.socket
 
 %preun daemon
-%systemd_preun git@.service
+%systemd_preun git.socket
 
 %postun daemon
-%systemd_postun_with_restart git@.service
+%systemd_postun_with_restart git.socket
 %endif
 # endif use_systemd
 
@@ -1029,6 +1029,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Thu Dec 19 2019 Todd Zullinger <tmz@pobox.com> - 2.24.1-2
+- fix git-daemon systemd scriptlets (#1785088)
+
 * Tue Dec 10 2019 Todd Zullinger <tmz@pobox.com> - 2.24.1-1
 - update to 2.24.1 (CVE-2019-1348, CVE-2019-1349, CVE-2019-1350, CVE-2019-1351,
   CVE-2019-1352, CVE-2019-1353, CVE-2019-1354, and CVE-2019-1387)
