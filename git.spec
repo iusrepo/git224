@@ -93,7 +93,7 @@
 
 Name:           git
 Version:        2.24.1
-Release:        2%{?rcrev}%{?dist}
+Release:        3%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -208,10 +208,10 @@ BuildRequires:  gnupg
 BuildRequires:  gnupg2-smime
 %endif
 # endif fedora or el > 8
-%if 0%{?fedora} || ( 0%{?rhel} && ( 0%{?rhel} == 6 || 0%{?rhel} >= 7 && %{_arch} != ppc64 ))
+%if 0%{?fedora} || 0%{?rhel} == 6 || ( 0%{?rhel} >= 7 && ( %{_arch} == ppc64le || %{_arch} == x86_64 ) )
 BuildRequires:  highlight
 %endif
-# endif fedora, el-6, or el7-ppc64
+# endif fedora, el-6, or el7+ (ppc64le/x86_64)
 BuildRequires:  httpd
 %if 0%{?fedora} && ! ( %{_arch} == i386 || %{_arch} == s390x )
 BuildRequires:  jgit
@@ -1029,6 +1029,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Jan 03 2020 Todd Zullinger <tmz@pobox.com> - 2.24.1-3
+- only add highlight test BR for ppc64le/x86_64 on EL7+
+
 * Thu Dec 19 2019 Todd Zullinger <tmz@pobox.com> - 2.24.1-2
 - fix git-daemon systemd scriptlets (#1785088)
 
