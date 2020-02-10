@@ -882,9 +882,9 @@ export LANG=en_US.UTF-8
 
 # Explicitly enable tests which may be skipped opportunistically
 # (Check for variables set via test_tristate in the test suite)
-export GIT_SVN_TEST_HTTPD=true
+export GIT_SVN_TEST_HTTPD=false
 export GIT_TEST_GIT_DAEMON=true
-export GIT_TEST_HTTPD=true
+export GIT_TEST_HTTPD=false
 export GIT_TEST_SVNSERVE=true
 
 # Create tmpdir for test output and update GIT_TEST_OPTS
@@ -1061,6 +1061,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Mon Feb 10 2020 Carl George <carl@george.computer> - 2.24.1-6
 - Port from Fedora to IUS
+- Disable tests that fail as root
 
 * Tue Jan 14 2020 Tom Stellard <tstellar@redhat.com> - 2.24.1-4
 - Use make_build macro when running tests
