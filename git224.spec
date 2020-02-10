@@ -88,17 +88,14 @@
 %global build_ldflags       -Wl,-z,relro -Wl,-z,now
 %endif
 
-# Define for release candidates
-#global rcrev   .rc0
-
-Name:           git
+Name:           git224
 Version:        2.24.1
-Release:        4%{?rcrev}%{?dist}
+Release:        5%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
-Source0:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.xz
-Source1:        https://www.kernel.org/pub/software/scm/git/%{?rcrev:testing/}%{name}-%{version}%{?rcrev}.tar.sign
+Source0:        https://www.kernel.org/pub/software/scm/git/git-%{version}.tar.xz
+Source1:        https://www.kernel.org/pub/software/scm/git/git-%{version}.tar.sign
 
 # Junio C Hamano's key is used to sign git releases, it can be found in the
 # junio-gpg-pub tag within git.
@@ -259,23 +256,10 @@ Requires:       emacs-filesystem >= %{_emacs_version}
 %endif
 # endif emacs_filesystem
 
-# Obsolete git-cvs if it's disabled
-%if %{without cvs}
-Obsoletes:      git-cvs < %{?epoch:%{epoch}:}%{version}-%{release}
-%endif
-# endif without cvs
-
-# Obsolete gnome-keyring credential helper (remove after Fedora 29)
-%if 0%{?fedora} && 0%{?fedora} < 30
-Obsoletes:      git-gnome-keyring < 2.11.1-4
-%endif
-# endif fedora < 30
-
-# Obsolete git-p4 if it's disabled
-%if %{without p4}
-Obsoletes:      git-p4 < %{?epoch:%{epoch}:}%{version}-%{release}
-%endif
-# endif without p4
+# safe replacement
+Provides:       git = %{version}-%{release}
+Provides:       git%{?_isa} = %{version}-%{release}
+Conflicts:      git < %{version}-%{release}
 
 %description
 Git is a fast, scalable, distributed revision control system with an
@@ -313,6 +297,9 @@ Requires:       perl(Term::ReadKey)
 Requires:       emacs-git = %{version}-%{release}
 %endif
 # endif ! emacs_filesystem
+# safe replacement
+Provides:       git-all = %{version}-%{release}
+Conflicts:      git-all < %{version}-%{release}
 %description all
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -325,6 +312,10 @@ Summary:        Core package of git with minimal functionality
 Requires:       less
 Requires:       openssh-clients
 Requires:       zlib >= 1.2
+# safe replacement
+Provides:       git-core = %{version}-%{release}
+Provides:       git-core%{?_isa} = %{version}-%{release}
+Conflicts:      git-core < %{version}-%{release}
 %description core
 Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
@@ -339,6 +330,9 @@ other SCMs, install the git-all meta-package.
 Summary:        Documentation files for git-core
 BuildArch:      noarch
 Requires:       git-core = %{version}-%{release}
+# safe replacement
+Provides:       git-core-doc = %{version}-%{release}
+Conflicts:      git-core-doc < %{version}-%{release}
 %description core-doc
 Documentation files for git-core package including man pages.
 
@@ -350,6 +344,9 @@ Requires:       git = %{version}-%{release}
 Requires:       cvs
 Requires:       cvsps
 Requires:       perl(DBD::SQLite)
+# safe replacement
+Provides:       git-cvs = %{version}-%{release}
+Conflicts:      git-cvs < %{version}-%{release}
 %description cvs
 %{summary}.
 %endif
@@ -367,6 +364,10 @@ Requires(postun): systemd
 Requires:       xinetd
 %endif
 # endif use_systemd
+# safe replacement
+Provides:       git-daemon = %{version}-%{release}
+Provides:       git-daemon%{?_isa} = %{version}-%{release}
+Conflicts:      git-daemon < %{version}-%{release}
 %description daemon
 The git daemon for supporting git:// access to git repositories
 
@@ -376,36 +377,47 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       perl(Authen::SASL)
 Requires:       perl(Net::SMTP::SSL)
+# safe replacement
+Provides:       git-email = %{version}-%{release}
+Conflicts:      git-email < %{version}-%{release}
 %description email
 %{summary}.
 
 %if ! %{emacs_filesystem}
-%package -n emacs-git
+%package emacs-git
 Summary:        Git version control system support for Emacs
 Requires:       git = %{version}-%{release}
 BuildArch:      noarch
 Requires:       emacs(bin) >= %{_emacs_version}
-Obsoletes:      emacs-git-el < 2.18.0-0.0
 Provides:       emacs-git-el = %{version}-%{release}
-%description -n emacs-git
+# safe replacement
+Provides:       emacs-git = %{version}-%{release}
+Conflicts:      emacs-git < %{version}-%{release}
+%description emacs-git
 %{summary}.
 %endif
 # endif ! emacs_filesystem
 
-%package -n gitk
+%package gitk
 Summary:        Git repository browser
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       git-gui = %{version}-%{release}
 Requires:       tk >= 8.4
-%description -n gitk
+# safe replacement
+Provides:       gitk = %{version}-%{release}
+Conflicts:      gitk < %{version}-%{release}
+%description gitk
 %{summary}.
 
-%package -n gitweb
+%package gitweb
 Summary:        Simple web interface to git repositories
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
-%description -n gitweb
+# safe replacement
+Provides:       gitweb = %{version}-%{release}
+Conflicts:      gitweb < %{version}-%{release}
+%description gitweb
 %{summary}.
 
 %package gui
@@ -413,6 +425,9 @@ Summary:        Graphical interface to Git
 BuildArch:      noarch
 Requires:       gitk = %{version}-%{release}
 Requires:       tk >= 8.4
+# safe replacement
+Provides:       git-gui = %{version}-%{release}
+Conflicts:      git-gui < %{version}-%{release}
 %description gui
 %{summary}.
 
@@ -422,7 +437,9 @@ BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       gitweb = %{version}-%{release}
 Requires:       lighttpd
-
+# safe replacement
+Provides:       git-instaweb = %{version}-%{release}
+Conflicts:      git-instaweb < %{version}-%{release}
 %description instaweb
 A simple script to set up gitweb and a web server for browsing the local
 repository.
@@ -433,30 +450,43 @@ Summary:        Git tools for working with Perforce depots
 BuildArch:      noarch
 BuildRequires:  python2-devel
 Requires:       git = %{version}-%{release}
+# safe replacement
+Provides:       git-p4 = %{version}-%{release}
+Conflicts:      git-p4 < %{version}-%{release}
 %description p4
 %{summary}.
 %endif
 # endif with p4
 
-%package -n perl-Git
+%package perl-Git
 Summary:        Perl interface to Git
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-%description -n perl-Git
+# safe replacement
+Provides:       perl-Git = %{version}-%{release}
+Conflicts:      perl-Git < %{version}-%{release}
+%description perl-Git
 %{summary}.
 
-%package -n perl-Git-SVN
+%package perl-Git-SVN
 Summary:        Perl interface to Git::SVN
 BuildArch:      noarch
 Requires:       git = %{version}-%{release}
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-%description -n perl-Git-SVN
+# safe replacement
+Provides:       perl-Git-SVN = %{version}-%{release}
+Conflicts:      perl-Git-SVN < %{version}-%{release}
+%description perl-Git-SVN
 %{summary}.
 
 %package subtree
 Summary:        Git tools to merge and split repositories
 Requires:       git-core = %{version}-%{release}
+# safe replacement
+Provides:       git-subtree = %{version}-%{release}
+Provides:       git-subtree%{?_isa} = %{version}-%{release}
+Conflicts:      git-subtree < %{version}-%{release}
 %description subtree
 Git subtrees allow subprojects to be included within a subdirectory
 of the main project, optionally including the subproject's entire
@@ -472,6 +502,9 @@ Requires:       perl(Term::ReadKey)
 %endif
 # endif ! defined perl_bootstrap
 Requires:       subversion
+# safe replacement
+Provides:       git-svn = %{version}-%{release}
+Conflicts:      git-svn < %{version}-%{release}
 %description svn
 %{summary}.
 
@@ -487,7 +520,7 @@ rm -rf "$gpghome" # Cleanup tmp gpg home dir
 
 # Ensure a blank line follows autosetup, el6 chokes otherwise
 # https://bugzilla.redhat.com/1310704
-%autosetup -p1 -n %{name}-%{version}%{?rcrev}
+%autosetup -p1 -n git-%{version}
 
 # Install print-failed-test-output script
 install -p -m 755 %{SOURCE99} print-failed-test-output
@@ -554,7 +587,7 @@ cat << \EOF > %{name}-req
 sed -e '/perl(packed-refs)/d'
 EOF
 
-%global __perl_requires %{_builddir}/%{name}-%{version}%{?rcrev}/%{name}-req
+%global __perl_requires %{_builddir}/git-%{version}/%{name}-req
 chmod +x %{__perl_requires}
 %endif
 # endif use_new_rpm_filters
@@ -743,8 +776,8 @@ fi
 popd >/dev/null
 
 # find translations
-%find_lang %{name} %{name}.lang
-cat %{name}.lang >> bin-man-doc-files
+%find_lang git git.lang
+cat git.lang >> bin-man-doc-files
 
 # quiet some rpmlint complaints
 chmod -R g-w %{buildroot}
@@ -951,7 +984,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-daemon*.html}
 
 %if ! %{emacs_filesystem}
-%files -n emacs-git
+%files emacs-git
 %{_pkgdocdir}/contrib/emacs/README
 %{elispdir}
 %endif
@@ -963,14 +996,14 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_mandir}/man1/*email*.1*}
 %{?with_docs:%{_pkgdocdir}/*email*.html}
 
-%files -n gitk
+%files gitk
 %{_pkgdocdir}/*gitk*.txt
 %{_bindir}/*gitk*
 %{_datadir}/gitk
 %{?with_docs:%{_mandir}/man1/*gitk*.1*}
 %{?with_docs:%{_pkgdocdir}/*gitk*.html}
 
-%files -n gitweb
+%files gitweb
 %{_pkgdocdir}/*.gitweb
 %{_pkgdocdir}/gitweb*.txt
 %{?with_docs:%{_mandir}/man1/gitweb.1*}
@@ -993,7 +1026,6 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-citool.html}
 
 %files instaweb
-%defattr(-,root,root)
 %{gitexecdir}/git-instaweb
 %{_pkgdocdir}/git-instaweb.txt
 %{?with_docs:%{_mandir}/man1/git-instaweb.1*}
@@ -1009,10 +1041,10 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %endif
 # endif with p4
 
-%files -n perl-Git -f perl-git-files
+%files perl-Git -f perl-git-files
 %{?with_docs:%{_mandir}/man3/Git.3pm*}
 
-%files -n perl-Git-SVN -f perl-git-svn-files
+%files perl-Git-SVN -f perl-git-svn-files
 
 %files subtree
 %{gitexecdir}/git-subtree
@@ -1027,6 +1059,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Mon Feb 10 2020 Carl George <carl@george.computer> - 2.24.1-6
+- Port from Fedora to IUS
+
 * Tue Jan 14 2020 Tom Stellard <tstellar@redhat.com> - 2.24.1-4
 - Use make_build macro when running tests
 
