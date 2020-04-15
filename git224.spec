@@ -89,8 +89,8 @@
 %endif
 
 Name:           git224
-Version:        2.24.1
-Release:        5%{?dist}
+Version:        2.24.2
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1059,6 +1059,10 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Apr 15 2020 Carl George <carl@george.computer> - 2.24.2-1
+- Latest upstream
+- Includes fix for CVE-2020-5260
+
 * Mon Feb 10 2020 Carl George <carl@george.computer> - 2.24.1-6
 - Port from Fedora to IUS
 - Disable tests that fail as root
