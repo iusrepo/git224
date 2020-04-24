@@ -44,6 +44,13 @@ build:: src.rpm
 	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
 		--rebuild $?
 
+.PHONY: fastbuild
+fastbuild:: src.rpm
+	rpmbuild --define '_topdir $(PWD)/rpmbuild' \
+		--without docs \
+		--without tests \
+		--rebuild $?
+
 .PHONY: $(MOCKS)
 $(MOCKS):: src.rpm
 	@if [ -e $@ -a -n "`find $@ -name \*.rpm`" ]; then \
