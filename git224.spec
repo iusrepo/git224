@@ -89,7 +89,7 @@
 %endif
 
 Name:           git224
-Version:        2.24.2
+Version:        2.24.3
 Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
