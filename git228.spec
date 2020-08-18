@@ -88,8 +88,8 @@
 %global build_ldflags       -Wl,-z,relro -Wl,-z,now
 %endif
 
-Name:           git226
-Version:        2.26.2
+Name:           git228
+Version:        2.28.0
 Release:        0%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
