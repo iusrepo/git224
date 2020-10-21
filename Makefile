@@ -11,13 +11,13 @@ RSYNCOPTS=-a --no-owner --no-group
 RSYNCSAFEOPTS=$(RSYNCOPTS) --ignore-existing 
 
 # "mock" configurations to build with, activate only as needed
-#MOCKS+=fedora-31-x86_64
+#MOCKS+=fedora-32-x86_64
 MOCKS+=epel-8-x86_64
 MOCKS+=epel-7-x86_64
 MOCKS+=epel-6-x86_64
 
 #REPOBASEDIR=/var/www/linux/gitrepo
-REPOBASEDIR:=`/bin/pwd`/../gitrepo
+REPOBASEDIR:=`/bin/pwd`/gitrepo
 
 SPEC := `ls *.spec | head -1`
 
@@ -69,15 +69,18 @@ install:: $(MOCKS)
 	@for repo in $(MOCKS); do \
 	    echo Installing $$repo; \
 	    case $$repo in \
+		*-6-x86_64) yumrelease=el/6; yumarch=x86_64; ;; \
 		*-7-x86_64) yumrelease=el/7; yumarch=x86_64; ;; \
 		*-8-x86_64) yumrelease=el/8; yumarch=x86_64; ;; \
-		*-31-x86_64) yumrelease=fedora/31; yumarch=x86_64; ;; \
-		*-f31-x86_64) yumrelease=fedora/31; yumarch=x86_64; ;; \
+		*-32-x86_64) yumrelease=fedora/32; yumarch=x86_64; ;; \
+		*-f32-x86_64) yumrelease=fedora/32; yumarch=x86_64; ;; \
 		*-rawhide-x86_64) yumrelease=fedora/rawhide; yumarch=x86_64; ;; \
 		*) echo "Unrecognized release for $$repo, exiting" >&2; exit 1; ;; \
 	    esac; \
 	    rpmdir=$(REPOBASEDIR)/$$yumrelease/$$yumarch; \
 	    srpmdir=$(REPOBASEDIR)/$$yumrelease/SRPMS; \
+	    install -d $$rpmdir; \
+	    install -d $$srpmdir; \
 	    echo "    Pushing SRPMS to $$srpmdir"; \
 	    rsync -a $$repo/*.src.rpm --no-owner --no-group $$repo/*.src.rpm $$srpmdir/. || exit 1; \
 	    createrepo -q $$srpmdir/.; \
