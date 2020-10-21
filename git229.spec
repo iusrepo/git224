@@ -88,8 +88,8 @@
 %global build_ldflags       -Wl,-z,relro -Wl,-z,now
 %endif
 
-Name:           git228
-Version:        2.28.0
+Name:           git229
+Version:        2.29.0
 Release:        0%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
@@ -1059,6 +1059,9 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Wed Oct 21 2020 Nico Kadel-Garcia <nkadel@gmail.com> - 2.29.0-0
+- Update to 2.29.0
+
 * Mon Feb 10 2020 Carl George <carl@george.computer> - 2.24.1-6
 - Port from Fedora to IUS
 - Disable tests that fail as root
