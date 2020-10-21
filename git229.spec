@@ -631,7 +631,6 @@ sed -i -e '1s@#! */usr/bin/env python$@#!%{__python2}@' \
     contrib/hooks/multimail/git_multimail.py \
     contrib/hooks/multimail/migrate-mailhook-config \
     contrib/hooks/multimail/post-receive.example \
-    contrib/svn-fe/svnrdump_sim.py
 %else
 # Remove contrib/fast-import/import-zips.py, contrib/hg-to-git, and
 # contrib/svn-fe which all require python2.
@@ -1061,6 +1060,7 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %changelog
 * Wed Oct 21 2020 Nico Kadel-Garcia <nkadel@gmail.com> - 2.29.0-0
 - Update to 2.29.0
+- Discard contrib/svn-fe/svnrdump_sim.py, no longer used
 
 * Mon Feb 10 2020 Carl George <carl@george.computer> - 2.24.1-6
 - Port from Fedora to IUS
