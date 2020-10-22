@@ -90,7 +90,7 @@
 
 Name:           git229
 Version:        2.29.0
-Release:        0%{?dist}
+Release:        1%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1061,6 +1061,14 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 * Wed Oct 21 2020 Nico Kadel-Garcia <nkadel@gmail.com> - 2.29.0-0
 - Update to 2.29.0
 - Discard contrib/svn-fe/svnrdump_sim.py, no longer used
+
+* Thu Jul 23 2020 Chun-Chi Hung <b10102229@gmail.com> - 2.24.3-1
+- Latest upstream
+- Includes fix for CVE-2020-11008
+
+* Wed Apr 15 2020 Carl George <carl@george.computer> - 2.24.2-1
+- Latest upstream
+- Includes fix for CVE-2020-5260
 
 * Mon Feb 10 2020 Carl George <carl@george.computer> - 2.24.1-6
 - Port from Fedora to IUS
